@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blacksmith Barbers &amp; Academy — More Than a Barbershop</title>
+<meta name="description" content="Blacksmith Barbers & Academy — premium barbering, Blackrose Salon, barber training, and a warehouse experience like no other. Biggera Waters, Gold Coast.">
+<meta property="og:title" content="Blacksmith Barbers & Academy">
+<meta property="og:description" content="More than a barbershop — we are family. Premium barbering, Blackrose Salon, Academy training. Biggera Waters, Gold Coast.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#C9A96E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+img{max-width:100%;height:auto;display:block}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer}
+ul,ol{list-style:none}
+
+/* ── ACCESSIBILITY ── */
+:focus-visible{outline:2px solid #C9A96E;outline-offset:3px;border-radius:4px}
+.skip-link{position:fixed;top:-80px;left:12px;padding:10px 16px;background:#C9A96E;color:#0A0A0A;border-radius:8px;z-index:999;font-weight:600;transition:top .2s;font-size:14px}
+.skip-link:focus{top:12px}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* ── TOKENS ── */
+:root{
+  --accent:#C9A96E;
+  --accent-hi:#D4BC8A;
+  --accent-lo:#A88A4E;
+  --accent-dim:#7A6435;
+  --accent-glow:rgba(201,169,110,.18);
+  --line-acc:rgba(201,169,110,.22);
+
+  --bg:#0A0A0A;
+  --s1:#111111;
+  --s2:#161616;
+  --s3:#1D1D1D;
+
+  --line:#1A1A1A;
+  --line-hi:#252525;
+  --line-2:#353535;
+
+  --tx-1:#FAFAFA;
+  --tx-2:#9A9A9A;
+  --tx-3:#5A5A5A;
+  --tx-4:#3A3A3A;
+  --white:#FFFFFF;
+
+  --space-page:clamp(20px,5vw,56px);
+  --space-section:clamp(64px,10vw,140px);
+  --space-block:clamp(32px,5vw,64px);
+  --gutter:clamp(16px,2.5vw,32px);
+
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --t-reveal:.55s;
+  --t-stagger:.40s;
+  --t-hover:.15s;
+  --t-drawer:.35s;
+}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  background:var(--bg);
+  color:var(--tx-2);
+  font-size:16px;
+  line-height:1.65;
+  overflow-x:hidden;
+}
+.serif{font-family:'DM Serif Display',serif}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{position:fixed;top:0;left:0;width:100%;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;z-index:1000;will-change:transform}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;
+  z-index:90;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px var(--space-page);
+  background:transparent;
+  border-bottom:1px solid transparent;
+  transition:background .35s var(--ease),border-color .35s var(--ease),transform .35s var(--ease);
+}
+.topbar.topbar-solid{background:rgba(10,10,10,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom-color:var(--line)}
+.topbar.topbar-hidden{transform:translateY(-100%)}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-logo img{height:28px;width:auto;display:block}
+.topbar-nav{display:none;align-items:center;gap:28px}
+.topbar-nav a{font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--tx-2);transition:color var(--t-hover) ease}
+.topbar-nav a:hover{color:var(--accent)}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-phone{display:none;font-size:12px;color:var(--tx-3);letter-spacing:.06em}
+.btn-book{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:10px 22px;
+  background:var(--accent);color:#0A0A0A;
+  border:none;border-radius:2px;
+  transition:background var(--t-hover) ease,transform var(--t-hover) ease;
+}
+.btn-book:hover{background:var(--accent-hi);transform:translateY(-1px)}
+
+/* ── HAMBURGER ── */
+.hamburger-btn{
+  background:none;border:none;
+  width:36px;height:36px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  padding:4px;z-index:110;position:relative;
+}
+.hamburger-btn span{display:block;width:22px;height:1.5px;background:var(--tx-1);transition:transform .25s ease,opacity .25s ease}
+.hamburger-btn.active span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hamburger-btn.active span:nth-child(2){opacity:0}
+.hamburger-btn.active span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* ── MOBILE NAV ── */
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:95;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.mobile-overlay.open{display:block}
+.mobile-nav{
+  position:fixed;top:0;left:0;bottom:0;
+  width:min(320px,85vw);
+  background:var(--s1);border-right:1px solid var(--line-hi);
+  z-index:100;transform:translateX(-100%);
+  display:flex;flex-direction:column;padding:0;
+}
+.mobile-nav.open{transform:translateX(0)}
+.mobile-nav-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;border-bottom:1px solid var(--line)}
+.mobile-nav-title{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--tx-3)}
+.mobile-nav-close{background:none;border:none;width:32px;height:32px;position:relative;display:flex;align-items:center;justify-content:center}
+.mobile-nav-close span{position:absolute;width:16px;height:1.5px;background:var(--tx-2);display:block}
+.mobile-nav-close span:first-child{transform:rotate(45deg)}
+.mobile-nav-close span:last-child{transform:rotate(-45deg)}
+.mobile-nav-links{padding:12px 0;overflow-y:auto;flex:1}
+.mobile-nav-links a{display:block;font-size:14px;color:var(--tx-2);padding:14px 24px;border-bottom:1px solid var(--line);transition:color .15s ease,background .15s ease;letter-spacing:.02em}
+.mobile-nav-links a:last-child{border-bottom:none}
+.mobile-nav-links a:hover,.mobile-nav-links a.active{color:var(--accent);background:var(--s2)}
+.mobile-nav-cta{padding:20px 24px;border-top:1px solid var(--line)}
+.mobile-nav-cta .btn-book{width:100%;justify-content:center;padding:14px 22px}
+
+/* ── PAGE WRAPPER ── */
+.page{max-width:1200px;margin:0 auto;padding:0 var(--space-page) 0}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;
+  padding:120px var(--space-page) 80px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 40%,rgba(201,169,110,.06),transparent 65%);
+  pointer-events:none;
+}
+.hero-logo{margin-bottom:48px;position:relative}
+.hero-logo img{height:clamp(50px,10vw,80px);width:auto;margin:0 auto}
+.hero-title{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(34px,7vw,72px);
+  color:var(--white);line-height:1.06;
+  letter-spacing:-.02em;margin-bottom:28px;
+  max-width:800px;
+}
+.hero-title .split-line-mask,
+.hero-title [style*="overflow: hidden"],
+.hero-title [style*="overflow:hidden"],
+.hero-title [style*="overflow: clip"],
+.hero-title [style*="overflow:clip"]{
+  padding-bottom:0.25em!important;
+  margin-bottom:-0.25em!important;
+}
+.hero-title em{color:var(--accent);font-style:italic}
+.hero-sub{
+  font-size:clamp(15px,1.5vw,18px);color:var(--tx-2);line-height:1.75;
+  max-width:520px;margin:0 auto 40px;
+}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.btn-hero{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:16px 36px;
+  background:var(--accent);color:#0A0A0A;
+  border:2px solid var(--accent);border-radius:2px;
+  transition:all var(--t-hover) ease;
+}
+.btn-hero:hover{background:var(--accent-hi);border-color:var(--accent-hi);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--accent);border:2px solid var(--line-hi)}
+.btn-outline:hover{border-color:var(--accent);background:rgba(201,169,110,.08);color:var(--accent-hi)}
+.hero-scroll{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx-3);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.hero-scroll::after{content:'';width:1px;height:28px;background:var(--line-hi);animation:scrollPulse 2s ease infinite}
+@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(1)}50%{opacity:.8;transform:scaleY(1.3)}}
+
+/* ── SECTIONS ── */
+.sec{padding:var(--space-section) 0;border-bottom:1px solid var(--line)}
+.sec:last-of-type{border-bottom:none}
+.sec-num{
+  font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--accent-lo);margin-bottom:18px;
+  display:flex;align-items:center;gap:12px;
+}
+.sec-num::after{content:'';flex:1;height:1px;background:var(--line-hi)}
+.h2{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(26px,4.5vw,42px);color:var(--white);
+  line-height:1.1;letter-spacing:-.015em;margin-bottom:24px;
+  text-wrap:balance;
+}
+.h2 em{color:var(--accent);font-style:italic}
+.h3{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(18px,2.6vw,24px);color:var(--white);
+  line-height:1.25;letter-spacing:-.01em;margin-bottom:16px;
+  text-wrap:balance;
+}
+.copy{font-size:16px;color:var(--tx-2);line-height:1.85}
+.copy p{margin-bottom:18px}
+.copy p:last-child{margin-bottom:0}
+.copy strong{color:var(--white);font-weight:600}
+.eyebrow{font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent-lo);margin-bottom:14px}
+
+/* ── SERVICE CARDS ── */
+.service-grid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line-hi);margin:32px 0}
+.service-card{background:var(--s1);padding:clamp(24px,3vw,36px);transition:background var(--t-hover) ease}
+.service-card-icon{font-size:28px;margin-bottom:16px;display:block}
+.service-card h3{font-family:'DM Serif Display',serif;font-size:clamp(17px,1.9vw,21px);color:var(--white);line-height:1.3;margin-bottom:10px}
+.service-card p{font-size:14px;color:var(--tx-2);line-height:1.7}
+@media(hover:hover){.service-card:hover{background:var(--s2)}}
+
+/* ── FEATURE LIST ── */
+.feature-list{margin:28px 0}
+.feature-item{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid var(--line)}
+.feature-item:last-child{border-bottom:none}
+.feature-icon{flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:rgba(201,169,110,.08);border:1px solid var(--line-acc);border-radius:2px;font-size:16px}
+.feature-text h4{font-size:14px;font-weight:600;color:var(--white);margin-bottom:4px}
+.feature-text p{font-size:13px;color:var(--tx-2);line-height:1.6}
+
+/* ── STAT GRID ── */
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;margin:32px 0;background:var(--line-hi)}
+.sc{background:var(--s1);padding:22px 18px;transition:background var(--t-hover) ease}
+.sn{
+  font-family:'DM Serif Display',serif;font-size:clamp(26px,4vw,32px);
+  line-height:1;margin-bottom:10px;
+  background:linear-gradient(145deg,var(--accent-hi),var(--accent));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum";
+}
+.sl{font-size:11px;color:var(--tx-2);line-height:1.55}
+@media(hover:hover){.sc:hover{background:var(--s2)}}
+
+/* ── PULL QUOTE ── */
+.pull{
+  margin:36px 0;padding:24px 26px;
+  background:rgba(201,169,110,.04);
+  border-left:2px solid var(--accent);
+  position:relative;overflow:hidden;
+}
+.pull::before{content:'\201C';font-family:'DM Serif Display',serif;font-size:80px;color:var(--accent);opacity:.08;position:absolute;top:-12px;left:14px;line-height:1}
+.pull p{font-family:'DM Serif Display',serif;font-size:18px;color:var(--accent-hi);line-height:1.65;font-style:italic;position:relative}
+
+/* ── CIRCLE TEASER ── */
+.circle-teaser{
+  margin:var(--space-section) 0;padding:clamp(40px,6vw,72px);
+  background:var(--s1);border:1px solid var(--line-hi);
+  text-align:center;position:relative;overflow:hidden;
+}
+.circle-teaser::before{content:'';position:absolute;inset:-20%;background:radial-gradient(ellipse at center,var(--accent-glow),transparent 60%);filter:blur(60px);pointer-events:none}
+.circle-badge{
+  display:inline-block;font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  padding:5px 14px;color:var(--accent);border:1px solid var(--line-acc);margin-bottom:24px;position:relative;
+}
+.circle-teaser .h2{position:relative}
+.circle-teaser .copy{max-width:480px;margin:0 auto;position:relative}
+
+/* ── HOURS TABLE ── */
+.hours-grid{display:grid;grid-template-columns:1fr;gap:0;margin:24px 0}
+.hours-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.hours-row:last-child{border-bottom:none}
+.hours-day{color:var(--tx-1);font-weight:500}
+.hours-time{color:var(--tx-2)}
+
+/* ── LOCATION ── */
+.location-grid{display:grid;grid-template-columns:1fr;gap:var(--gutter);margin-top:32px}
+.location-card{background:var(--s1);border:1px solid var(--line-hi);padding:clamp(24px,3vw,36px)}
+.location-card .h3{margin-bottom:16px}
+
+/* ── MAP EMBED ── */
+.map-wrap{width:100%;height:260px;background:var(--s2);border:1px solid var(--line-hi);overflow:hidden;margin-top:24px}
+.map-wrap iframe{width:100%;height:100%;border:0;filter:grayscale(1) contrast(1.1) brightness(.7)}
+
+/* ── CTA SECTION ── */
+.cta-sec{padding:var(--space-section) 0;text-align:center}
+.cta-sec::before{content:'';display:block;width:40px;height:1px;background:var(--accent);margin:0 auto 48px;opacity:.35}
+.ct{font-family:'DM Serif Display',serif;font-size:clamp(28px,5.5vw,44px);color:var(--white);line-height:1.1;letter-spacing:-.015em;margin-bottom:22px;text-wrap:balance}
+.ct em{color:var(--accent)}
+.cs{font-size:15px;color:var(--tx-2);line-height:1.85;max-width:480px;margin:0 auto 32px}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--line);padding:40px 0 32px}
+.footer-top{display:flex;flex-direction:column;gap:32px;margin-bottom:32px}
+.footer-brand img{height:24px;width:auto;opacity:.4}
+.footer-links{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.footer-col-title{font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--tx-3);margin-bottom:12px}
+.footer-col a{display:block;font-size:13px;color:var(--tx-2);padding:4px 0;transition:color .15s ease}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-top:24px;border-top:1px solid var(--line)}
+.footer-copy{font-size:11px;color:var(--tx-3)}
+.footer-socials{display:flex;gap:16px}
+.footer-socials a{font-size:13px;color:var(--tx-3);transition:color .15s ease}
+.footer-socials a:hover{color:var(--accent)}
+
+/* ── PROGRESSIVE ENHANCEMENT (REVEAL) ── */
+.js .reveal{opacity:0;transform:translateY(20px);transition:opacity .55s cubic-bezier(0.22,1,0.36,1),transform .55s cubic-bezier(0.22,1,0.36,1)}
+.js .reveal.in{opacity:1;transform:translateY(0)}
+.js .stagger>*{opacity:0;transform:translateY(12px);transition:opacity .4s cubic-bezier(0.22,1,0.36,1),transform .4s cubic-bezier(0.22,1,0.36,1)}
+.js .stagger.in>*{opacity:1;transform:translateY(0)}
+.js .stagger.in>*:nth-child(1){transition-delay:.04s}
+.js .stagger.in>*:nth-child(2){transition-delay:.10s}
+.js .stagger.in>*:nth-child(3){transition-delay:.16s}
+.js .stagger.in>*:nth-child(4){transition-delay:.22s}
+.js .stagger.in>*:nth-child(5){transition-delay:.28s}
+.js .stagger.in>*:nth-child(6){transition-delay:.34s}
+
+@media(prefers-reduced-motion:reduce){
+  .js .reveal,.js .stagger>*{opacity:1!important;transform:none!important;transition:none!important}
+}
+
+/* ── RESPONSIVE ── */
+@media(min-width:480px){
+  .sg{grid-template-columns:repeat(4,1fr)}
+}
+@media(min-width:540px){
+  .service-grid{grid-template-columns:repeat(2,1fr)}
+  .location-grid{grid-template-columns:1fr 1fr}
+}
+@media(min-width:640px){
+  .footer-top{flex-direction:row;justify-content:space-between;align-items:flex-start}
+}
+@media(min-width:900px){
+  .service-grid{grid-template-columns:repeat(3,1fr)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,64px);align-items:start}
+}
+@media(min-width:1100px){
+  .hamburger-btn{display:none}
+  .topbar-nav{display:flex}
+  .topbar-phone{display:block}
+  .page{padding:0 48px 0}
+}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+<div class="progress-bar" id="js-bar"></div>
+
+<!-- Mobile overlay -->
+<div class="mobile-overlay" id="mobile-overlay"></div>
+
+<!-- Mobile nav drawer -->
+<nav class="mobile-nav" id="mobile-nav" aria-label="Site navigation">
+  <div class="mobile-nav-header">
+    <span class="mobile-nav-title">Menu</span>
+    <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close navigation">
+      <span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-nav-links">
+    <a href="#services">Services</a>
+    <a href="#blackrose">Blackrose Salon</a>
+    <a href="#academy">The Academy</a>
+    <a href="#experience">The Experience</a>
+    <a href="#circle">The Circle</a>
+    <a href="#location">Location &amp; Hours</a>
+  </div>
+  <div class="mobile-nav-cta">
+    <a href="tel:0755638960" class="btn-book">Call to Book</a>
+  </div>
+</nav>
+
+<!-- Topbar -->
+<header class="topbar" id="topbar">
+  <div class="topbar-left">
+    <button class="hamburger-btn" id="hamburger-btn" aria-label="Open navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="topbar-logo">
+      <a href="#"><img src="assets/logo-white.png" alt="Blacksmith Barbers" height="28"></a>
+    </div>
+  </div>
+  <nav class="topbar-nav" aria-label="Main navigation">
+    <a href="#services">Services</a>
+    <a href="#blackrose">Blackrose</a>
+    <a href="#academy">Academy</a>
+    <a href="#experience">Experience</a>
+    <a href="#location">Visit</a>
+  </nav>
+  <div class="topbar-right">
+    <span class="topbar-phone">(07) 5563 8960</span>
+    <a href="tel:0755638960" class="btn-book">Book Now</a>
+  </div>
+</header>
+
+<div class="page">
+<main id="main">
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-logo reveal">
+    <img src="assets/logo-white.png" alt="Blacksmith Barbers & Academy" height="80">
+  </div>
+  <h1 class="hero-title" data-no-split>More Than a Barbershop — <em>We Are Family</em></h1>
+  <p class="hero-sub reveal">Premium barbering, world-class salon, and an academy forging the next generation — all under one warehouse roof on the Gold Coast.</p>
+  <div class="hero-cta reveal">
+    <a href="tel:0755638960" class="btn-hero">Book Your Chair</a>
+    <a href="#services" class="btn-hero btn-outline">Explore</a>
+  </div>
+  <div class="hero-scroll">Scroll<span></span></div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<div class="sg stagger" data-no-split>
+  <div class="sc">
+    <div class="sn" data-target="2015">2015</div>
+    <div class="sl">Established</div>
+  </div>
+  <div class="sc">
+    <div class="sn">Walk-in</div>
+    <div class="sl">App Queue</div>
+  </div>
+  <div class="sc">
+    <div class="sn">Gold Coast</div>
+    <div class="sl">Biggera Waters</div>
+  </div>
+  <div class="sc">
+    <div class="sn">Family</div>
+    <div class="sl">Owned &amp; Operated</div>
+  </div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="sec" id="services">
+  <div class="sec-num reveal" data-no-split>01 &middot; Services</div>
+  <h2 class="h2 reveal" data-no-split>Crafted with <em>Precision</em></h2>
+  <div class="copy reveal">
+    <p>Every cut at Blacksmith is a craft — honed by skilled barbers who take the time to understand your style. From classic fades to modern textures, beard sculpting to hot-towel shaves, we deliver the standard your hair deserves.</p>
+  </div>
+  <div class="service-grid stagger">
+    <div class="service-card">
+      <span class="service-card-icon">✂️</span>
+      <h3>Haircuts &amp; Fades</h3>
+      <p>Precision cuts tailored to your face shape and lifestyle. Skin fades, tapers, scissor cuts — every technique in the book.</p>
+    </div>
+    <div class="service-card">
+      <span class="service-card-icon">🪒</span>
+      <h3>Beard &amp; Shave</h3>
+      <p>Hot-towel straight razor shaves and beard sculpting. The ritual your grandfather knew, refined for today.</p>
+    </div>
+    <div class="service-card">
+      <span class="service-card-icon">👦</span>
+      <h3>Kids Cuts</h3>
+      <p>Relaxed atmosphere for the little ones. Patient barbers, great results, and a chair they actually want to sit in.</p>
+    </div>
+    <div class="service-card">
+      <span class="service-card-icon">💈</span>
+      <h3>Colour &amp; Design</h3>
+      <p>From subtle enhancements to bold creative colour and razor-etched designs that make a statement.</p>
+    </div>
+    <div class="service-card">
+      <span class="service-card-icon">🧴</span>
+      <h3>Retail</h3>
+      <p>Take the Blacksmith standard home. Premium styling products hand-picked by our team for every hair type.</p>
+    </div>
+    <div class="service-card">
+      <span class="service-card-icon">📱</span>
+      <h3>Walk-in App Queue</h3>
+      <p>Skip the wait. Join the queue from your phone and see real-time estimated wait times before you arrive.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BLACKROSE SALON ═══ -->
+<section class="sec" id="blackrose">
+  <div class="sec-num reveal" data-no-split>02 &middot; Blackrose Salon</div>
+  <h2 class="h2 reveal" data-no-split>Precision Cuts &amp; <em>Colour</em></h2>
+  <div class="two-col">
+    <div class="copy reveal">
+      <p><strong>Blackrose Salon</strong> sits inside Blacksmith — a dedicated space for precision hairdressing. Whether it's a sharp restyle, lived-in balayage, or full colour transformation, Blackrose delivers salon-quality results in a space that feels nothing like a typical salon.</p>
+      <p>The same warehouse energy, the same obsession with craft — designed for anyone who wants <strong>precision without pretension</strong>.</p>
+    </div>
+    <div class="feature-list stagger">
+      <div class="feature-item">
+        <div class="feature-icon">✂️</div>
+        <div class="feature-text">
+          <h4>Precision Cuts</h4>
+          <p>Structured bobs, textured layers, sharp lines — cut to complement your features.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-text">
+          <h4>Colour Services</h4>
+          <p>Full colour, highlights, balayage, toner refresh — from subtle to statement.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💎</div>
+        <div class="feature-text">
+          <h4>Styling &amp; Treatments</h4>
+          <p>Blowouts, event styling, and repair treatments to bring damaged hair back to life.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ACADEMY ═══ -->
+<section class="sec" id="academy">
+  <div class="sec-num reveal" data-no-split>03 &middot; The Academy</div>
+  <h2 class="h2 reveal" data-no-split>Forging the <em>Next Generation</em></h2>
+  <div class="copy reveal">
+    <p>The Blacksmith Academy is where raw talent meets real-world training. We don't just teach barbering — we build careers. Our students learn on a live shop floor alongside working professionals, graduating with the skills, confidence, and certification to walk into any shop ready to earn.</p>
+  </div>
+  <div class="pull reveal">
+    <p>We believe the best barbers are forged in the fire of a real shop — not just a classroom.</p>
+  </div>
+  <div class="feature-list stagger">
+    <div class="feature-item">
+      <div class="feature-icon">🔨</div>
+      <div class="feature-text">
+        <h4>Hands-On Training</h4>
+        <p>Learn in a working barbershop environment from day one. Real clients, real pressure, real growth.</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📜</div>
+      <div class="feature-text">
+        <h4>Certification</h4>
+        <p>Graduate with nationally recognised qualifications that open doors across the industry.</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🤝</div>
+      <div class="feature-text">
+        <h4>Mentorship</h4>
+        <p>One-on-one guidance from experienced barbers who've built careers and businesses from the chair up.</p>
+      </div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🚀</div>
+      <div class="feature-text">
+        <h4>Career Pathways</h4>
+        <p>From apprentice to senior barber to shop owner — we map the journey and support every step.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ THE EXPERIENCE ═══ -->
+<section class="sec" id="experience">
+  <div class="sec-num reveal" data-no-split>04 &middot; The Experience</div>
+  <h2 class="h2 reveal" data-no-split>Where <em>Warehouse</em> Meets Premium</h2>
+  <div class="two-col">
+    <div class="copy reveal">
+      <p>Walk in and feel it immediately — raw concrete, exposed steel, and the kind of industrial edge that can't be faked. Then sit down and experience the opposite: <strong>massage chairs, complimentary drinks, and service that treats every visit like an event</strong>.</p>
+      <p>Blacksmith isn't styled to look tough. It is tough — and refined. The warehouse aesthetic is real because the building is real. The premium finishes are deliberate because the experience matters.</p>
+    </div>
+    <div>
+      <div class="service-grid stagger">
+        <div class="service-card">
+          <span class="service-card-icon">💺</span>
+          <h3>Massage Chairs</h3>
+          <p>Every station fitted with premium massage chairs. Your cut comes with full relaxation.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-card-icon">🥃</span>
+          <h3>Complimentary Drinks</h3>
+          <p>Cold drinks, hot coffee — on the house, every visit. This is how we look after our own.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-card-icon">🏗️</span>
+          <h3>Warehouse Aesthetic</h3>
+          <p>Exposed steel, raw concrete, industrial lighting. Authentic, not cosplay.</p>
+        </div>
+        <div class="service-card">
+          <span class="service-card-icon">⚡</span>
+          <h3>High-End Finishes</h3>
+          <p>Custom metalwork, curated details, and a fitout that matches the standard of the cuts.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ THE CIRCLE ═══ -->
+<section class="sec" id="circle">
+  <div class="circle-teaser reveal">
+    <div class="circle-badge">Coming Soon</div>
+    <h2 class="h2">The <em>Circle</em></h2>
+    <div class="copy">
+      <p>A members-only layer for the Blacksmith faithful. Priority booking, exclusive drops, and perks that reward loyalty the way it should be rewarded. Details incoming.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ LOCATION & HOURS ═══ -->
+<section class="sec" id="location">
+  <div class="sec-num reveal" data-no-split>05 &middot; Visit Us</div>
+  <h2 class="h2 reveal" data-no-split>Find <em>Your Chair</em></h2>
+  <div class="location-grid">
+    <div class="location-card reveal">
+      <h3 class="h3" data-no-split>Location</h3>
+      <div class="copy">
+        <p><strong>9 Gateway Drive</strong><br>Biggera Waters QLD 4216</p>
+        <p>Near Harbour Town, Gold Coast. Easy parking right at the door.</p>
+      </div>
+      <div style="margin-top:20px">
+        <a href="tel:0755638960" class="btn-book" style="font-size:12px;padding:12px 24px">(07) 5563 8960</a>
+      </div>
+    </div>
+    <div class="location-card reveal">
+      <h3 class="h3" data-no-split>Hours</h3>
+      <div class="hours-grid">
+        <div class="hours-row"><span class="hours-day">Monday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Tuesday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Wednesday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Thursday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Friday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">9:00 – 3:30</span></div>
+        <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">9:00 – 3:30</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="map-wrap reveal">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3524.7!2d153.3794!3d-27.9352!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b91119e27!2sBlacksmith+Barbers!5e0!3m2!1sen!2sau!4v1717200000000" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Blacksmith Barbers location"></iframe>
+  </div>
+</section>
+
+<!-- ═══ CTA CLOSE ═══ -->
+<section class="cta-sec reveal">
+  <h2 class="ct" data-no-split>Ready to Experience <em>Blacksmith?</em></h2>
+  <p class="cs">Walk in, call ahead, or join the queue from your phone. Your chair is waiting.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+    <a href="tel:0755638960" class="btn-hero">Call (07) 5563 8960</a>
+    <a href="https://maps.google.com/?q=9+Gateway+Drive+Biggera+Waters+QLD+4216" class="btn-hero btn-outline" target="_blank" rel="noopener">Get Directions</a>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <img src="assets/logo-white.png" alt="Blacksmith Barbers" height="24">
+      <p style="font-size:12px;color:var(--tx-3);margin-top:10px">More than a barbershop — we are family.<br>Est. 2015 · Biggera Waters, Gold Coast</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <div class="footer-col-title">Navigate</div>
+        <a href="#services">Services</a>
+        <a href="#blackrose">Blackrose Salon</a>
+        <a href="#academy">The Academy</a>
+        <a href="#experience">The Experience</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Connect</div>
+        <a href="tel:0755638960">(07) 5563 8960</a>
+        <a href="#location">9 Gateway Drive</a>
+        <a href="https://www.instagram.com/blacksmithbarbers/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/blacksmithbarbers/" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2026 Blacksmith Barbers &amp; Academy. All rights reserved.</span>
+  </div>
+</footer>
+
+</div><!-- /page -->
+
+<!-- ── SCRIPTS ── -->
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
+<script>
+if(window.gsap&&window.ScrollTrigger)gsap.registerPlugin(ScrollTrigger);
+window.__prm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+</script>
+<script>
+(function(){
+  document.documentElement.classList.add('js');
+
+  gsap.registerPlugin(ScrollTrigger, SplitText);
+
+  // ── Lenis smooth scroll ──
+  const lenis = new Lenis({
+    lerp: 0.1,
+    wheelMultiplier: 1,
+    touchMultiplier: 1.5,
+  });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+  gsap.ticker.lagSmoothing(0);
+
+  // ── Reduced motion ──
+  if (window.__prm) {
+    document.querySelectorAll('.reveal, .stagger').forEach(el => el.classList.add('in'));
+    return;
+  }
+
+  // ── Progress bar ──
+  gsap.to('#js-bar', {
+    scaleX: 1, ease: 'none',
+    scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0 }
+  });
+
+  // ── Section reveals (classList toggle) ──
+  gsap.utils.toArray('.reveal').forEach(el => {
+    ScrollTrigger.create({
+      trigger: el, start: 'top 88%',
+      onEnter:     () => el.classList.add('in'),
+      onLeaveBack: () => el.classList.remove('in'),
+    });
+  });
+
+  // ── Stagger children ──
+  gsap.utils.toArray('.stagger').forEach(el => {
+    ScrollTrigger.create({
+      trigger: el, start: 'top 86%',
+      onEnter:     () => el.classList.add('in'),
+      onLeaveBack: () => el.classList.remove('in'),
+    });
+  });
+
+  // ── Hero SplitText ──
+  const heroTitle = document.querySelector('.hero-title');
+  if (heroTitle && !heroTitle.dataset.noSplit) {
+    document.fonts.ready.then(() => {
+      const split = SplitText.create(heroTitle, { type: 'lines', mask: 'lines' });
+      gsap.from(split.lines, {
+        yPercent: 100, opacity: 0, duration: 0.85,
+        stagger: 0.12, ease: 'power3.out', delay: 0.2
+      });
+      ScrollTrigger.refresh();
+    });
+  }
+
+  // ── Stat counters ──
+  gsap.utils.toArray('.sn[data-target]').forEach(el => {
+    const target = parseFloat(el.dataset.target);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const decimals = el.dataset.decimals ? parseInt(el.dataset.decimals) : 0;
+    const obj = { val: 0 };
+    el.textContent = prefix + '0' + suffix;
+    gsap.to(obj, {
+      val: target, duration: 1.8, ease: 'power2.out',
+      onUpdate: function() {
+        const v = obj.val;
+        el.textContent = prefix + (decimals ? v.toFixed(decimals) : Math.round(v)) + suffix;
+      },
+      onComplete: function() {
+        el.textContent = prefix + (decimals ? target.toFixed(decimals) : Math.round(target)) + suffix;
+      },
+      scrollTrigger: { trigger: el, start: 'top 85%', once: true }
+    });
+  });
+
+  // ── Smart sticky topbar ──
+  const _tb = document.getElementById('topbar');
+  let hidden = false, solid = false;
+  lenis.on('scroll', ({ scroll, direction }) => {
+    if (scroll < 80) {
+      if (hidden) { _tb.classList.remove('topbar-hidden'); hidden = false; }
+      if (solid)  { _tb.classList.remove('topbar-solid');  solid = false; }
+      return;
+    }
+    if (direction === 1 && !hidden) {
+      _tb.classList.add('topbar-hidden'); hidden = true;
+    } else if (direction === -1 && hidden) {
+      _tb.classList.remove('topbar-hidden');
+      _tb.classList.add('topbar-solid');
+      hidden = false; solid = true;
+    }
+  });
+
+  // ── Hamburger nav ──
+  const hamburgerBtn  = document.getElementById('hamburger-btn');
+  const mobileNav     = document.getElementById('mobile-nav');
+  const mobileOverlay = document.getElementById('mobile-overlay');
+  const mobileClose   = document.getElementById('mobile-nav-close');
+  let mobileOpen = false;
+
+  function openMobileNav() {
+    mobileOpen = true;
+    mobileNav.classList.add('open');
+    mobileOverlay.classList.add('open');
+    hamburgerBtn.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    gsap.from(mobileNav, { x: '-100%', duration: 0.35, ease: 'power2.out' });
+    gsap.from('.mobile-nav-links a', {
+      x: -16, opacity: 0, stagger: 0.04,
+      duration: 0.3, ease: 'power2.out', delay: 0.1
+    });
+  }
+
+  function closeMobileNav() {
+    mobileOpen = false;
+    hamburgerBtn.classList.remove('active');
+    document.body.style.overflow = '';
+    gsap.to(mobileNav, {
+      x: '-100%', duration: 0.28, ease: 'power2.in',
+      onComplete: () => {
+        mobileNav.classList.remove('open');
+        mobileOverlay.classList.remove('open');
+      }
+    });
+  }
+
+  hamburgerBtn?.addEventListener('click', () => mobileOpen ? closeMobileNav() : openMobileNav());
+  mobileClose?.addEventListener('click', closeMobileNav);
+  mobileOverlay?.addEventListener('click', closeMobileNav);
+  document.querySelectorAll('.mobile-nav-links a').forEach(a => {
+    a.addEventListener('click', closeMobileNav);
+  });
+
+  // ── Smooth scroll for nav links ──
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target, { offset: -80, duration: 1.2 });
+    });
+  });
+
+}());
+</script>
+</body>
+</html>
