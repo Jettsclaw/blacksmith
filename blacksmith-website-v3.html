@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blacksmith Barbers & Academy — Premium Barbering, Gold Coast</title>
+<meta name="description" content="Blacksmith Barbers & Academy — premium barbering, Blackrose Salon, barber training, and a warehouse experience like no other. Est. 2015, Biggera Waters, Gold Coast.">
+<meta property="og:title" content="Blacksmith Barbers & Academy">
+<meta property="og:description" content="More than a barbershop — we are family. Premium barbering, Blackrose Salon, Academy training. Biggera Waters, Gold Coast.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#C9A96E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════
+   BLACKSMITH BARBERS v3 — Warehouse Premium
+   Design inspo: Gentlemen Barber Clubs (editorial layout),
+   Barber & Co Miami (dark fashion-brand feel),
+   Jack the Clipper London (narrative + dark tones),
+   Abel's on Queen (vintage serif + modern pairing)
+   ══════════════════════════════════════════════════ */
+
+/* ── RESET ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+img{max-width:100%;height:auto;display:block}
+a{text-decoration:none;color:inherit}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+ul,ol{list-style:none}
+
+/* ── ACCESSIBILITY ── */
+:focus-visible{outline:2px solid #C9A96E;outline-offset:3px;border-radius:4px}
+.skip-link{position:fixed;top:-80px;left:12px;padding:10px 16px;background:#C9A96E;color:#0A0A0A;border-radius:8px;z-index:9999;font-weight:600;transition:top .2s;font-size:14px}
+.skip-link:focus{top:12px}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* ── TOKENS ── */
+:root{
+  --gold:#C9A96E;
+  --gold-light:#D4BC8A;
+  --gold-dark:#A88A4E;
+  --gold-dim:rgba(201,169,110,.12);
+  --gold-glow:rgba(201,169,110,.06);
+
+  --bg:#080808;
+  --s1:#0E0E0E;
+  --s2:#141414;
+  --s3:#1A1A1A;
+  --s4:#222222;
+
+  --line:rgba(255,255,255,.06);
+  --line-hi:rgba(255,255,255,.10);
+  --line-gold:rgba(201,169,110,.18);
+
+  --tx-1:#F5F5F5;
+  --tx-2:#8A8A8A;
+  --tx-3:#555555;
+  --tx-4:#333333;
+  --white:#FFFFFF;
+
+  --page-px:clamp(20px,5vw,80px);
+  --sec-py:clamp(80px,12vw,160px);
+  --gap:clamp(16px,2.5vw,32px);
+  --max:1140px;
+
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --ease-out:cubic-bezier(0,0,0.2,1);
+}
+
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  background:var(--bg);
+  color:var(--tx-2);
+  font-size:15px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+
+/* ── GRAIN TEXTURE OVERLAY ── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9998;opacity:.5;
+}
+
+.serif{font-family:'Playfair Display',Georgia,serif}
+
+/* ── WRAPPER ── */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--page-px)}
+
+/* ══════ TOPBAR ══════ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--page-px);height:72px;
+  background:transparent;
+  border-bottom:1px solid transparent;
+  transition:background .4s var(--ease),border-color .4s var(--ease),transform .4s var(--ease);
+}
+.topbar.scrolled{background:rgba(8,8,8,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom-color:var(--line)}
+.topbar.hide{transform:translateY(-100%)}
+.topbar-logo img{height:26px;width:auto;display:block}
+.topbar-nav{display:none;align-items:center;gap:32px}
+.topbar-nav a{
+  font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tx-3);transition:color .2s ease;position:relative;
+}
+.topbar-nav a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s var(--ease)}
+.topbar-nav a:hover{color:var(--tx-1)}
+.topbar-nav a:hover::after{width:100%}
+.topbar-right{display:flex;align-items:center;gap:16px}
+.topbar-phone{display:none;font-size:11px;color:var(--tx-3);letter-spacing:.06em;font-weight:500}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  padding:12px 28px;border:1px solid var(--gold);
+  background:var(--gold);color:#080808;
+  transition:all .2s ease;position:relative;overflow:hidden;
+}
+.btn:hover{background:var(--gold-light);border-color:var(--gold-light);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--gold)}
+.btn-ghost:hover{background:rgba(201,169,110,.08);border-color:var(--gold-light);color:var(--gold-light)}
+.btn-lg{padding:16px 40px;font-size:12px}
+
+/* ── HAMBURGER ── */
+.ham{
+  width:36px;height:36px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px;
+  z-index:110;position:relative;
+}
+.ham span{display:block;width:22px;height:1.5px;background:var(--tx-1);transition:all .3s ease}
+.ham.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.ham.open span:nth-child(2){opacity:0}
+.ham.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+
+/* ── MOBILE DRAWER ── */
+.mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:95;opacity:0;pointer-events:none;transition:opacity .3s ease;backdrop-filter:blur(4px)}
+.mob-overlay.open{opacity:1;pointer-events:auto}
+.mob-drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(360px,88vw);
+  background:var(--s1);border-left:1px solid var(--line-hi);
+  z-index:105;transform:translateX(100%);transition:transform .4s var(--ease);
+  display:flex;flex-direction:column;
+}
+.mob-drawer.open{transform:translateX(0)}
+.mob-header{display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid var(--line)}
+.mob-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--tx-3)}
+.mob-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+.mob-close span{position:absolute;width:16px;height:1.5px;background:var(--tx-2)}
+.mob-close span:first-child{transform:rotate(45deg)}
+.mob-close span:last-child{transform:rotate(-45deg)}
+.mob-links{padding:16px 0;flex:1;overflow-y:auto}
+.mob-links a{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:15px;color:var(--tx-2);padding:16px 28px;
+  border-bottom:1px solid var(--line);transition:all .15s ease;
+}
+.mob-links a:last-child{border-bottom:none}
+.mob-links a:hover{color:var(--gold);background:var(--s2)}
+.mob-links a::after{content:'→';font-size:12px;color:var(--tx-4);transition:color .15s ease}
+.mob-links a:hover::after{color:var(--gold)}
+.mob-cta{padding:24px;border-top:1px solid var(--line)}
+.mob-cta .btn{width:100%;justify-content:center;padding:16px}
+
+/* ══════ HERO ══════ */
+.hero{
+  min-height:100vh;min-height:100dvh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:120px var(--page-px) 80px;
+  position:relative;overflow:hidden;
+}
+/* Animated ambient gradient */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 30%, rgba(201,169,110,.07) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(201,169,110,.03) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 60%, rgba(120,100,60,.04) 0%, transparent 50%);
+  animation:heroGlow 8s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+@keyframes heroGlow{
+  0%{opacity:.6;transform:scale(1)}
+  100%{opacity:1;transform:scale(1.05)}
+}
+/* Subtle diagonal lines texture */
+.hero::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    -45deg,
+    transparent,transparent 40px,
+    rgba(255,255,255,.008) 40px,rgba(255,255,255,.008) 41px
+  );
+  pointer-events:none;
+}
+.hero-content{position:relative;z-index:1}
+.hero-logo{margin-bottom:40px}
+.hero-logo img{height:clamp(48px,9vw,72px);width:auto;margin:0 auto;opacity:0;animation:fadeUp .8s var(--ease) .2s forwards}
+.hero-rule{
+  width:60px;height:1px;margin:0 auto 36px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;animation:fadeUp .6s var(--ease) .5s forwards;
+}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(36px,7.5vw,76px);
+  color:var(--white);line-height:1.05;font-weight:400;
+  letter-spacing:-.02em;margin-bottom:28px;
+  max-width:800px;
+  opacity:0;animation:fadeUp .8s var(--ease) .4s forwards;
+}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero-sub{
+  font-size:clamp(14px,1.4vw,17px);color:var(--tx-2);line-height:1.8;
+  max-width:500px;margin:0 auto 44px;font-weight:300;
+  opacity:0;animation:fadeUp .7s var(--ease) .7s forwards;
+}
+.hero-cta{
+  display:flex;flex-wrap:wrap;gap:14px;justify-content:center;
+  opacity:0;animation:fadeUp .7s var(--ease) .9s forwards;
+}
+.hero-scroll{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx-4);
+  display:flex;flex-direction:column;align-items:center;gap:10px;z-index:1;
+}
+.hero-scroll::after{
+  content:'';width:1px;height:32px;
+  background:linear-gradient(to bottom,var(--gold-dark),transparent);
+  animation:scrollPulse 2.5s ease infinite;
+}
+@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(1)}50%{opacity:.7;transform:scaleY(1.2)}}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}from{opacity:0;transform:translateY(16px)}}
+
+/* ══════ STATS BAR ══════ */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.stat{
+  padding:28px 24px;text-align:center;
+  border-right:1px solid var(--line);
+  transition:background .2s ease;
+}
+.stat:last-child{border-right:none}
+.stat:hover{background:var(--s1)}
+.stat-val{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,3.5vw,30px);line-height:1;
+  margin-bottom:8px;
+  background:linear-gradient(145deg,var(--gold-light),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat-label{font-size:11px;color:var(--tx-3);letter-spacing:.04em}
+
+/* ══════ SECTIONS ══════ */
+.sec{padding:var(--sec-py) 0}
+.sec-divider{height:1px;background:var(--line);margin:0}
+
+/* Section header */
+.sec-tag{
+  font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gold-dark);margin-bottom:20px;
+  display:flex;align-items:center;gap:14px;
+}
+.sec-tag::before{content:'';width:24px;height:1px;background:var(--gold-dark)}
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,5vw,48px);color:var(--white);
+  line-height:1.08;letter-spacing:-.015em;margin-bottom:24px;
+  font-weight:400;text-wrap:balance;
+}
+.sec-title em{color:var(--gold);font-style:italic}
+.sec-intro{font-size:16px;color:var(--tx-2);line-height:1.85;max-width:600px;font-weight:300}
+.sec-intro strong{color:var(--tx-1);font-weight:500}
+
+/* ══════ SERVICES ══════ */
+.svc-grid{
+  display:grid;grid-template-columns:1fr;gap:1px;
+  background:var(--line);margin-top:48px;
+}
+.svc-card{
+  background:var(--s1);padding:clamp(28px,3.5vw,44px);
+  transition:background .25s ease;position:relative;
+}
+.svc-card:hover{background:var(--s2)}
+.svc-card::before{
+  content:'';position:absolute;top:0;left:0;width:0;height:2px;
+  background:var(--gold);transition:width .4s var(--ease);
+}
+.svc-card:hover::before{width:100%}
+.svc-icon{
+  font-size:24px;margin-bottom:18px;display:block;
+  width:48px;height:48px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--gold-dim);border:1px solid var(--line-gold);
+}
+.svc-card h3{
+  font-family:'Playfair Display',serif;font-size:clamp(17px,1.8vw,20px);
+  color:var(--white);line-height:1.3;margin-bottom:10px;font-weight:500;
+}
+.svc-card p{font-size:14px;color:var(--tx-2);line-height:1.7}
+
+/* ══════ TWO-COLUMN LAYOUT ══════ */
+.two-col{display:grid;grid-template-columns:1fr;gap:clamp(40px,6vw,80px);margin-top:48px}
+.col-features{display:flex;flex-direction:column;gap:0}
+.feat{
+  display:flex;gap:18px;align-items:flex-start;
+  padding:22px 0;border-bottom:1px solid var(--line);
+}
+.feat:last-child{border-bottom:none}
+.feat-icon{
+  flex-shrink:0;width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--gold-dim);border:1px solid var(--line-gold);
+  font-size:16px;
+}
+.feat h4{font-size:14px;font-weight:600;color:var(--white);margin-bottom:4px;letter-spacing:.01em}
+.feat p{font-size:13px;color:var(--tx-2);line-height:1.65}
+
+/* ══════ PULLQUOTE ══════ */
+.pull{
+  margin:40px 0;padding:28px 32px;
+  background:rgba(201,169,110,.03);
+  border-left:2px solid var(--gold);
+  position:relative;
+}
+.pull::before{
+  content:'\201C';font-family:'Playfair Display',serif;
+  font-size:80px;color:var(--gold);opacity:.08;
+  position:absolute;top:-16px;left:16px;line-height:1;
+}
+.pull p{
+  font-family:'Playfair Display',serif;font-size:clamp(16px,1.6vw,19px);
+  color:var(--gold-light);line-height:1.7;font-style:italic;position:relative;
+}
+
+/* ══════ EXPERIENCE CARDS ══════ */
+.exp-grid{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);margin-top:48px}
+.exp-card{
+  background:var(--s1);padding:clamp(24px,3vw,36px);
+  display:flex;gap:18px;align-items:flex-start;
+  transition:background .2s ease;
+}
+.exp-card:hover{background:var(--s2)}
+.exp-card .svc-icon{flex-shrink:0}
+.exp-card h3{font-family:'Playfair Display',serif;font-size:17px;color:var(--white);margin-bottom:6px;font-weight:500}
+.exp-card p{font-size:13px;color:var(--tx-2);line-height:1.7}
+
+/* ══════ SHOP ══════ */
+.shop-visual{
+  margin-top:48px;padding:clamp(40px,6vw,72px);
+  background:var(--s1);border:1px solid var(--line-hi);
+  text-align:center;position:relative;overflow:hidden;
+}
+.shop-visual::before{
+  content:'';position:absolute;inset:-30%;
+  background:radial-gradient(ellipse at center,var(--gold-glow),transparent 60%);
+  filter:blur(60px);pointer-events:none;
+}
+.shop-visual>*{position:relative}
+.shop-items{
+  display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px;
+}
+.shop-tag{
+  font-size:12px;color:var(--tx-2);
+  padding:8px 20px;border:1px solid var(--line-hi);
+  background:var(--s2);transition:all .2s ease;
+}
+.shop-tag:hover{border-color:var(--line-gold);color:var(--gold)}
+
+/* ══════ LOCATION ══════ */
+.loc-grid{display:grid;grid-template-columns:1fr;gap:var(--gap);margin-top:48px}
+.loc-card{
+  background:var(--s1);border:1px solid var(--line-hi);
+  padding:clamp(28px,3.5vw,40px);
+}
+.loc-card h3{
+  font-family:'Playfair Display',serif;font-size:clamp(18px,2.2vw,22px);
+  color:var(--white);margin-bottom:18px;font-weight:500;
+}
+.hours-table{display:grid;gap:0}
+.hours-row{
+  display:flex;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--line);
+  font-size:14px;
+}
+.hours-row:last-child{border-bottom:none}
+.hours-day{color:var(--tx-1);font-weight:500}
+.hours-time{color:var(--tx-2)}
+.map-container{
+  width:100%;height:280px;background:var(--s2);
+  border:1px solid var(--line-hi);overflow:hidden;margin-top:32px;
+}
+.map-container iframe{width:100%;height:100%;border:0;filter:grayscale(1) contrast(1.1) brightness(.65)}
+
+/* ══════ CONTACT ══════ */
+.contact-row{
+  display:grid;grid-template-columns:1fr;gap:1px;
+  background:var(--line);margin-top:48px;
+}
+.contact-card{
+  background:var(--s1);padding:28px;text-align:center;
+  transition:background .2s ease;
+}
+.contact-card:hover{background:var(--s2)}
+.contact-card .label{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--tx-3);margin-bottom:10px}
+.contact-card .value{font-size:15px;color:var(--tx-1);font-weight:500}
+.contact-card a{color:var(--tx-1);transition:color .2s ease}
+.contact-card a:hover{color:var(--gold)}
+
+/* ══════ CTA ══════ */
+.cta-sec{padding:var(--sec-py) 0;text-align:center}
+.cta-rule{width:40px;height:1px;background:var(--gold);margin:0 auto 48px;opacity:.3}
+.cta-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(30px,6vw,52px);color:var(--white);
+  line-height:1.08;letter-spacing:-.015em;margin-bottom:24px;font-weight:400;
+}
+.cta-title em{color:var(--gold);font-style:italic}
+.cta-sub{font-size:15px;color:var(--tx-2);line-height:1.85;max-width:460px;margin:0 auto 36px;font-weight:300}
+
+/* ══════ FOOTER ══════ */
+.footer{border-top:1px solid var(--line);padding:48px 0 36px}
+.footer-inner{display:flex;flex-direction:column;gap:36px}
+.footer-brand p{font-size:12px;color:var(--tx-4);margin-top:12px;line-height:1.6}
+.footer-brand img{height:22px;width:auto;opacity:.35}
+.footer-cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.footer-col-label{font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--tx-4);margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:var(--tx-3);padding:3px 0;transition:color .15s ease}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;
+  gap:12px;padding-top:28px;border-top:1px solid var(--line);margin-top:36px;
+}
+.footer-copy{font-size:11px;color:var(--tx-4)}
+.footer-socials{display:flex;gap:20px}
+.footer-socials a{font-size:12px;color:var(--tx-4);transition:color .15s ease;letter-spacing:.06em;font-weight:500;text-transform:uppercase}
+.footer-socials a:hover{color:var(--gold)}
+
+/* ══════ SCROLL REVEALS ══════ */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.stagger>*{opacity:0;transform:translateY(12px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.stagger.in>*{opacity:1;transform:translateY(0)}
+.stagger.in>*:nth-child(1){transition-delay:.03s}
+.stagger.in>*:nth-child(2){transition-delay:.08s}
+.stagger.in>*:nth-child(3){transition-delay:.13s}
+.stagger.in>*:nth-child(4){transition-delay:.18s}
+.stagger.in>*:nth-child(5){transition-delay:.23s}
+.stagger.in>*:nth-child(6){transition-delay:.28s}
+
+@media(prefers-reduced-motion:reduce){
+  .reveal,.stagger>*{opacity:1!important;transform:none!important;transition:none!important}
+  .hero-logo img,.hero-rule,.hero h1,.hero-sub,.hero-cta{opacity:1!important;animation:none!important;transform:none!important}
+}
+
+/* ══════ RESPONSIVE ══════ */
+@media(min-width:480px){
+  .stats-bar{grid-template-columns:repeat(4,1fr)}
+  .contact-row{grid-template-columns:repeat(2,1fr)}
+}
+@media(min-width:600px){
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .exp-grid{grid-template-columns:repeat(2,1fr)}
+  .loc-grid{grid-template-columns:1fr 1fr}
+}
+@media(min-width:900px){
+  .svc-grid{grid-template-columns:repeat(3,1fr)}
+  .two-col{grid-template-columns:1fr 1fr}
+  .contact-row{grid-template-columns:repeat(4,1fr)}
+}
+@media(min-width:1060px){
+  .ham{display:none}
+  .topbar-nav{display:flex}
+  .topbar-phone{display:block}
+}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ═══ MOBILE OVERLAY ═══ -->
+<div class="mob-overlay" id="mob-overlay"></div>
+<nav class="mob-drawer" id="mob-drawer" aria-label="Mobile navigation">
+  <div class="mob-header">
+    <span class="mob-label">Menu</span>
+    <button class="mob-close" id="mob-close" aria-label="Close navigation"><span></span><span></span></button>
+  </div>
+  <div class="mob-links">
+    <a href="#services">Services</a>
+    <a href="#blackrose">Blackrose Salon</a>
+    <a href="#academy">The Academy</a>
+    <a href="#experience">The Experience</a>
+    <a href="#shop">Shop</a>
+    <a href="#visit">Visit Us</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="mob-cta">
+    <a href="tel:0755638960" class="btn">Call to Book</a>
+  </div>
+</nav>
+
+<!-- ═══ TOPBAR ═══ -->
+<header class="topbar" id="topbar">
+  <a href="#" class="topbar-logo"><img src="assets/logo-white.png" alt="Blacksmith Barbers" height="26"></a>
+  <nav class="topbar-nav" aria-label="Main navigation">
+    <a href="#services">Services</a>
+    <a href="#blackrose">Blackrose</a>
+    <a href="#academy">Academy</a>
+    <a href="#experience">Experience</a>
+    <a href="#shop">Shop</a>
+    <a href="#visit">Visit</a>
+  </nav>
+  <div class="topbar-right">
+    <span class="topbar-phone">(07) 5563 8960</span>
+    <a href="tel:0755638960" class="btn">Book Now</a>
+    <button class="ham" id="ham-btn" aria-label="Open navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+<main id="main">
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-logo">
+      <img src="assets/logo-white.png" alt="Blacksmith Barbers & Academy" height="72">
+    </div>
+    <div class="hero-rule"></div>
+    <h1>More Than a Barbershop&thinsp;—<br><em>We Are Family</em></h1>
+    <p class="hero-sub">Premium barbering, world-class salon, and an academy forging the next generation — all under one warehouse roof on the Gold Coast.</p>
+    <div class="hero-cta">
+      <a href="tel:0755638960" class="btn btn-lg">Book Your Chair</a>
+      <a href="#services" class="btn btn-lg btn-ghost">Explore</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<div class="stats-bar stagger" id="stats">
+  <div class="stat">
+    <div class="stat-val" data-count="2015">2015</div>
+    <div class="stat-label">Established</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">Walk-in</div>
+    <div class="stat-label">App Queue</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">Gold Coast</div>
+    <div class="stat-label">Biggera Waters</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">Family</div>
+    <div class="stat-label">Owned &amp; Operated</div>
+  </div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="sec" id="services">
+  <div class="sec-tag reveal">Services</div>
+  <h2 class="sec-title reveal">Crafted with <em>Precision</em></h2>
+  <p class="sec-intro reveal">Every cut at Blacksmith is a craft — honed by skilled barbers who take the time to understand your style. From classic fades to modern textures, beard sculpting to hot-towel shaves, we deliver the standard your hair deserves.</p>
+  <div class="svc-grid stagger">
+    <div class="svc-card">
+      <span class="svc-icon">✂️</span>
+      <h3>Haircuts &amp; Fades</h3>
+      <p>Precision cuts tailored to your face shape and lifestyle. Skin fades, tapers, scissor cuts — every technique in the book.</p>
+    </div>
+    <div class="svc-card">
+      <span class="svc-icon">🪒</span>
+      <h3>Beard &amp; Shave</h3>
+      <p>Hot-towel straight razor shaves and beard sculpting. The ritual your grandfather knew, refined for today.</p>
+    </div>
+    <div class="svc-card">
+      <span class="svc-icon">👦</span>
+      <h3>Kids Cuts</h3>
+      <p>Relaxed atmosphere for the little ones. Patient barbers, great results, and a chair they actually want to sit in.</p>
+    </div>
+    <div class="svc-card">
+      <span class="svc-icon">💈</span>
+      <h3>Colour &amp; Design</h3>
+      <p>From subtle enhancements to bold creative colour and razor-etched designs that make a statement.</p>
+    </div>
+    <div class="svc-card">
+      <span class="svc-icon">🧴</span>
+      <h3>Retail Products</h3>
+      <p>Take the Blacksmith standard home. Premium styling products hand-picked by our team for every hair type.</p>
+    </div>
+    <div class="svc-card">
+      <span class="svc-icon">📱</span>
+      <h3>Walk-in App Queue</h3>
+      <p>Skip the wait. Join the queue from your phone and see real-time estimated wait times before you arrive.</p>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ═══ BLACKROSE SALON ═══ -->
+<section class="sec" id="blackrose">
+  <div class="sec-tag reveal">Blackrose Salon</div>
+  <h2 class="sec-title reveal">Precision Cuts &amp; <em>Colour</em></h2>
+  <div class="two-col">
+    <div class="reveal">
+      <p class="sec-intro"><strong>Blackrose Salon</strong> sits inside Blacksmith — a dedicated space for precision hairdressing. Whether it's a sharp restyle, lived-in balayage, or full colour transformation, Blackrose delivers salon-quality results in a space that feels nothing like a typical salon.</p>
+      <p class="sec-intro" style="margin-top:18px">The same warehouse energy, the same obsession with craft — designed for anyone who wants <strong>precision without pretension</strong>.</p>
+    </div>
+    <div class="col-features stagger">
+      <div class="feat">
+        <div class="feat-icon">✂️</div>
+        <div>
+          <h4>Precision Cuts</h4>
+          <p>Structured bobs, textured layers, sharp lines — cut to complement your features.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🎨</div>
+        <div>
+          <h4>Colour Services</h4>
+          <p>Full colour, highlights, balayage, toner refresh — from subtle to statement.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">💎</div>
+        <div>
+          <h4>Styling &amp; Treatments</h4>
+          <p>Blowouts, event styling, and repair treatments to bring damaged hair back to life.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ═══ ACADEMY ═══ -->
+<section class="sec" id="academy">
+  <div class="sec-tag reveal">The Academy</div>
+  <h2 class="sec-title reveal">Forging the <em>Next Generation</em></h2>
+  <p class="sec-intro reveal">The Blacksmith Academy is where raw talent meets real-world training. We don't just teach barbering — we build careers. Our students learn on a live shop floor alongside working professionals, graduating with the skills, confidence, and certification to walk into any shop ready to earn.</p>
+
+  <div class="pull reveal">
+    <p>We believe the best barbers are forged in the fire of a real shop — not just a classroom.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="col-features stagger">
+      <div class="feat">
+        <div class="feat-icon">🔨</div>
+        <div>
+          <h4>Hands-On Training</h4>
+          <p>Learn in a working barbershop environment from day one. Real clients, real pressure, real growth.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📜</div>
+        <div>
+          <h4>Certification</h4>
+          <p>Graduate with nationally recognised qualifications that open doors across the industry.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">🤝</div>
+        <div>
+          <h4>Mentorship</h4>
+          <p>One-on-one guidance from experienced barbers who've built careers and businesses from the chair up.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-features stagger">
+      <div class="feat">
+        <div class="feat-icon">🚀</div>
+        <div>
+          <h4>Career Pathways</h4>
+          <p>From apprentice to senior barber to shop owner — we map the journey and support every step.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">📅</div>
+        <div>
+          <h4>Flexible Programs</h4>
+          <p>Monthly hands-on programs, in-house workshops, after-hours sessions, boot camps, and up-skilling for hairdressers transitioning into barbering.</p>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="feat-icon">⚡</div>
+        <div>
+          <h4>Live Shop Floor</h4>
+          <p>No simulated environments. You learn surrounded by 14 working operators — the real pace, the real standard.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ═══ THE EXPERIENCE ═══ -->
+<section class="sec" id="experience">
+  <div class="sec-tag reveal">The Experience</div>
+  <h2 class="sec-title reveal">Where <em>Warehouse</em> Meets Premium</h2>
+  <div class="two-col" style="margin-top:0">
+    <p class="sec-intro reveal">Walk in and feel it immediately — raw concrete, exposed steel, and the kind of industrial edge that can't be faked. Then sit down and experience the opposite: <strong>massage chairs, complimentary drinks, and service that treats every visit like an event</strong>.</p>
+    <p class="sec-intro reveal">Blacksmith isn't styled to look tough. It is tough — and refined. The warehouse aesthetic is real because the building is real. The premium finishes are deliberate because the experience matters.</p>
+  </div>
+  <div class="exp-grid stagger">
+    <div class="exp-card">
+      <span class="svc-icon">💺</span>
+      <div>
+        <h3>Massage Chairs</h3>
+        <p>Every station fitted with premium massage chairs. Your cut comes with full relaxation.</p>
+      </div>
+    </div>
+    <div class="exp-card">
+      <span class="svc-icon">🥃</span>
+      <div>
+        <h3>Complimentary Drinks</h3>
+        <p>Cold drinks, hot coffee — on the house, every visit. This is how we look after our own.</p>
+      </div>
+    </div>
+    <div class="exp-card">
+      <span class="svc-icon">🏗️</span>
+      <div>
+        <h3>Warehouse Aesthetic</h3>
+        <p>Exposed steel, raw concrete, industrial lighting. Authentic, not cosplay.</p>
+      </div>
+    </div>
+    <div class="exp-card">
+      <span class="svc-icon">⚡</span>
+      <div>
+        <h3>High-End Finishes</h3>
+        <p>Custom metalwork, curated details, and a fitout that matches the standard of the cuts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ═══ SHOP ═══ -->
+<section class="sec" id="shop">
+  <div class="sec-tag reveal">Shop</div>
+  <h2 class="sec-title reveal">Take the Standard <em>Home</em></h2>
+  <p class="sec-intro reveal">Premium styling products hand-picked by our barbers. The same products we use in the chair — because your hair deserves the same standard between visits.</p>
+
+  <div class="shop-visual reveal">
+    <h3 class="sec-title" style="font-size:clamp(20px,3vw,28px);margin-bottom:8px">Available In-Store</h3>
+    <p style="font-size:14px;color:var(--tx-2);margin-bottom:24px">Visit the shop or ask your barber for recommendations tailored to your hair type.</p>
+    <div class="shop-items">
+      <span class="shop-tag">Pomades</span>
+      <span class="shop-tag">Clays</span>
+      <span class="shop-tag">Waxes</span>
+      <span class="shop-tag">Shampoo</span>
+      <span class="shop-tag">Conditioner</span>
+      <span class="shop-tag">Beard Oil</span>
+      <span class="shop-tag">Styling Powder</span>
+      <span class="shop-tag">Combs &amp; Brushes</span>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ═══ VISIT ═══ -->
+<section class="sec" id="visit">
+  <div class="sec-tag reveal">Visit Us</div>
+  <h2 class="sec-title reveal">Find <em>Your Chair</em></h2>
+  <div class="loc-grid">
+    <div class="loc-card reveal">
+      <h3>Location</h3>
+      <p style="font-size:15px;color:var(--tx-2);line-height:1.8">
+        <strong style="color:var(--tx-1)">9 Gateway Drive</strong><br>
+        Biggera Waters QLD 4216
+      </p>
+      <p style="font-size:14px;color:var(--tx-3);margin-top:10px">Near Harbour Town, Gold Coast. Easy parking right at the door.</p>
+      <div style="margin-top:24px">
+        <a href="tel:0755638960" class="btn" style="font-size:11px;padding:12px 24px">(07) 5563 8960</a>
+      </div>
+    </div>
+    <div class="loc-card reveal">
+      <h3>Hours</h3>
+      <div class="hours-table">
+        <div class="hours-row"><span class="hours-day">Monday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Tuesday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Wednesday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Thursday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Friday</span><span class="hours-time">9:00 – 5:30</span></div>
+        <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">9:00 – 3:30</span></div>
+        <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">9:00 – 3:30</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="map-container reveal">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3524.7!2d153.3794!3d-27.9352!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b91119e27!2sBlacksmith+Barbers!5e0!3m2!1sen!2sau!4v1717200000000" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Blacksmith Barbers location"></iframe>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- ═══ CONTACT ═══ -->
+<section class="sec" id="contact">
+  <div class="sec-tag reveal">Contact</div>
+  <h2 class="sec-title reveal">Get in <em>Touch</em></h2>
+  <div class="contact-row stagger">
+    <div class="contact-card">
+      <div class="label">Phone</div>
+      <div class="value"><a href="tel:0755638960">(07) 5563 8960</a></div>
+    </div>
+    <div class="contact-card">
+      <div class="label">Email</div>
+      <div class="value"><a href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a></div>
+    </div>
+    <div class="contact-card">
+      <div class="label">Instagram</div>
+      <div class="value"><a href="https://www.instagram.com/blacksmithbarbers/" target="_blank" rel="noopener">@blacksmithbarbers</a></div>
+    </div>
+    <div class="contact-card">
+      <div class="label">Facebook</div>
+      <div class="value"><a href="https://www.facebook.com/TheBlacksmithBarbers/" target="_blank" rel="noopener">The Blacksmith Barbers</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-sec reveal">
+  <div class="cta-rule"></div>
+  <h2 class="cta-title">Ready to Experience<br><em>Blacksmith?</em></h2>
+  <p class="cta-sub">Walk in, call ahead, or join the queue from your phone. Your chair is waiting.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center">
+    <a href="tel:0755638960" class="btn btn-lg">Call (07) 5563 8960</a>
+    <a href="https://maps.google.com/?q=9+Gateway+Drive+Biggera+Waters+QLD+4216" class="btn btn-lg btn-ghost" target="_blank" rel="noopener">Get Directions</a>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div style="display:flex;flex-direction:column;gap:36px">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:36px">
+        <div class="footer-brand">
+          <img src="assets/logo-white.png" alt="Blacksmith Barbers" height="22">
+          <p>More than a barbershop — we are family.<br>Est. 2015 · Biggera Waters, Gold Coast</p>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <div class="footer-col-label">Navigate</div>
+            <a href="#services">Services</a>
+            <a href="#blackrose">Blackrose Salon</a>
+            <a href="#academy">The Academy</a>
+            <a href="#experience">The Experience</a>
+            <a href="#shop">Shop</a>
+          </div>
+          <div class="footer-col">
+            <div class="footer-col-label">Connect</div>
+            <a href="tel:0755638960">(07) 5563 8960</a>
+            <a href="mailto:blacksmithbarbers@gmail.com">Email Us</a>
+            <a href="#visit">9 Gateway Drive</a>
+            <a href="https://www.instagram.com/blacksmithbarbers/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.facebook.com/TheBlacksmithBarbers/" target="_blank" rel="noopener">Facebook</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; 2026 Blacksmith Barbers &amp; Academy. All rights reserved.</span>
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/blacksmithbarbers/" target="_blank" rel="noopener">IG</a>
+        <a href="https://www.facebook.com/TheBlacksmithBarbers/" target="_blank" rel="noopener">FB</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</div><!-- /wrap -->
+
+<!-- ── SCRIPTS ── -->
+<script>
+(function(){
+  /* ── Scroll reveals (IntersectionObserver — no external deps) ── */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('in');
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal, .stagger').forEach(el => io.observe(el));
+
+  /* ── Topbar scroll behavior ── */
+  const tb = document.getElementById('topbar');
+  let lastY = 0, ticking = false;
+
+  function onScroll() {
+    const y = window.scrollY;
+    if (y > 80) {
+      tb.classList.add('scrolled');
+      if (y > lastY && y > 200) tb.classList.add('hide');
+      else tb.classList.remove('hide');
+    } else {
+      tb.classList.remove('scrolled', 'hide');
+    }
+    lastY = y;
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+  }, { passive: true });
+
+  /* ── Mobile nav ── */
+  const hamBtn = document.getElementById('ham-btn');
+  const drawer = document.getElementById('mob-drawer');
+  const overlay = document.getElementById('mob-overlay');
+  const closeBtn = document.getElementById('mob-close');
+
+  function openNav() {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    hamBtn.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeNav() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    hamBtn.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  hamBtn.addEventListener('click', () => drawer.classList.contains('open') ? closeNav() : openNav());
+  closeBtn.addEventListener('click', closeNav);
+  overlay.addEventListener('click', closeNav);
+  document.querySelectorAll('.mob-links a').forEach(a => a.addEventListener('click', closeNav));
+
+  /* ── Smooth scroll for anchor links ── */
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      const offset = tb.offsetHeight + 16;
+      const top = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+
+  /* ── Counter animation for 2015 stat ── */
+  const counter = document.querySelector('[data-count]');
+  if (counter) {
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const target = parseInt(e.target.dataset.count);
+        const duration = 1500;
+        const start = performance.now();
+        const from = 2000;
+        function tick(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          e.target.textContent = Math.round(from + (target - from) * eased);
+          if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        cio.unobserve(e.target);
+      });
+    }, { threshold: 0.5 });
+    cio.observe(counter);
+  }
+})();
+</script>
+</body>
+</html>
