@@ -1,0 +1,36 @@
+/* Blacksmith brand override on top of Forty (HTML5 UP) — dark + gold */
+:root{ --gold:#c8a44d; --gold-2:#e6c879; }
+body, input, select, textarea{ color:#e9e7e1; }
+body{ background:#0b0b0d; }
+#wrapper{ background:#0b0b0d; }
+
+/* accent: teal -> gold */
+a{ color:var(--gold-2); }
+a:hover{ color:var(--gold); }
+.button{ box-shadow:inset 0 0 0 2px var(--gold) !important; color:var(--gold-2) !important; }
+.button:hover{ background-color:rgba(200,164,77,.10) !important; }
+.button.primary{ background-color:var(--gold) !important; color:#1a1407 !important; box-shadow:none !important; }
+.button.primary:hover{ background-color:var(--gold-2) !important; }
+
+/* banner: full-bleed shop photo + dark wash */
+#banner{
+  background:linear-gradient(to top, rgba(8,8,10,.92), rgba(8,8,10,.45)),
+             url('../../assets/photos/TLB_4429.jpg') center/cover no-repeat fixed;
+}
+#banner h1{ font-weight:800; letter-spacing:-.01em; }
+#banner .logo-img{ height:60px; margin-bottom:22px; }
+
+/* tiles: kill Forty's cyan duotone, let real photos show on a dark base + gold label */
+.tiles article{ background-color:#15151a !important; }
+.tiles article .image img{ opacity:.78 !important; filter:none !important; transition:opacity .4s, transform .6s; }
+.tiles article:hover .image img{ opacity:1 !important; transform:scale(1.04); }
+.tiles article:before{ background:linear-gradient(to top, rgba(8,8,10,.78), rgba(8,8,10,.15)) !important; opacity:1 !important; }
+.tiles article h3 a{ font-weight:700; color:#f5f3ee; }
+.tiles article p{ color:#e9e7e1; }
+
+/* sections / footer */
+#main{ background:#0b0b0d; }
+.major h2:after{ background-color:var(--gold) !important; }
+#footer{ background:#0e0e11; }
+#footer .copyright a{ color:var(--gold-2); }
+header.major h2{ color:#f5f3ee; }
