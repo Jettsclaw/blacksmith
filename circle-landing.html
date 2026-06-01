@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blacksmith Circle — Founding Access</title>
+<meta name="description" content="Your barber. Your chair. Your number. 47 founding spots on the Members Wall. Apply for founding access to the Blacksmith Circle.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+/* ── Reset & Variables ── */
+:root {
+  --ink: #0a0a0c;
+  --panel: #111113;
+  --panel-2: #161618;
+  --line: #222228;
+  --paper: #f5f3ee;
+  --muted: #8a8a94;
+  --gold: #c8a44d;
+  --gold-light: #e6c879;
+  --gold-glow: rgba(200,164,77,.15);
+  --red: #c04040;
+  --green: #3aaf5c;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: "Inter", -apple-system, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+h1, h2, h3, h4 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+
+/* ── Layout ── */
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+.center { text-align: center; }
+
+/* ── Utilities ── */
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: .3em;
+  font-size: 11px;
+  color: var(--gold);
+  font-weight: 600;
+  display: inline-block;
+}
+.gold { color: var(--gold); }
+.muted { color: var(--muted); }
+.spacer { height: clamp(48px, 8vw, 96px); }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-block;
+  background: var(--gold);
+  color: #1a1407;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  padding: 16px 36px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: all .25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.btn:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,164,77,.25); }
+.btn-lg { padding: 20px 48px; font-size: 14px; }
+.btn-ghost {
+  background: transparent;
+  color: var(--paper);
+  border: 1px solid rgba(255,255,255,.2);
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); background: transparent; }
+
+/* ── Gold line divider ── */
+.gold-line {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  margin: 0 auto 24px;
+}
+
+/* ══════════════════════════
+   HERO SECTION
+   ══════════════════════════ */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 100px 20px 60px;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 30%, rgba(200,164,77,.06) 0%, transparent 60%),
+              var(--ink);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: .4;
+}
+.hero-badge {
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 32px;
+  position: relative;
+}
+.hero-badge::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border: 1px solid rgba(200,164,77,.15);
+  border-radius: 50%;
+}
+.hero-badge svg { width: 36px; height: 36px; fill: var(--gold); }
+.hero h1 {
+  font-size: clamp(36px, 8vw, 72px);
+  font-weight: 900;
+  max-width: 16ch;
+  margin: 0 auto 20px;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--gold);
+  display: block;
+}
+.hero-sub {
+  font-size: clamp(16px, 2.2vw, 20px);
+  color: #b8b8c0;
+  max-width: 48ch;
+  margin: 0 auto 12px;
+  line-height: 1.7;
+}
+.hero-mechanism {
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: .08em;
+  margin-bottom: 36px;
+  font-weight: 500;
+}
+.hero-scarcity {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(200,164,77,.08);
+  border: 1px solid rgba(200,164,77,.2);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-size: 13px;
+  color: var(--gold-light);
+  margin-top: 24px;
+  font-weight: 500;
+}
+.hero-scarcity .dot {
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(.7); }
+}
+
+/* ══════════════════════════
+   PAIN SECTION
+   ══════════════════════════ */
+.pain {
+  padding: clamp(64px, 10vw, 120px) 20px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 960px;
+  margin: 48px auto 0;
+}
+@media (max-width: 640px) { .pain-grid { grid-template-columns: 1fr; gap: 16px; } }
+.pain-card {
+  background: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 28px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.pain-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--red);
+  opacity: .6;
+}
+.pain-card .icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+  filter: grayscale(1) brightness(.7);
+}
+.pain-card h3 {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--paper);
+}
+.pain-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ══════════════════════════
+   MECHANISM SECTION
+   ══════════════════════════ */
+.mechanism {
+  padding: clamp(64px, 10vw, 120px) 20px;
+}
+.mech-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 960px;
+  margin: 48px auto 0;
+}
+@media (max-width: 640px) { .mech-grid { grid-template-columns: 1fr; } }
+.mech-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+}
+.mech-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+}
+.mech-num {
+  width: 48px; height: 48px;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-family: "Playfair Display", serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.mech-card h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.mech-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ══════════════════════════
+   SOCIAL PROOF
+   ══════════════════════════ */
+.proof {
+  padding: clamp(48px, 8vw, 80px) 20px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.proof-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+@media (max-width: 640px) { .proof-stats { grid-template-columns: repeat(2, 1fr); } }
+.proof-stat .num {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+.proof-stat .label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  margin-top: 6px;
+}
+
+/* ══════════════════════════
+   TIER COMPARISON
+   ══════════════════════════ */
+.tiers {
+  padding: clamp(64px, 10vw, 120px) 20px;
+}
+.tier-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1000px;
+  margin: 48px auto 0;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .tier-grid { grid-template-columns: 1fr; max-width: 400px; }
+}
+.tier-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 36px 28px 32px;
+  position: relative;
+  transition: transform .3s ease, border-color .3s ease;
+}
+.tier-card:hover { transform: translateY(-4px); border-color: rgba(200,164,77,.3); }
+.tier-card.featured {
+  border-color: var(--gold);
+  background: linear-gradient(180deg, rgba(200,164,77,.06) 0%, var(--panel) 40%);
+}
+.tier-card.featured::before {
+  content: "MOST POPULAR";
+  position: absolute;
+  top: -12px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: #1a1407;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  padding: 4px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.tier-name {
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.tier-tagline {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.tier-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+.tier-price .amount {
+  font-family: "Playfair Display", serif;
+  font-size: 44px;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+.tier-price .period {
+  font-size: 14px;
+  color: var(--muted);
+}
+.tier-was {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.tier-was s { color: var(--red); opacity: .7; }
+.tier-features {
+  list-style: none;
+  margin-bottom: 28px;
+}
+.tier-features li {
+  font-size: 14px;
+  color: #c8c8d0;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.tier-features li::before {
+  content: "";
+  width: 16px; height: 16px;
+  min-width: 16px;
+  margin-top: 2px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.5 11.5L3 8l1-1 2.5 2.5L12 4l1 1z' fill='%23c8a44d'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.tier-card .btn { width: 100%; text-align: center; }
+
+/* ══════════════════════════
+   GODFATHER OFFER
+   ══════════════════════════ */
+.godfather {
+  padding: clamp(64px, 10vw, 120px) 20px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.offer-stack {
+  max-width: 680px;
+  margin: 48px auto 0;
+}
+.offer-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.offer-item:last-child { border-bottom: none; }
+.offer-icon {
+  width: 40px; height: 40px;
+  min-width: 40px;
+  background: rgba(200,164,77,.1);
+  border: 1px solid rgba(200,164,77,.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.offer-item h4 {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.offer-item p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ══════════════════════════
+   GUARANTEE
+   ══════════════════════════ */
+.guarantee {
+  padding: clamp(48px, 8vw, 80px) 20px;
+}
+.guarantee-box {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--panel);
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 40px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.guarantee-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(200,164,77,.08), transparent 60%);
+  pointer-events: none;
+}
+.guarantee-box h2 {
+  font-size: clamp(24px, 4vw, 32px);
+  margin-bottom: 16px;
+  position: relative;
+}
+.guarantee-box p {
+  font-size: 15px;
+  color: #b8b8c0;
+  line-height: 1.7;
+  max-width: 48ch;
+  margin: 0 auto;
+  position: relative;
+}
+.guarantee-shield {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.guarantee-shield svg { width: 56px; height: 56px; }
+
+/* ══════════════════════════
+   SCARCITY WALL
+   ══════════════════════════ */
+.wall {
+  padding: clamp(64px, 10vw, 100px) 20px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+}
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 6px;
+  max-width: 560px;
+  margin: 36px auto 0;
+}
+.wall-slot {
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Playfair Display", serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  transition: all .3s ease;
+  position: relative;
+}
+.wall-slot.taken {
+  background: rgba(200,164,77,.12);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.wall-slot.open {
+  border-color: rgba(255,255,255,.1);
+  color: rgba(255,255,255,.2);
+}
+.wall-slot.open:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(200,164,77,.06);
+  transform: scale(1.08);
+}
+.wall-legend {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.wall-legend span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+}
+.legend-dot.taken-dot { background: rgba(200,164,77,.4); border: 1px solid var(--gold); }
+.legend-dot.open-dot { background: transparent; border: 1px solid rgba(255,255,255,.15); }
+
+/* ══════════════════════════
+   FINAL CTA
+   ══════════════════════════ */
+.final-cta {
+  padding: clamp(80px, 12vw, 140px) 20px;
+  text-align: center;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 60%, rgba(200,164,77,.05) 0%, transparent 50%);
+}
+.final-cta h2 {
+  font-size: clamp(30px, 6vw, 56px);
+  font-weight: 900;
+  max-width: 16ch;
+  margin: 0 auto 16px;
+}
+.final-cta p {
+  font-size: 16px;
+  color: #b8b8c0;
+  max-width: 44ch;
+  margin: 0 auto 36px;
+  line-height: 1.7;
+}
+
+/* ── Footer ── */
+footer {
+  padding: 40px 20px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ── Mobile sticky CTA ── */
+.sticky-cta {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 50;
+  padding: 12px 16px;
+  background: rgba(10,10,12,.97);
+  border-top: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  transform: translateY(100%);
+  transition: transform .4s ease;
+}
+.sticky-cta.visible { transform: translateY(0); }
+.sticky-cta .btn { display: block; width: 100%; text-align: center; }
+@media (min-width: 721px) { .sticky-cta { display: none; } }
+
+/* ── Animations ── */
+[data-anim] { opacity: 0; transform: translateY(30px); }
+.pain-card[data-anim] { transform: translateY(20px); }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     HERO
+     ════════════════════════════════════ -->
+<section class="hero">
+  <div class="wrap center">
+    <div class="hero-badge" data-anim>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L4 7v10l8 5 8-5V7l-8-5zm0 2.18L18 8.1v7.8L12 19.82 6 15.9V8.1L12 4.18z"/><path d="M12 8v8M8 12h8" stroke-width="0"/><rect x="10" y="7" width="4" height="10" rx="1"/></svg>
+    </div>
+    <p class="eyebrow" data-anim>Founding Access — Limited to 47</p>
+    <h1 data-anim>
+      The Locked<br>Chair System<em>Your Barber. Your Chair. Your Number.</em>
+    </h1>
+    <p class="hero-sub" data-anim>Stop re-explaining your cut to a stranger every two weeks. Lock in your barber, your time slot, and your founding number on the Members Wall — before someone else does.</p>
+    <p class="hero-mechanism" data-anim>Blacksmith Circle — Biggera Waters, Gold Coast</p>
+    <a class="btn btn-lg" href="#apply" data-anim>Apply for Founding Access</a>
+    <div class="hero-scarcity" data-anim>
+      <span class="dot"></span>
+      <span>28 of 47 founding numbers still available</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     PAIN SECTION
+     ════════════════════════════════════ -->
+<section class="pain">
+  <div class="wrap center">
+    <p class="eyebrow" data-anim>Sound familiar?</p>
+    <h2 style="font-size:clamp(26px,4.5vw,40px); margin-top:12px; max-width:22ch; margin-left:auto; margin-right:auto;" data-anim>Walk-in barbershops weren't built for you. They were built to fill chairs.</h2>
+  </div>
+  <div class="pain-grid wrap">
+    <div class="pain-card" data-anim>
+      <div class="icon">&#9201;</div>
+      <h3>The 45-Minute Wait</h3>
+      <p>You show up Saturday morning. Four guys ahead of you. You wait. Again. Your time is worth more than a plastic chair and a magazine from 2019.</p>
+    </div>
+    <div class="pain-card" data-anim>
+      <div class="icon">&#9986;</div>
+      <h3>The Stranger's Hands</h3>
+      <p>You've explained your cut to six different barbers this year. And you're still not happy with it. Because every visit resets to zero.</p>
+    </div>
+    <div class="pain-card" data-anim>
+      <div class="icon">&#128260;</div>
+      <h3>The Groundhog Day Loop</h3>
+      <p>"Just a bit off the top, fade on the sides, yeah like last time." Except they don't remember last time. They never do.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     MECHANISM — How It Works
+     ════════════════════════════════════ -->
+<section class="mechanism">
+  <div class="wrap center">
+    <p class="eyebrow" data-anim>The Locked Chair System</p>
+    <h2 style="font-size:clamp(26px,4.5vw,40px); margin-top:12px; max-width:24ch; margin-left:auto; margin-right:auto;" data-anim>Not a discount membership.<br>A permanent reservation.</h2>
+    <p style="color:var(--muted); max-width:52ch; margin:16px auto 0; font-size:15px;" data-anim>Your barber already knows your cut before you sit down. Your chair is waiting before you walk through the door. Your number stays on the wall whether you're there or not.</p>
+  </div>
+  <div class="mech-grid wrap">
+    <div class="mech-card" data-anim>
+      <div class="mech-num">1</div>
+      <h3>Your Barber, Locked In</h3>
+      <p>Choose your barber. Every visit, same hands, same understanding. No more re-explaining. They know your cut, your preferences, your name.</p>
+    </div>
+    <div class="mech-card" data-anim>
+      <div class="mech-num">2</div>
+      <h3>Your Time, Reserved</h3>
+      <p>Priority booking means you skip the queue. Recurring slots lock your preferred day and time. Walk in, sit down, done. No waiting.</p>
+    </div>
+    <div class="mech-card" data-anim>
+      <div class="mech-num">3</div>
+      <h3>Your Number, Permanent</h3>
+      <p>Founding members get a number on the Members Wall. 47 spots. Physical. Visible. Yours. The wall doesn't grow — once it's full, it's full.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     SOCIAL PROOF STATS
+     ════════════════════════════════════ -->
+<section class="proof">
+  <div class="wrap">
+    <div class="proof-stats">
+      <div class="proof-stat" data-anim>
+        <div class="num">10</div>
+        <div class="label">Years Running</div>
+      </div>
+      <div class="proof-stat" data-anim>
+        <div class="num">15K+</div>
+        <div class="label">Clients Served</div>
+      </div>
+      <div class="proof-stat" data-anim>
+        <div class="num">14</div>
+        <div class="label">Operators</div>
+      </div>
+      <div class="proof-stat" data-anim>
+        <div class="num">47</div>
+        <div class="label">Founding Spots</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     TIER COMPARISON
+     ════════════════════════════════════ -->
+<section class="tiers" id="tiers">
+  <div class="wrap center">
+    <p class="eyebrow" data-anim>Founding Rates — Locked for Life</p>
+    <h2 style="font-size:clamp(26px,4.5vw,40px); margin-top:12px; max-width:22ch; margin-left:auto; margin-right:auto;" data-anim>Three tiers. One standard.<br><span class="gold">Yours doesn't go up.</span></h2>
+    <p style="color:var(--muted); max-width:50ch; margin:12px auto 0; font-size:15px;" data-anim>Founding members lock in today's rate permanently. When prices rise for everyone else, yours stays exactly where it is.</p>
+  </div>
+
+  <div class="tier-grid wrap">
+    <!-- THE CUT -->
+    <div class="tier-card" data-anim>
+      <div class="tier-name">The Cut</div>
+      <div class="tier-tagline">For the regular who wants consistency</div>
+      <div class="tier-price">
+        <span class="amount">$69</span>
+        <span class="period">/mo</span>
+      </div>
+      <div class="tier-was"><s>$79/mo</s> — founding rate, first 100</div>
+      <ul class="tier-features">
+        <li>1 cut per month with your locked barber</li>
+        <li>Members Lounge access</li>
+        <li>Priority booking — skip the queue</li>
+        <li>25% off all merch</li>
+        <li>Unused cut rolls over 1 month</li>
+        <li>Guest pass — 1 per quarter</li>
+      </ul>
+      <a class="btn btn-ghost" href="#apply">Apply Now</a>
+    </div>
+
+    <!-- THE CLUB -->
+    <div class="tier-card featured" data-anim>
+      <div class="tier-name">The Club</div>
+      <div class="tier-tagline">For the man who shows up fortnightly</div>
+      <div class="tier-price">
+        <span class="amount">$129</span>
+        <span class="period">/mo</span>
+      </div>
+      <div class="tier-was"><s>$149/mo</s> — founding rate, first 75</div>
+      <ul class="tier-features">
+        <li>2 cuts per month with your locked barber</li>
+        <li>Members Lounge + Members-only hours</li>
+        <li>Priority booking — skip the queue</li>
+        <li>40% off all merch</li>
+        <li>20% off Blackrose salon services</li>
+        <li>20% retail-to-credit (up to $50/mo)</li>
+        <li>Guest pass — 1 per quarter</li>
+      </ul>
+      <a class="btn" href="#apply">Apply for Founding Access</a>
+    </div>
+
+    <!-- THE EMPIRE -->
+    <div class="tier-card" data-anim>
+      <div class="tier-name">The Empire</div>
+      <div class="tier-tagline">For the first 47 — wall number included</div>
+      <div class="tier-price">
+        <span class="amount">$229</span>
+        <span class="period">/mo</span>
+      </div>
+      <div class="tier-was"><s>$249/mo</s> — founding rate, lifetime lock</div>
+      <ul class="tier-features">
+        <li>3 services per month — cuts, beard, hot towel</li>
+        <li>Permanent number on the Members Wall</li>
+        <li>Members Lounge + Members-only hours</li>
+        <li>50% off all merch + free monthly drop</li>
+        <li>Cut gifting — share with a mate</li>
+        <li>Exclusive Empire events (twice yearly)</li>
+        <li>Recov bottle on signup + 30% ongoing</li>
+        <li>Partner discounts across the portfolio</li>
+      </ul>
+      <a class="btn" href="#apply">Apply for Founding Access</a>
+    </div>
+  </div>
+
+  <!-- Cost comparison anchor -->
+  <div class="wrap center" style="margin-top: 48px;" data-anim>
+    <div style="background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:28px 24px; max-width:560px; margin:0 auto;">
+      <p style="font-size:14px; color:var(--muted); margin-bottom:8px;">What you're paying now (walk-in, no membership):</p>
+      <p style="font-size:28px; font-family:'Playfair Display',serif; font-weight:800;"><s style="color:var(--red); opacity:.7;">$110/mo</s> <span style="font-size:16px; color:var(--muted); font-family:'Inter',sans-serif; font-weight:400;">for 2 cuts, no priority, no lounge, no locked barber</span></p>
+      <p style="font-size:14px; color:var(--gold); margin-top:12px; font-weight:500;">The Club founding rate: $129/mo — 2 cuts + everything above.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     GODFATHER OFFER — What You Get
+     ════════════════════════════════════ -->
+<section class="godfather">
+  <div class="wrap center">
+    <p class="eyebrow" data-anim>Founding Member Offer</p>
+    <h2 style="font-size:clamp(26px,4.5vw,40px); margin-top:12px; max-width:24ch; margin-left:auto; margin-right:auto;" data-anim>Everything that comes with<br><span class="gold">your founding spot.</span></h2>
+  </div>
+  <div class="offer-stack wrap">
+    <div class="offer-item" data-anim>
+      <div class="offer-icon">&#128274;</div>
+      <div>
+        <h4>Rate locked permanently</h4>
+        <p>Your founding rate never increases. When standard pricing goes up, you stay where you started. Period.</p>
+      </div>
+    </div>
+    <div class="offer-item" data-anim>
+      <div class="offer-icon">&#127866;</div>
+      <div>
+        <h4>The Members Lounge</h4>
+        <p>Couches, 55" TV, gaming console, bar fridge, massage chair. Show up early, bring a mate, stay after. It's your space.</p>
+      </div>
+    </div>
+    <div class="offer-item" data-anim>
+      <div class="offer-icon">&#128197;</div>
+      <div>
+        <h4>Members-only hours</h4>
+        <p>Tuesday and Wednesday afternoons reserved for Circle members. No walk-ins competing for your barber's attention.</p>
+      </div>
+    </div>
+    <div class="offer-item" data-anim>
+      <div class="offer-icon">&#127942;</div>
+      <div>
+        <h4>Priority rebooking guarantee</h4>
+        <p>If your barber ever leaves, your slot survives. First cut with your new barber is free. Your wall number stays.</p>
+      </div>
+    </div>
+    <div class="offer-item" data-anim>
+      <div class="offer-icon">&#127873;</div>
+      <div>
+        <h4>Birthday + anniversary perks</h4>
+        <p>Free service in your birthday month. At 12 months continuous membership, you earn a seasonal merch piece.</p>
+      </div>
+    </div>
+    <div class="offer-item" data-anim>
+      <div class="offer-icon">&#129309;</div>
+      <div>
+        <h4>Guest pass every quarter</h4>
+        <p>Bring a mate to the lounge. Show them what they're missing. If they sign up, you both get a free cut credit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     POWER GUARANTEE
+     ════════════════════════════════════ -->
+<section class="guarantee">
+  <div class="guarantee-box" data-anim>
+    <div class="guarantee-shield">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
+        <path d="M28 4L8 14v16c0 12.4 8.5 24 20 28 11.5-4 20-15.6 20-28V14L28 4z" stroke="#c8a44d" stroke-width="2" fill="rgba(200,164,77,.08)"/>
+        <path d="M22 28l4 4 8-8" stroke="#c8a44d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>The 30-Day <span class="gold">Iron Guarantee</span></h2>
+    <p>Try it for 30 days. If you don't notice the difference between walking in and being a member, we'll refund the month <strong>and</strong> you keep your next cut free. You risk nothing. We risk everything — because we know what the difference feels like.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     SCARCITY WALL VISUALISATION
+     ════════════════════════════════════ -->
+<section class="wall">
+  <div class="wrap center">
+    <p class="eyebrow" data-anim>The Members Wall</p>
+    <h2 style="font-size:clamp(24px,4vw,36px); margin-top:12px;" data-anim>47 numbers. <span class="gold">One wall.</span> No expansion.</h2>
+    <p style="color:var(--muted); max-width:48ch; margin:12px auto 0; font-size:14px;" data-anim>Each number represents a founding Empire member. Once the wall is full, it stays full. Your number is permanent — it doesn't get reassigned.</p>
+
+    <div class="wall-grid" data-anim>
+      <!-- 47 slots: first 19 taken, rest open -->
+      <div class="wall-slot taken">01</div>
+      <div class="wall-slot taken">02</div>
+      <div class="wall-slot taken">03</div>
+      <div class="wall-slot taken">04</div>
+      <div class="wall-slot taken">05</div>
+      <div class="wall-slot taken">06</div>
+      <div class="wall-slot taken">07</div>
+      <div class="wall-slot taken">08</div>
+      <div class="wall-slot taken">09</div>
+      <div class="wall-slot taken">10</div>
+      <div class="wall-slot taken">11</div>
+      <div class="wall-slot taken">12</div>
+      <div class="wall-slot taken">13</div>
+      <div class="wall-slot taken">14</div>
+      <div class="wall-slot taken">15</div>
+      <div class="wall-slot taken">16</div>
+      <div class="wall-slot taken">17</div>
+      <div class="wall-slot taken">18</div>
+      <div class="wall-slot taken">19</div>
+      <div class="wall-slot open">20</div>
+      <div class="wall-slot open">21</div>
+      <div class="wall-slot open">22</div>
+      <div class="wall-slot open">23</div>
+      <div class="wall-slot open">24</div>
+      <div class="wall-slot open">25</div>
+      <div class="wall-slot open">26</div>
+      <div class="wall-slot open">27</div>
+      <div class="wall-slot open">28</div>
+      <div class="wall-slot open">29</div>
+      <div class="wall-slot open">30</div>
+      <div class="wall-slot open">31</div>
+      <div class="wall-slot open">32</div>
+      <div class="wall-slot open">33</div>
+      <div class="wall-slot open">34</div>
+      <div class="wall-slot open">35</div>
+      <div class="wall-slot open">36</div>
+      <div class="wall-slot open">37</div>
+      <div class="wall-slot open">38</div>
+      <div class="wall-slot open">39</div>
+      <div class="wall-slot open">40</div>
+      <div class="wall-slot open">41</div>
+      <div class="wall-slot open">42</div>
+      <div class="wall-slot open">43</div>
+      <div class="wall-slot open">44</div>
+      <div class="wall-slot open">45</div>
+      <div class="wall-slot open">46</div>
+      <div class="wall-slot open">47</div>
+    </div>
+
+    <div class="wall-legend" data-anim>
+      <span><span class="legend-dot taken-dot"></span> Claimed</span>
+      <span><span class="legend-dot open-dot"></span> Available</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     OBJECTION HANDLING
+     ════════════════════════════════════ -->
+<section style="padding: clamp(64px,10vw,100px) 20px;">
+  <div class="wrap center">
+    <p class="eyebrow" data-anim>Straight Answers</p>
+    <h2 style="font-size:clamp(24px,4vw,36px); margin-top:12px; margin-bottom:40px;" data-anim>Before you ask</h2>
+  </div>
+  <div class="wrap" style="max-width:680px;">
+    <div class="offer-item" data-anim>
+      <div class="offer-icon" style="font-size:16px; font-weight:700; color:var(--gold); font-family:'Inter',sans-serif;">Q</div>
+      <div>
+        <h4>"I don't want to commit monthly"</h4>
+        <p>You're not paying for cuts — you're locking a slot. Cancel and the slot goes to someone else. Permanently. The 30-Day Iron Guarantee means you risk nothing for the first month.</p>
+      </div>
+    </div>
+    <div class="offer-item" data-anim>
+      <div class="offer-icon" style="font-size:16px; font-weight:700; color:var(--gold); font-family:'Inter',sans-serif;">Q</div>
+      <div>
+        <h4>"What if my barber leaves?"</h4>
+        <p>Your slot survives staff turnover. First cut with a new barber is on us. Your number on the wall stays. The system is built around the chair, not the person in it.</p>
+      </div>
+    </div>
+    <div class="offer-item" data-anim>
+      <div class="offer-icon" style="font-size:16px; font-weight:700; color:var(--gold); font-family:'Inter',sans-serif;">Q</div>
+      <div>
+        <h4>"I can just book online anyway"</h4>
+        <p>Booking isn't priority. Members get locked recurring slots. Non-members get whatever's left. There's a reason the lounge has couches and the waiting area has plastic chairs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     FINAL CTA
+     ════════════════════════════════════ -->
+<section class="final-cta" id="apply">
+  <div class="wrap">
+    <p class="eyebrow" data-anim>Founding Access</p>
+    <h2 data-anim>Your chair is waiting.<br><span class="gold">Claim your number.</span></h2>
+    <p data-anim>Apply below and we'll reach out personally to lock in your barber, your time, and your founding rate. This isn't a checkout — it's a conversation.</p>
+    <a class="btn btn-lg" href="#apply" data-anim>Apply for Founding Access</a>
+    <div class="hero-scarcity" style="margin-top:28px;" data-anim>
+      <span class="dot"></span>
+      <span>28 of 47 founding numbers remaining</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <p class="eyebrow" style="margin-bottom:8px;">Blacksmith Barbers</p>
+  <p>Biggera Waters, Gold Coast &middot; Est. 2015</p>
+  <p style="margin-top:12px;">Founding access by application only. Membership subject to availability.</p>
+</footer>
+
+<!-- ── Mobile Sticky CTA ── -->
+<div class="sticky-cta" id="stickyCta">
+  <a class="btn" href="#apply">Apply for Founding Access</a>
+</div>
+
+<!-- ════════════════════════════════════
+     GSAP ANIMATIONS
+     ════════════════════════════════════ -->
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+// Animate all [data-anim] elements
+document.querySelectorAll('[data-anim]').forEach(el => {
+  gsap.to(el, {
+    opacity: 1,
+    y: 0,
+    duration: 0.8,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: el,
+      start: 'top 88%',
+      once: true
+    }
+  });
+});
+
+// Stagger pain cards
+gsap.utils.toArray('.pain-card').forEach((card, i) => {
+  gsap.to(card, {
+    opacity: 1,
+    y: 0,
+    duration: 0.7,
+    delay: i * 0.12,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: card.parentElement,
+      start: 'top 80%',
+      once: true
+    }
+  });
+});
+
+// Stagger mechanism cards
+gsap.utils.toArray('.mech-card').forEach((card, i) => {
+  gsap.to(card, {
+    opacity: 1,
+    y: 0,
+    duration: 0.7,
+    delay: i * 0.15,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: card.parentElement,
+      start: 'top 80%',
+      once: true
+    }
+  });
+});
+
+// Stagger tier cards
+gsap.utils.toArray('.tier-card').forEach((card, i) => {
+  gsap.to(card, {
+    opacity: 1,
+    y: 0,
+    duration: 0.7,
+    delay: i * 0.15,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: card.parentElement,
+      start: 'top 80%',
+      once: true
+    }
+  });
+});
+
+// Stagger wall slots
+gsap.utils.toArray('.wall-slot').forEach((slot, i) => {
+  gsap.fromTo(slot,
+    { opacity: 0, scale: 0.6 },
+    {
+      opacity: 1,
+      scale: 1,
+      duration: 0.3,
+      delay: i * 0.03,
+      ease: 'back.out(1.4)',
+      scrollTrigger: {
+        trigger: '.wall-grid',
+        start: 'top 85%',
+        once: true
+      }
+    }
+  );
+});
+
+// Counter animation for proof stats
+gsap.utils.toArray('.proof-stat .num').forEach(num => {
+  const text = num.textContent;
+  const match = text.match(/(\d+)/);
+  if (!match) return;
+  const target = parseInt(match[1]);
+  const suffix = text.replace(match[1], '').trim();
+  const obj = { val: 0 };
+  gsap.to(obj, {
+    val: target,
+    duration: 1.5,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: num,
+      start: 'top 85%',
+      once: true
+    },
+    onUpdate: () => {
+      num.textContent = Math.round(obj.val) + (suffix ? suffix : '');
+    }
+  });
+});
+
+// Mobile sticky CTA — show after scrolling past hero
+const stickyCta = document.getElementById('stickyCta');
+ScrollTrigger.create({
+  trigger: '.pain',
+  start: 'top 90%',
+  onEnter: () => stickyCta.classList.add('visible'),
+  onLeaveBack: () => stickyCta.classList.remove('visible')
+});
+
+// Gold line parallax on guarantee box
+gsap.to('.guarantee-box::before', {
+  backgroundPosition: '50% 100%',
+  scrollTrigger: {
+    trigger: '.guarantee-box',
+    scrub: 1
+  }
+});
+</script>
+
+</body>
+</html>
