@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Product — Blacksmith Barbers</title>
+<meta name="description" content="Barbershop-grade grooming gear and Blacksmith own-brand merch. The gear our barbers actually use, ready to take home.">
+<meta name="theme-color" content="#0b0b0d">
+<meta property="og:type" content="product">
+<meta property="og:locale" content="en_AU">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/logo-white.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Blacksmith">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ============ TOPBAR ============ -->
+<header class="topbar" id="topbar">
+  <a href="index.html" class="topbar-logo" aria-label="Blacksmith Barbers home"><img src="assets/logo-white.png" alt="Blacksmith Barbers"></a>
+  <nav class="nav-desktop" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="shop.html" class="active" aria-current="page">Shop</a>
+    <a href="academy.html">Academy</a>
+    <a href="blackrose.html">Blackrose</a>
+    <a href="barbers.html">Barbers</a>
+    <a href="about.html">About</a>
+    <a href="visit.html">Visit</a>
+  </nav>
+  <div class="nav-actions">
+    <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store"><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+    <button class="cart-btn" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
+    <a class="btn btn-gold" href="https://web.slikr.com.au/shop/421/res">Book a Cut</a>
+  </div>
+  <button class="cart-btn cart-btn-mobile" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ============ MOBILE DRAWER ============ -->
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Site menu">
+  <nav aria-label="Mobile">
+    <a href="index.html" data-close>Home</a>
+    <a href="shop.html" class="active" data-close>Shop</a>
+    <a href="academy.html" data-close>Academy</a>
+    <a href="blackrose.html" data-close>Blackrose</a>
+    <a href="barbers.html" data-close>Barbers</a>
+    <a href="about.html" data-close>About</a>
+    <a href="visit.html" data-close>Visit</a>
+  </nav>
+  <div class="drawer-actions">
+    <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/421/res" data-close>Book a Cut</a>
+    <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store" data-close><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+  </div>
+</div>
+
+<main id="main">
+<section class="pdp section-pad">
+  <div class="wrap">
+    <p class="crumb pdp-crumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <a href="shop.html">Shop</a> &nbsp;/&nbsp; <span id="crumbName">Product</span></p>
+    <div id="pdpRoot"></div>
+  </div>
+</section>
+
+<section class="cta-band section-pad">
+  <div class="wrap reveal">
+    <p class="eyebrow">In the chair, on us</p>
+    <h2 class="h2">Add it to your cart, grab it in the chair.</h2>
+    <p>Build your order here, then pick it up next time you&rsquo;re in &mdash; or ask your barber what they used on you and take it home.</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="https://web.slikr.com.au/shop/421/res">Book a Cut</a>
+      <a class="btn btn-ghost" href="visit.html">Visit the shop</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-col footer-logo">
+        <img src="assets/logo-white.png" alt="Blacksmith Barbers">
+        <p class="footer-tag">Est. 2015 &mdash; Biggera Waters, Gold Coast. More than a barbershop. We're family.</p>
+        <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store"><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="academy.html">Academy</a></li>
+          <li><a href="blackrose.html">Blackrose Salon</a></li>
+          <li><a href="barbers.html">Our Barbers</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="visit.html">Visit</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Book</h4>
+        <ul>
+          <li><a href="https://web.slikr.com.au/shop/421/res">Book a Cut</a></li>
+          <li><a href="barbers.html">Book with your barber</a></li>
+          <li><a href="https://web.slikr.com.au/blackrosesalon">Book Salon</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <address>
+          9 Gateway Drive<br>
+          Biggera Waters QLD 4216<br>
+          <a href="tel:+61755638960">(07) 5563 8960</a><br>
+          <a class="mail" href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a><br><br>
+          Mon&ndash;Fri 9:00&ndash;5:30<br>
+          Sat&ndash;Sun 9:00&ndash;3:30
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Blacksmith Barbers. Biggera Waters, Gold Coast.</p>
+      <p>Your chair. Your barber. Every time.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ STICKY MOBILE BOOKING BAR ============ -->
+<div class="book-bar" id="bookBar">
+  <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/421/res">Book a Cut</a>
+</div>
+
+<script src="assets/site.js"></script>
+<script src="assets/cart.js"></script>
+<script>
+/* ============================================================
+   PDP RENDERER — reads ?id=<slug>, looks up products.json,
+   renders gallery + details. Re-uses bs_cart via [data-add-to-cart].
+   ============================================================ */
+(function(){
+  var ICONS = {
+    beanie: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 14a7 7 0 0 1 14 0v3H5v-3z"/><path d="M5 17h14v3H5z"/></svg>',
+    giftcard: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 12h18"/><path d="M12 8V21"/><path d="M12 8S10 3 7.5 4.5 12 8 12 8z"/><path d="M12 8s2-5 4.5-3.5S12 8 12 8z"/></svg>'
+  };
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function money(n){ return '$' + (Math.round(n*100)/100).toFixed(2); }
+  function qs(name){
+    var m = new RegExp('[?&]' + name + '=([^&]+)').exec(window.location.search);
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  var root = document.getElementById('pdpRoot');
+  var crumbName = document.getElementById('crumbName');
+
+  function renderMissing(){
+    crumbName.textContent = 'Not found';
+    document.title = 'Product not found — Blacksmith Barbers';
+    root.innerHTML =
+      '<div class="pdp-missing">' +
+        '<p class="eyebrow">404</p>' +
+        '<h2 class="h2">We couldn’t find that product.</h2>' +
+        '<p style="color:var(--body);margin:0 auto 26px;max-width:46ch">It may have sold out or moved. Head back to the shop to see what’s on the shelf.</p>' +
+        '<a class="btn btn-gold" href="shop.html">Back to Shop</a>' +
+      '</div>';
+  }
+
+  function render(p){
+    crumbName.textContent = p.name.replace(/&mdash;/g,'—');
+    document.title = p.name.replace(/&[a-z]+;/g,'') + ' — Blacksmith Barbers';
+
+    var isApparel = Array.isArray(p.colours) && p.colours.length > 0;
+    // Build the active image list for the initial state.
+    var colour = isApparel ? p.colours[0] : null;
+    var imgs = isApparel ? colour.images.slice() : (p.images || []).slice();
+
+    function galleryHTML(){
+      var apparelCls = isApparel ? ' is-apparel' : '';
+      var mainInner;
+      if(imgs.length){
+        mainInner = '<img id="pdpMainImg" src="' + esc(imgs[0]) + '" alt="' + esc(p.name) + '">';
+      } else if(p.icon && ICONS[p.icon]){
+        mainInner = ICONS[p.icon];
+      } else {
+        mainInner = ICONS.giftcard;
+      }
+      var flag = p.flag ? '<span class="product-flag">' + esc(p.flag) + '</span>' : '';
+      var thumbs = '';
+      if(imgs.length > 1){
+        thumbs = '<div class="pdp-thumbs" id="pdpThumbs">' +
+          imgs.map(function(src,i){
+            return '<button type="button" class="pdp-thumb' + apparelCls + (i===0?' is-active':'') +
+              '" data-src="' + esc(src) + '" aria-label="View image ' + (i+1) + '">' +
+              '<img src="' + esc(src) + '" alt="' + esc(p.name) + ' view ' + (i+1) + '"></button>';
+          }).join('') +
+        '</div>';
+      }
+      return '<div class="pdp-main' + apparelCls + '" id="pdpMain">' + flag + mainInner + '</div>' + thumbs;
+    }
+
+    function colourHTML(){
+      if(!isApparel) return '';
+      return '<hr class="pdp-divider">' +
+        '<div class="pdp-colour-head">' +
+          '<span class="pdp-colour-label">Colour</span>' +
+          '<span class="pdp-colour-current" id="pdpColourName">' + esc(colour.name) + '</span>' +
+        '</div>' +
+        '<div class="pdp-swatches" id="pdpSwatches" role="group" aria-label="Choose colour">' +
+          p.colours.map(function(c,i){
+            return '<button type="button" class="pdp-swatch' + (i===0?' is-active':'') +
+              '" data-colour="' + esc(c.name) + '" style="background:' + esc(c.swatch) +
+              '" aria-label="' + esc(c.name) + '"></button>';
+          }).join('') +
+        '</div>';
+    }
+
+    var addId = isApparel ? colour.variantId : p.id;
+    var addName = isApparel ? (p.name + ' — ' + colour.name) : (p.cartName || p.name);
+
+    root.innerHTML =
+      '<div class="pdp-grid">' +
+        '<div class="pdp-gallery">' + galleryHTML() + '</div>' +
+        '<div class="pdp-details">' +
+          '<p class="pdp-cat">' + esc(p.category) + '</p>' +
+          '<h1 class="pdp-name">' + p.name + '</h1>' +
+          '<p class="pdp-price">' + money(p.price) + '</p>' +
+          '<p class="pdp-desc">' + p.description + '</p>' +
+          colourHTML() +
+          '<div class="pdp-actions">' +
+            '<button class="btn btn-gold pdp-add" id="pdpAdd" data-add-to-cart data-id="' + esc(addId) +
+              '" data-name="' + esc(addName) + '" data-price="' + p.price + '">Add to cart</button>' +
+          '</div>' +
+          '<div class="pdp-meta">' +
+            '<div class="pdp-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/></svg><span><b>Grab it in the chair.</b> Build your order online, pick it up on your next visit.</span></div>' +
+            '<div class="pdp-meta-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.4 5.5L20 8l-4 4 1 6-5-2.8L7 18l1-6-4-4 5.6-.5L12 2z"/></svg><span><b>Barber-grade.</b> The gear our barbers actually reach for behind the chair.</span></div>' +
+          '</div>' +
+          '<a class="pdp-back" href="shop.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>Back to Shop</a>' +
+        '</div>' +
+      '</div>';
+
+    /* ---- gallery interactions ---- */
+    var mainImg = document.getElementById('pdpMainImg');
+    function bindThumbs(){
+      var thumbsWrap = document.getElementById('pdpThumbs');
+      if(!thumbsWrap) return;
+      thumbsWrap.querySelectorAll('.pdp-thumb').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          if(mainImg) mainImg.src = btn.getAttribute('data-src');
+          thumbsWrap.querySelectorAll('.pdp-thumb').forEach(function(b){ b.classList.remove('is-active'); });
+          btn.classList.add('is-active');
+        });
+      });
+    }
+    bindThumbs();
+
+    /* ---- colour swatches (apparel) ---- */
+    if(isApparel){
+      var swatches = document.getElementById('pdpSwatches');
+      var addBtn = document.getElementById('pdpAdd');
+      var colourNameEl = document.getElementById('pdpColourName');
+      var gallery = document.querySelector('.pdp-gallery');
+      swatches.querySelectorAll('.pdp-swatch').forEach(function(sw){
+        sw.addEventListener('click', function(){
+          var name = sw.getAttribute('data-colour');
+          var c = p.colours.filter(function(x){ return x.name === name; })[0];
+          if(!c) return;
+          colour = c;
+          imgs = c.images.slice();
+          // swap whole gallery for this colour's shots
+          gallery.innerHTML = galleryHTML();
+          mainImg = document.getElementById('pdpMainImg');
+          bindThumbs();
+          colourNameEl.textContent = c.name;
+          swatches.querySelectorAll('.pdp-swatch').forEach(function(s){ s.classList.toggle('is-active', s===sw); });
+          addBtn.setAttribute('data-id', c.variantId);
+          addBtn.setAttribute('data-name', p.name + ' — ' + c.name);
+        });
+      });
+    }
+
+    /* ---- add to cart (re-uses bs_cart via cart.js global wiring) ---- */
+    var add = document.getElementById('pdpAdd');
+    add.addEventListener('click', function(){
+      if(window.BSCart && typeof window.BSCart.add === 'function'){
+        window.BSCart.add({
+          id: add.getAttribute('data-id'),
+          name: add.getAttribute('data-name'),
+          price: parseFloat(add.getAttribute('data-price')) || 0
+        });
+      }
+      add.classList.add('added');
+      var orig = add.textContent;
+      add.textContent = 'Added ✓';
+      setTimeout(function(){ add.textContent = orig; add.classList.remove('added'); }, 1100);
+    });
+  }
+
+  fetch('assets/products.json', {cache:'no-store'})
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var id = qs('id');
+      var p = (data.products || []).filter(function(x){ return x.id === id || x.slug === id; })[0];
+      if(!p){ renderMissing(); return; }
+      render(p);
+    })
+    .catch(function(){ renderMissing(); });
+})();
+</script>
+</body>
+</html>

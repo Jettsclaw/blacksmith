@@ -1,0 +1,190 @@
+{
+  "products": [
+    {
+      "id": "beard-oil-immortal",
+      "slug": "beard-oil-immortal",
+      "name": "Immortal NYC Beard King Beard Oil",
+      "cartName": "Immortal NYC Beard King Beard Oil 100ml",
+      "price": 29.95,
+      "category": "Beard",
+      "description": "Premium conditioning oil that softens, hydrates and tames even the roughest beard. 100ml.",
+      "images": ["assets/products/beard-oil-immortal.jpg"]
+    },
+    {
+      "id": "beard-wash-proraso",
+      "slug": "beard-wash-proraso",
+      "name": "Proraso Beard Wash",
+      "cartName": "Proraso Beard Wash Eucalyptus & Menthol 200ml",
+      "price": 21.99,
+      "category": "Beard",
+      "description": "Eucalyptus & menthol formula that deep-cleans facial hair and wakes the skin up. 200ml.",
+      "images": ["assets/products/beard-wash-proraso.jpg"]
+    },
+    {
+      "id": "style-infuse-powder",
+      "slug": "style-infuse-powder",
+      "name": "Immortal Infuse Styling Powder, White",
+      "cartName": "Immortal Infuse Styling Powder, White 30g",
+      "price": 27.50,
+      "category": "Styling",
+      "flag": "Best seller",
+      "description": "The shop favourite. A tiny shake at the roots for instant lift, texture and matte volume — no residue, no weight. 30g.",
+      "images": ["assets/products/style-infuse-powder.jpg"]
+    },
+    {
+      "id": "style-wax-cbd",
+      "slug": "style-wax-cbd",
+      "name": "Immortal NYC CBD Styling Hair Wax",
+      "cartName": "Immortal NYC CBD Styling Hair Wax 100ml",
+      "price": 28.95,
+      "category": "Styling",
+      "description": "CBD-infused wax with a natural finish and flexible hold. Tames without crunch. 100ml.",
+      "images": ["assets/products/style-wax-cbd.jpg"]
+    },
+    {
+      "id": "style-chaos-pomade",
+      "slug": "style-chaos-pomade",
+      "name": "Immortal NYC Chaos Sea Salt Pomade",
+      "cartName": "Immortal NYC Chaos Sea Salt Pomade 100ml",
+      "price": 29.95,
+      "category": "Styling",
+      "description": "Sea-salt pomade for textured, matte, beachy volume with strong hold. 100ml.",
+      "images": ["assets/products/style-chaos-pomade.jpg"]
+    },
+    {
+      "id": "style-super-spray",
+      "slug": "style-super-spray",
+      "name": "Immortal NYC Deluxe Super Spray",
+      "cartName": "Immortal NYC Deluxe Super Spray 500ml",
+      "price": 25.95,
+      "category": "Styling",
+      "description": "Strong-hold finishing spray that locks styles in all day without stiffness. 500ml.",
+      "images": ["assets/products/style-super-spray.jpg"]
+    },
+    {
+      "id": "style-tobacco-matte",
+      "slug": "style-tobacco-matte",
+      "name": "Immortal NYC Tobacco Matte Pomade",
+      "cartName": "Immortal NYC Tobacco Matte Pomade 100ml",
+      "price": 28.95,
+      "category": "Styling",
+      "description": "Strong-hold matte pomade with a dry, no-shine finish and a warm tobacco note. Reworkable all day. 100ml.",
+      "images": ["assets/products/style-tobacco-matte.jpg"]
+    },
+    {
+      "id": "style-marmara-clay",
+      "slug": "style-marmara-clay",
+      "name": "Barber Marmara Hair Wax — Clay",
+      "cartName": "Barber Marmara Hair Wax Clay 100ml",
+      "price": 24.95,
+      "category": "Styling",
+      "description": "Turkish-barbershop clay wax for textured, matte styling with firm, all-day hold. 100ml.",
+      "images": ["assets/products/style-marmara-clay.jpg"]
+    },
+    {
+      "id": "style-marmara-space",
+      "slug": "style-marmara-space",
+      "name": "Barber Marmara Hair Wax — Space",
+      "cartName": "Barber Marmara Hair Wax Space 100ml",
+      "price": 24.95,
+      "category": "Styling",
+      "description": "High-hold styling wax with a light sheen and a fresh signature scent. Locks the shape, stays workable. 100ml.",
+      "images": ["assets/products/style-marmara-space.jpg"]
+    },
+    {
+      "id": "shave-bayrum-splash",
+      "slug": "shave-bayrum-splash",
+      "name": "Immortal Infuse Bay Rum Aftershave Splash",
+      "cartName": "Immortal Infuse Bay Rum Aftershave Splash 250ml",
+      "price": 24.95,
+      "category": "Shave & Fragrance",
+      "description": "Classic bay rum splash that cools, tones and finishes the shave clean. 250ml.",
+      "images": ["assets/products/shave-bayrum-splash.jpg"]
+    },
+    {
+      "id": "cologne-one-million",
+      "slug": "cologne-one-million",
+      "name": "Immortal NYC Cologne ‘One Million Dollars’",
+      "cartName": "Immortal NYC Cologne One Million Dollars 500ml",
+      "price": 29.95,
+      "category": "Shave & Fragrance",
+      "description": "Bold barbershop cologne with a fresh, long-lasting signature scent. 500ml.",
+      "images": ["assets/products/cologne-one-million.jpg"]
+    },
+    {
+      "id": "tonic-wahl-bayrum",
+      "slug": "tonic-wahl-bayrum",
+      "name": "Wahl Traditional Bay Rum",
+      "cartName": "Wahl Traditional Bay Rum 250ml",
+      "price": 16.95,
+      "category": "Shave & Fragrance",
+      "description": "Old-school bay rum tonic for scalp and skin — invigorating, antiseptic, built to last. 250ml.",
+      "images": ["assets/products/tonic-wahl-bayrum.jpg"]
+    },
+    {
+      "id": "merch-hoodie",
+      "slug": "merch-hoodie",
+      "name": "Heavy Hoodie",
+      "price": 90.00,
+      "category": "Apparel",
+      "description": "Brushed-fleece heavyweight hoodie, double-lined hood, embroidered chest mark with the “bs” print across the back.",
+      "colours": [
+        {
+          "name": "Black",
+          "swatch": "#15151a",
+          "variantId": "merch-hoodie-black",
+          "images": ["assets/merch/hoodie-black-front.jpg", "assets/merch/hoodie-black-back.jpg", "assets/merch/hoodie-onmodel.jpg"]
+        },
+        {
+          "name": "Pine Green",
+          "swatch": "#2f4136",
+          "variantId": "merch-hoodie-pine-green",
+          "images": ["assets/merch/hoodie-pine-front.jpg", "assets/merch/hoodie-pine-back.jpg", "assets/merch/hoodie-onmodel.jpg"]
+        }
+      ]
+    },
+    {
+      "id": "merch-tee",
+      "slug": "merch-tee",
+      "name": "Heavy Tee",
+      "price": 50.00,
+      "category": "Apparel",
+      "description": "Heavyweight cotton tee with the Blacksmith blackletter chest mark and the “bs” print across the back. Boxy, hard-wearing fit.",
+      "colours": [
+        {
+          "name": "Black",
+          "swatch": "#15151a",
+          "variantId": "merch-tee-black",
+          "images": ["assets/merch/tee-black-front.jpg", "assets/merch/tee-black-back.jpg"]
+        },
+        {
+          "name": "Pine Green",
+          "swatch": "#2f4136",
+          "variantId": "merch-tee-pine-green",
+          "images": ["assets/merch/tee-pine-front.jpg", "assets/merch/tee-pine-back.jpg"]
+        }
+      ]
+    },
+    {
+      "id": "merch-beanie",
+      "slug": "merch-beanie",
+      "name": "Cuffed Beanie",
+      "price": 35.00,
+      "category": "Headwear",
+      "description": "Fine-knit cuffed beanie with woven Blacksmith tab. One size.",
+      "images": [],
+      "icon": "beanie"
+    },
+    {
+      "id": "merch-giftcard",
+      "slug": "merch-giftcard",
+      "name": "Gift Card",
+      "cartName": "Gift Card ($50)",
+      "price": 50.00,
+      "category": "Gift",
+      "description": "The easy win. Redeemable on cuts, salon and product in-shop. $50 value.",
+      "images": [],
+      "icon": "giftcard"
+    }
+  ]
+}
