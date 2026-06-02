@@ -106,7 +106,7 @@ section{position:relative}
   transition:border-color .3s,background .3s;
 }
 .topbar.scrolled{border-bottom-color:var(--line);background:rgba(11,11,13,.92)}
-.topbar-logo img{height:50px;width:auto}
+.topbar-logo img{height:72px;width:auto}
 .nav-desktop{display:none;align-items:center;gap:26px}
 .nav-desktop a{
   font-family:'Oswald',sans-serif;font-weight:500;text-transform:uppercase;
