@@ -1,3 +1,12 @@
+## ✅ FONTS — LOCKED (Jett approved 2026-06-02) — USE VERBATIM, DO NOT GUESS
+- **Wordmark / logo only:** Scotland (blackletter, @font-face) — never body text.
+- **Headlines / display:** **Oswald** (Google Fonts; weights 500/700; uppercase for big headlines, letter-spacing ~0.01em).
+- **Body / paragraphs / UI:** **Inter** (Google Fonts; 400/600).
+- Palette (locked): bg #0b0b0d / #121214, gold #c8a44d (accent), warm gold #e6c879, body grey #c9c9d0.
+- This supersedes any earlier "TBD/blocker" note below. The headline serif question is RESOLVED → Oswald.
+
+---
+
 # BLACKSMITH BARBERS — Brand DNA (Locked Foundation)
 
 **Status:** Partial lock — colours, display font, voice, and rules confirmed from real brand assets. Web companion fonts (headline serif + body sans) NOT YET LOCKED by Jett.
