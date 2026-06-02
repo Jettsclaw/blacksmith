@@ -39,8 +39,10 @@
       <svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg>
       <span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span>
     </a>
+    <button class="cart-btn" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
     <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a>
   </div>
+  <button class="cart-btn cart-btn-mobile" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
     <span></span><span></span><span></span>
   </button>
@@ -70,7 +72,7 @@
 
 <!-- ============ 1 · HOOK / HERO ============ -->
 <section class="hero" aria-label="Blacksmith Barbers">
-  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-bg" style="background-image:url('assets/photos/TLB_4429.jpg')" aria-hidden="true"></div>
   <div class="wrap hero-inner">
     <p class="eyebrow reveal">Est. 2015 — Biggera Waters, Gold Coast</p>
     <h1 class="h1 reveal">Your chair.<br>Your barber.<br><span class="gold">Every time.</span></h1>
@@ -195,6 +197,39 @@
   </div>
 </section>
 
+<!-- ============ EXPERIENCE ============ -->
+<section class="experience section-pad">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">The experience</p>
+      <h2 class="h2">It's an experience, not just a cut.</h2>
+      <p>A large-format warehouse fit-out built to be comfortable — somewhere you actually want to sit, not just somewhere you get a haircut.</p>
+    </div>
+    <div class="exp-grid stagger">
+      <article class="exp-card">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 9V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/><path d="M4 12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4H4v-4z"/><path d="M6 16v3M18 16v3"/></svg></span>
+        <h3 class="h3">Massage chairs</h3>
+        <p>Sink into a massage chair while you wait or while you're in the cut. The visit is built to feel good, not rushed.</p>
+      </article>
+      <article class="exp-card">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 8h11v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M11 3v2"/></svg></span>
+        <h3 class="h3">Complimentary drinks</h3>
+        <p>A cold beer or a fresh coffee in your hand the moment you walk in. On us, every time.</p>
+      </article>
+      <article class="exp-card">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg></span>
+        <h3 class="h3">In-shop merch</h3>
+        <p>Blacksmith own-brand caps, tees and grooming gear on the shelf — take a bit of the shop home with you.</p>
+      </article>
+      <article class="exp-card">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 21V9l9-6 9 6v12"/><path d="M3 21h18"/><path d="M9 21v-6h6v6"/></svg></span>
+        <h3 class="h3">The warehouse fit-out</h3>
+        <p>Reclaimed timber, polished concrete and room to breathe — a large-format space with no waiting line, beside the Harbour Town carpark.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
 <!-- ============ 5 · WOW / GALLERY ============ -->
 <section class="gallery section-pad">
   <div class="wrap">
@@ -290,5 +325,6 @@
 </div>
 
 <script src="assets/site.js"></script>
+<script src="assets/cart.js"></script>
 </body>
 </html>

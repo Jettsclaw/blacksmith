@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Shop — Barbershop-Grade Grooming Gear | Blacksmith Barbers</title>
-<meta name="description" content="Barbershop-grade shampoos, styling gear, beard care and shave essentials. Shop the gear our barbers actually use — in-store and online.">
+<title>Shop — Grooming Gear & Blacksmith Merch | Blacksmith Barbers</title>
+<meta name="description" content="Barbershop-grade grooming gear — hair, beard, shave and styling — plus Blacksmith own-brand merch. The gear our barbers actually use, ready to take home.">
 <meta name="theme-color" content="#0b0b0d">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Shop — Barbershop-Grade Grooming Gear | Blacksmith Barbers">
-<meta property="og:description" content="Barbershop-grade shampoos, styling gear, beard care and shave essentials. Shop the gear our barbers actually use — in-store and online.">
+<meta property="og:title" content="Shop — Grooming Gear & Blacksmith Merch | Blacksmith Barbers">
+<meta property="og:description" content="Barbershop-grade grooming gear — hair, beard, shave and styling — plus Blacksmith own-brand merch.">
 <meta property="og:locale" content="en_AU">
 <link rel="apple-touch-icon" href="assets/logo-white.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,8 +36,10 @@
   </nav>
   <div class="nav-actions">
     <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store"><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+    <button class="cart-btn" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
     <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a>
   </div>
+  <button class="cart-btn cart-btn-mobile" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
     <span></span><span></span><span></span>
   </button>
@@ -67,74 +69,242 @@
     <p class="crumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <span>Shop</span></p>
     <p class="eyebrow reveal">Shop</p>
     <h1 class="h1 reveal">Take the shop home<br>with you.</h1>
-    <p class="lead reveal">The same barbershop-grade gear we reach for behind the chair &mdash; shampoos, styling, beard care and shave essentials. Made to make the cut last past your appointment.</p>
-    <div class="hero-cta reveal"><a class="btn btn-gold" href="https://blacksmithbarbers.com.au/blacksmith-barbers-shop/">Shop all products</a><a class="btn btn-ghost" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a></div>
+    <p class="lead reveal">The same barbershop-grade gear we reach for behind the chair &mdash; plus Blacksmith own-brand merch. Add it to your cart and grab it in the chair on your next visit.</p>
+    <div class="hero-cta reveal"><a class="btn btn-gold" href="#grooming">Shop grooming</a><a class="btn btn-ghost" href="#merch">Shop merch</a></div>
   </div>
 </section>
 
-<section class="services section-pad">
+<!-- ============ GROOMING ============ -->
+<section class="shop-section section-pad" id="grooming">
   <div class="wrap">
-    <div class="section-head reveal">
-      <p class="eyebrow">By category</p>
-      <h2 class="h2">Grooming gear, barber-grade.</h2>
-      <p>No drugstore filler. Everything on the shelf is what our barbers actually use &mdash; chosen to hold, condition and finish the way a proper cut deserves.</p>
+    <div class="shop-cat-head reveal">
+      <div class="col">
+        <p class="eyebrow">Grooming</p>
+        <h2 class="h2">Barber-grade grooming gear.</h2>
+        <p>No drugstore filler &mdash; the hair, beard, shave and styling gear our barbers actually use. Make the cut last past your appointment.</p>
+      </div>
     </div>
-    <div class="cat-grid stagger">
-      <article class="cat-card">
-        <span class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 8h8v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8z"/><path d="M9 8V5h6v3"/><path d="M10 5V3h4v2"/></svg></span>
-        <span class="tag">Wash</span>
-        <h3 class="h3">Shampoos &amp; Conditioners</h3>
-        <p>Salon-strength cleansing and conditioning that won&rsquo;t strip your hair or your colour. The base every good style sits on.</p>
+
+    <!-- HAIR -->
+    <div class="section-head reveal" style="margin-bottom:22px">
+      <p class="eyebrow">Hair</p>
+    </div>
+    <div class="product-grid stagger">
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Hair</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 8h8v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8z"/><path d="M9 8V5h6v3"/><path d="M10 5V3h4v2"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Daily Cleanse Shampoo</p>
+          <p class="product-desc">Sulphate-free everyday shampoo that cleans without stripping. 300ml.</p>
+          <div class="product-foot"><span class="product-price">$28.00</span><button class="btn-add" data-add-to-cart data-id="hair-shampoo" data-name="Daily Cleanse Shampoo" data-price="28">Add to cart</button></div>
+        </div>
       </article>
-      <article class="cat-card">
-        <span class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.5 15.5"/><path d="M14.5 14 20 20"/></svg></span>
-        <span class="tag">Finish</span>
-        <h3 class="h3">Styling Gear</h3>
-        <p>Pomades, clays, pastes and sprays &mdash; matte to high-shine, light hold to all-day lock. Get the chair finish at home.</p>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Hair</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 8h8v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8z"/><path d="M9 8V5h6v3"/><path d="M10 5V3h4v2"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Conditioning Treatment</p>
+          <p class="product-desc">Lightweight conditioner that softens and tames without weighing hair down. 300ml.</p>
+          <div class="product-foot"><span class="product-price">$28.00</span><button class="btn-add" data-add-to-cart data-id="hair-conditioner" data-name="Conditioning Treatment" data-price="28">Add to cart</button></div>
+        </div>
       </article>
-      <article class="cat-card">
-        <span class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 5c0 7 3 13 8 13s8-6 8-13"/><path d="M9 9c1 1 5 1 6 0"/></svg></span>
-        <span class="tag">Beard</span>
-        <h3 class="h3">Beard Care</h3>
-        <p>Beard oils, balms and washes to keep it soft, shaped and itch-free between trims. Looked-after, not just grown.</p>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Hair</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 8h8v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8z"/><path d="M9 8V5h6v3"/><path d="M10 5V3h4v2"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Thickening Tonic</p>
+          <p class="product-desc">Leave-in tonic for added body and grip on finer hair. 200ml.</p>
+          <div class="product-foot"><span class="product-price">$32.00</span><button class="btn-add" data-add-to-cart data-id="hair-tonic" data-name="Thickening Tonic" data-price="32">Add to cart</button></div>
+        </div>
       </article>
-      <article class="cat-card">
-        <span class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3 21 10"/><path d="M17.5 6.5 7 17l-4 1 1-4L14.5 3.5z"/></svg></span>
-        <span class="tag">Shave</span>
-        <h3 class="h3">Shave Essentials</h3>
-        <p>Pre-shave, creams and post-shave care for a close, comfortable shave &mdash; the hot-towel feel, your bathroom.</p>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Hair</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 8h8v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8z"/><path d="M9 8V5h6v3"/><path d="M10 5V3h4v2"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Scalp Detox Scrub</p>
+          <p class="product-desc">Weekly exfoliating scrub to clear build-up and keep the scalp healthy. 200ml.</p>
+          <div class="product-foot"><span class="product-price">$30.00</span><button class="btn-add" data-add-to-cart data-id="hair-scrub" data-name="Scalp Detox Scrub" data-price="30">Add to cart</button></div>
+        </div>
       </article>
     </div>
-    <div class="reveal" style="text-align:center;margin-top:clamp(40px,6vw,64px)">
-      <a class="btn btn-gold" href="https://blacksmithbarbers.com.au/blacksmith-barbers-shop/">Shop all products</a>
+
+    <!-- BEARD -->
+    <div class="section-head reveal" style="margin:clamp(40px,5vw,56px) 0 22px">
+      <p class="eyebrow">Beard</p>
+    </div>
+    <div class="product-grid stagger">
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Beard</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5c0 7 3 13 8 13s8-6 8-13"/><path d="M9 9c1 1 5 1 6 0"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Beard Oil</p>
+          <p class="product-desc">Lightweight conditioning oil to soften and tame. Cedar &amp; sandalwood. 50ml.</p>
+          <div class="product-foot"><span class="product-price">$26.00</span><button class="btn-add" data-add-to-cart data-id="beard-oil" data-name="Beard Oil" data-price="26">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Beard</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5c0 7 3 13 8 13s8-6 8-13"/><path d="M9 9c1 1 5 1 6 0"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Beard Balm</p>
+          <p class="product-desc">Shaping balm with light hold to control flyaways and add a matte finish. 60g.</p>
+          <div class="product-foot"><span class="product-price">$28.00</span><button class="btn-add" data-add-to-cart data-id="beard-balm" data-name="Beard Balm" data-price="28">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Beard</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5c0 7 3 13 8 13s8-6 8-13"/><path d="M9 9c1 1 5 1 6 0"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Beard Wash</p>
+          <p class="product-desc">Gentle daily wash that cleans without drying the skin underneath. 200ml.</p>
+          <div class="product-foot"><span class="product-price">$24.00</span><button class="btn-add" data-add-to-cart data-id="beard-wash" data-name="Beard Wash" data-price="24">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Beard</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 5c0 7 3 13 8 13s8-6 8-13"/><path d="M9 9c1 1 5 1 6 0"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Beard Comb</p>
+          <p class="product-desc">Saw-cut sandalwood comb. Anti-static, snag-free, fits the pocket. </p>
+          <div class="product-foot"><span class="product-price">$18.00</span><button class="btn-add" data-add-to-cart data-id="beard-comb" data-name="Beard Comb" data-price="18">Add to cart</button></div>
+        </div>
+      </article>
+    </div>
+
+    <!-- SHAVE -->
+    <div class="section-head reveal" style="margin:clamp(40px,5vw,56px) 0 22px">
+      <p class="eyebrow">Shave</p>
+    </div>
+    <div class="product-grid stagger">
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Shave</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3 21 10"/><path d="M17.5 6.5 7 17l-4 1 1-4L14.5 3.5z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Pre-Shave Oil</p>
+          <p class="product-desc">Primes the skin and lifts the hair for a closer, more comfortable pass. 50ml.</p>
+          <div class="product-foot"><span class="product-price">$24.00</span><button class="btn-add" data-add-to-cart data-id="shave-pre" data-name="Pre-Shave Oil" data-price="24">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Shave</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3 21 10"/><path d="M17.5 6.5 7 17l-4 1 1-4L14.5 3.5z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Shave Cream</p>
+          <p class="product-desc">Rich, slick lather for a clean glide and no razor burn. 150ml.</p>
+          <div class="product-foot"><span class="product-price">$26.00</span><button class="btn-add" data-add-to-cart data-id="shave-cream" data-name="Shave Cream" data-price="26">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Shave</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3 21 10"/><path d="M17.5 6.5 7 17l-4 1 1-4L14.5 3.5z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Post-Shave Balm</p>
+          <p class="product-desc">Alcohol-free balm to calm, hydrate and close the shave. 100ml.</p>
+          <div class="product-foot"><span class="product-price">$26.00</span><button class="btn-add" data-add-to-cart data-id="shave-balm" data-name="Post-Shave Balm" data-price="26">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Shave</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3 21 10"/><path d="M17.5 6.5 7 17l-4 1 1-4L14.5 3.5z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Safety Razor</p>
+          <p class="product-desc">Weighted double-edge razor with a knurled handle. Built to last. </p>
+          <div class="product-foot"><span class="product-price">$45.00</span><button class="btn-add" data-add-to-cart data-id="shave-razor" data-name="Safety Razor" data-price="45">Add to cart</button></div>
+        </div>
+      </article>
+    </div>
+
+    <!-- STYLING -->
+    <div class="section-head reveal" style="margin:clamp(40px,5vw,56px) 0 22px">
+      <p class="eyebrow">Styling</p>
+    </div>
+    <div class="product-grid stagger">
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.5 15.5"/><path d="M14.5 14 20 20"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Matte Clay</p>
+          <p class="product-desc">Strong hold, no shine. The everyday go-to for textured, natural-looking styles. 100g.</p>
+          <div class="product-foot"><span class="product-price">$30.00</span><button class="btn-add" data-add-to-cart data-id="style-clay" data-name="Matte Clay" data-price="30">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.5 15.5"/><path d="M14.5 14 20 20"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Water-Based Pomade</p>
+          <p class="product-desc">Medium hold, high shine, washes out clean. Classic slick-back finish. 100g.</p>
+          <div class="product-foot"><span class="product-price">$30.00</span><button class="btn-add" data-add-to-cart data-id="style-pomade" data-name="Water-Based Pomade" data-price="30">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.5 15.5"/><path d="M14.5 14 20 20"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Texture Paste</p>
+          <p class="product-desc">Light, pliable hold for piece-y, lived-in texture. Re-workable all day. 100g.</p>
+          <div class="product-foot"><span class="product-price">$30.00</span><button class="btn-add" data-add-to-cart data-id="style-paste" data-name="Texture Paste" data-price="30">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.5 15.5"/><path d="M14.5 14 20 20"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Sea Salt Spray</p>
+          <p class="product-desc">Pre-style spray for grip, volume and a matte, beachy texture. 200ml.</p>
+          <div class="product-foot"><span class="product-price">$26.00</span><button class="btn-add" data-add-to-cart data-id="style-spray" data-name="Sea Salt Spray" data-price="26">Add to cart</button></div>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="story section-pad">
+<!-- ============ MERCH ============ -->
+<section class="shop-section section-pad" id="merch">
   <div class="wrap">
-    <div class="story-grid">
-      <div class="story-copy reveal">
-        <p class="eyebrow">Why it matters</p>
-        <h2 class="h2">A good cut is only half the job.</h2>
-        <p class="lead">The other half is what you do with it for the next three weeks. The right product is the difference between &ldquo;fresh out of the chair&rdquo; and &ldquo;due for a trim&rdquo; by Wednesday.</p>
-        <p>Ask your barber what they used on you &mdash; then take it home. We stock it on the shelf and online, no guesswork. Same gear, same finish, every morning.</p>
-        <p><a class="svc-link" href="https://blacksmithbarbers.com.au/blacksmith-barbers-shop/">Browse the full range &rarr;</a></p>
+    <div class="shop-cat-head reveal">
+      <div class="col">
+        <p class="eyebrow">Merch</p>
+        <h2 class="h2">Blacksmith own-brand.</h2>
+        <p>Wear the shop. Own-brand caps, tees, hoodies and beanies &mdash; plus a gift card for the bloke who's hard to buy for.</p>
       </div>
-      <div class="story-media reveal">
-        <img src="assets/photos/TLB_4414-1.jpg" alt="Product shelf and leather lounge inside Blacksmith Barbers" loading="lazy">
-      </div>
+    </div>
+    <div class="product-grid merch stagger">
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Headwear</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M2 15h13"/><path d="M15 15c3 0 6 .8 6 2H15v-2z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Blacksmith Cap</p>
+          <p class="product-desc">Structured 6-panel with embroidered Blacksmith mark. Adjustable strap.</p>
+          <div class="product-foot"><span class="product-price">$40.00</span><button class="btn-add" data-add-to-cart data-id="merch-cap" data-name="Blacksmith Cap" data-price="40">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Apparel</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3 5 6l2 2 1-1v13h8V7l1 1 2-2-3-3-2 1a3 3 0 0 1-4 0L8 3z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Heavy Tee</p>
+          <p class="product-desc">Heavyweight cotton tee with the Blacksmith print. Boxy, hard-wearing fit.</p>
+          <div class="product-foot"><span class="product-price">$50.00</span><button class="btn-add" data-add-to-cart data-id="merch-tee" data-name="Heavy Tee" data-price="50">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Apparel</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3 5 6l2 2 1-1v13h8V7l1 1 2-2-3-3-2 1a3 3 0 0 1-4 0L8 3z"/><path d="M12 7v4"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Heavy Hoodie</p>
+          <p class="product-desc">Brushed-fleece hoodie, double-lined hood, embroidered chest mark.</p>
+          <div class="product-foot"><span class="product-price">$90.00</span><button class="btn-add" data-add-to-cart data-id="merch-hoodie" data-name="Heavy Hoodie" data-price="90">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Headwear</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 14a7 7 0 0 1 14 0v3H5v-3z"/><path d="M5 17h14v3H5z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Cuffed Beanie</p>
+          <p class="product-desc">Fine-knit cuffed beanie with woven Blacksmith tab. One size.</p>
+          <div class="product-foot"><span class="product-price">$35.00</span><button class="btn-add" data-add-to-cart data-id="merch-beanie" data-name="Cuffed Beanie" data-price="35">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Gift</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 12h18"/><path d="M12 8V21"/><path d="M12 8S10 3 7.5 4.5 12 8 12 8z"/><path d="M12 8s2-5 4.5-3.5S12 8 12 8z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Gift Card</p>
+          <p class="product-desc">The easy win. Redeemable on cuts, salon and product in-shop. $50 value.</p>
+          <div class="product-foot"><span class="product-price">$50.00</span><button class="btn-add" data-add-to-cart data-id="merch-giftcard" data-name="Gift Card ($50)" data-price="50">Add to cart</button></div>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 
 <section class="cta-band section-pad">
   <div class="wrap reveal">
-    <p class="eyebrow">In-store &amp; online</p>
-    <h2 class="h2">Pick it up in the chair, or order online.</h2>
-    <p>Grab your gear next time you&rsquo;re in, or shop the full range and have it sent to you.</p>
+    <p class="eyebrow">In the chair, on us</p>
+    <h2 class="h2">Add it to your cart, grab it in the chair.</h2>
+    <p>Build your order here, then pick it up next time you&rsquo;re in &mdash; or ask your barber what they used on you and take it home.</p>
     <div class="hero-cta">
-      <a class="btn btn-gold" href="https://blacksmithbarbers.com.au/blacksmith-barbers-shop/">Shop all products</a>
+      <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a>
       <a class="btn btn-ghost" href="visit.html">Visit the shop</a>
     </div>
   </div>
@@ -196,5 +366,6 @@
 </div>
 
 <script src="assets/site.js"></script>
+<script src="assets/cart.js"></script>
 </body>
 </html>
