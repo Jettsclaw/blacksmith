@@ -55,15 +55,6 @@
     "active": true
   },
   {
-    "name": "Cameron",
-    "role": "Owner / Head Barber",
-    "shop": "Blacksmith Barbers",
-    "photo": "assets/barbers/cameron.png",
-    "photoSource": "blacksmithbarbers.com.au (academy.webp \u2014 may not be a headshot, verify)",
-    "blurb": "Founded the shop in 2015. Twenty years behind the chair. Built Blacksmith from one room to a Gold Coast institution.",
-    "active": true
-  },
-  {
     "name": "Mubarak",
     "role": "Barber",
     "shop": "Blacksmith Barbers",
