@@ -46,10 +46,13 @@
   --ease:cubic-bezier(0.22,1,0.36,1);
   --t-reveal:0.55s;
   --space-section:clamp(64px,9vw,128px);
-  --page:clamp(20px,5vw,56px);
+  --page:clamp(24px,6vw,76px);
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+section[id]{scroll-margin-top:92px}
+.detail-copy{padding-block:8px}
 html{scroll-padding-top:84px}
 body{
   font-family:'Inter',system-ui,-apple-system,sans-serif;
@@ -134,7 +137,7 @@ section{position:relative}
   transition:border-color .3s,background .3s;
 }
 .topbar.scrolled{border-bottom-color:var(--line);background:rgba(11,11,13,.92)}
-.topbar-logo img{height:34px;width:auto}
+.topbar-logo img{height:50px;width:auto}
 .nav-desktop{display:none;align-items:center;gap:30px}
 .nav-desktop a{
   font-family:'Oswald',sans-serif;font-weight:500;text-transform:uppercase;
