@@ -133,13 +133,13 @@
           "name": "Black",
           "swatch": "#15151a",
           "variantId": "merch-hoodie-black",
-          "images": ["assets/merch/hoodie-black-front.jpg", "assets/merch/hoodie-black-back.jpg"]
+          "images": ["assets/merch/hoodie-black-front.jpg", "assets/merch/hoodie-black-back.jpg", "assets/merch/hoodie-onmodel.jpg"]
         },
         {
           "name": "Pine Green",
           "swatch": "#2f4136",
           "variantId": "merch-hoodie-pine-green",
-          "images": ["assets/merch/hoodie-pine-front.jpg", "assets/merch/hoodie-pine-back.jpg"]
+          "images": ["assets/merch/hoodie-pine-front.jpg", "assets/merch/hoodie-pine-back.jpg", "assets/merch/hoodie-onmodel.jpg"]
         }
       ]
     },
