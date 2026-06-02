@@ -614,3 +614,61 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
   .reveal,.stagger>*{opacity:1!important;transform:none!important}
 }
+
+/* ============================================================
+   PRODUCT DETAIL PAGE (PDP) — Culture-Kings-style editorial
+   ============================================================ */
+.pdp{padding-block:clamp(28px,5vw,56px)}
+.pdp-crumb{margin-bottom:26px}
+.pdp-grid{display:grid;grid-template-columns:1fr;gap:clamp(28px,5vw,56px);align-items:start}
+@media(min-width:900px){ .pdp-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)} }
+
+/* ---- gallery ---- */
+.pdp-gallery{display:flex;flex-direction:column;gap:14px}
+@media(min-width:900px){ .pdp-gallery{position:sticky;top:96px} }
+.pdp-main{position:relative;aspect-ratio:1/1;background:radial-gradient(circle at 50% 32%,#1b1b20 0%,#0e0e11 80%);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.pdp-main img{width:100%;height:100%;object-fit:contain;padding:clamp(16px,4vw,40px);display:block}
+.pdp-main.is-apparel img{object-fit:cover;padding:0}
+.pdp-main svg{width:34%;height:34%;color:var(--gold);opacity:.85}
+.pdp-main .product-flag{position:absolute;top:16px;right:16px;font-family:'Oswald',sans-serif;font-size:.64rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--btn-ink);background:var(--gold);padding:5px 10px;border-radius:2px;z-index:2}
+.pdp-thumbs{display:flex;gap:10px;flex-wrap:wrap}
+.pdp-thumb{position:relative;width:74px;height:74px;flex:0 0 auto;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:radial-gradient(circle at 50% 35%,#1b1b20 0%,#0e0e11 80%);cursor:pointer;padding:0;transition:border-color .15s var(--ease),transform .15s var(--ease)}
+.pdp-thumb img{width:100%;height:100%;object-fit:contain;padding:6px;display:block}
+.pdp-thumb.is-apparel img{object-fit:cover;padding:0}
+.pdp-thumb:hover{transform:translateY(-2px);border-color:rgba(200,164,77,.5)}
+.pdp-thumb.is-active{border-color:var(--gold)}
+
+/* ---- details ---- */
+.pdp-cat{font-family:'Oswald',sans-serif;font-size:.72rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.pdp-name{font-family:'Oswald',sans-serif;text-transform:uppercase;font-weight:600;font-size:clamp(1.9rem,4.5vw,2.8rem);line-height:1.02;color:var(--paper);margin-bottom:14px}
+.pdp-price{font-family:'Oswald',sans-serif;font-weight:600;font-size:1.7rem;color:var(--gold);margin-bottom:24px}
+.pdp-desc{font-size:1rem;color:var(--body);line-height:1.65;max-width:48ch;margin-bottom:28px}
+.pdp-divider{height:1px;background:var(--line);border:0;margin:0 0 26px}
+
+/* colour selector */
+.pdp-colour-head{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.pdp-colour-label{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.78rem;letter-spacing:.12em;color:var(--muted)}
+.pdp-colour-current{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.82rem;letter-spacing:.06em;color:var(--paper)}
+.pdp-swatches{display:flex;gap:12px;margin-bottom:30px}
+.pdp-swatch{width:42px;height:42px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0;position:relative;transition:transform .15s var(--ease),border-color .15s}
+.pdp-swatch:hover{transform:translateY(-2px)}
+.pdp-swatch.is-active{border-color:var(--gold);box-shadow:0 0 0 3px rgba(200,164,77,.18)}
+
+.pdp-actions{display:flex;flex-direction:column;gap:14px;max-width:420px}
+.pdp-add{width:100%;font-size:1rem;padding:16px 24px}
+.pdp-add.added{background:var(--panel-2);color:var(--gold);border:1px solid var(--gold)}
+.pdp-meta{margin-top:30px;border-top:1px solid var(--line);padding-top:22px;display:grid;gap:12px}
+.pdp-meta-row{display:flex;gap:12px;font-size:.88rem;color:var(--body)}
+.pdp-meta-row svg{flex:none;width:20px;height:20px;color:var(--gold);margin-top:1px}
+.pdp-meta-row b{color:var(--paper);font-weight:600}
+
+.pdp-back{display:inline-flex;align-items:center;gap:8px;font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.78rem;letter-spacing:.12em;color:var(--muted);margin-top:34px;transition:color .15s}
+.pdp-back:hover{color:var(--gold)}
+.pdp-back svg{width:16px;height:16px}
+.pdp-missing{text-align:center;padding:clamp(60px,12vw,140px) 0}
+.pdp-missing .h2{margin-bottom:18px}
+
+/* product card → PDP link (keeps thumb + title clickable, cart btn separate) */
+.product-thumb-link{display:block;text-decoration:none;color:inherit}
+.product-name-link{text-decoration:none;color:inherit;transition:color .15s}
+.product-name-link:hover .product-name{color:var(--gold)}
