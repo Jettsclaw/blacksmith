@@ -191,4 +191,15 @@
     wireProducts();
     render();
   });
+
+  /* ---------- public API ----------
+     Lets pages that render products AFTER load (e.g. the PDP, built
+     from products.json via fetch) drive the same cart. */
+  window.BSCart = {
+    add: add,
+    open: open,
+    close: close,
+    count: count,
+    wire: wireProducts
+  };
 })();
