@@ -352,6 +352,34 @@ section{position:relative}
   transform:translateY(120%);transition:transform .35s var(--ease);
 }
 .book-bar.show{transform:translateY(0)}
+/* Hide the sticky bar while the cart drawer is open so it never covers the cart on the shop page */
+body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
+
+/* ---------- Reviews marquee ---------- */
+.reviews{background:var(--ink);padding-top:clamp(48px,8vw,90px);padding-bottom:clamp(56px,9vw,110px);overflow:hidden}
+.reviews-head{text-align:center;max-width:640px;margin:0 auto 38px;padding:0 var(--page)}
+.reviews-rating{display:inline-flex;align-items:center;gap:10px;font-family:'Oswald',sans-serif;font-weight:600;font-size:clamp(1.15rem,2.4vw,1.55rem);color:var(--paper);letter-spacing:.01em;text-transform:uppercase}
+.reviews-rating .gold{color:var(--gold)}
+.lead .gold,p .gold{color:var(--gold);font-weight:600}
+.reviews-rating .dot{color:var(--muted);font-weight:400}
+.marquee{position:relative;width:100%;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.marquee:hover .marquee-track{animation-play-state:paused}
+.marquee-track{display:flex;gap:18px;width:max-content;will-change:transform;
+  animation:bs-marquee 60s linear infinite}
+.marquee + .marquee .marquee-track{animation-duration:72s;animation-direction:reverse}
+@keyframes bs-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.review-card{flex:0 0 320px;max-width:320px;background:var(--panel,#141416);border:1px solid var(--line);
+  border-radius:12px;padding:22px 22px 24px;display:flex;flex-direction:column;gap:12px}
+.review-stars{color:var(--gold);font-size:1rem;letter-spacing:2px;line-height:1}
+.review-quote{color:var(--body);font-size:.95rem;line-height:1.6;margin:0;
+  display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.review-name{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em;
+  font-size:.95rem;color:var(--paper);margin:0}
+.review-name .src{display:block;font-family:'Inter',sans-serif;text-transform:none;letter-spacing:0;
+  font-size:.74rem;color:var(--muted);margin-top:3px}
+@media(min-width:560px){.marquee+.marquee{margin-top:18px}}
 
 /* ---------- Reveal ---------- */
 .reveal{opacity:0;transform:translateY(22px);transition:opacity var(--t-reveal) var(--ease),transform var(--t-reveal) var(--ease)}

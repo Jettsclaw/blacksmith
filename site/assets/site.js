@@ -30,6 +30,30 @@
   }
   document.body.style.overflow = '';
 
+  /* Reviews marquee — build cards from reviews.json, duplicate the row for a seamless -50% loop */
+  var mq = document.querySelectorAll('.marquee-track[data-reviews]');
+  if(mq.length){
+    fetch('assets/reviews.json').then(function(r){ return r.json(); }).then(function(list){
+      if(!Array.isArray(list) || !list.length) return;
+      function esc(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+      function cardHTML(rv){
+        var n = Math.max(0, Math.min(5, rv.stars|0));
+        var stars = '★'.repeat(n) + '☆'.repeat(5-n);
+        return '<article class="review-card">'+
+          '<div class="review-stars" aria-label="'+n+' out of 5 stars">'+stars+'</div>'+
+          '<p class="review-quote">'+esc(rv.text)+'</p>'+
+          '<p class="review-name">'+esc(rv.name)+'<span class="src">Google review</span></p>'+
+          '</article>';
+      }
+      mq.forEach(function(track, i){
+        var order = track.getAttribute('data-reviews') === 'reverse'
+          ? list.slice().reverse() : list;
+        var row = order.map(cardHTML).join('');
+        track.innerHTML = row + row; /* two identical halves -> -50% loops seamlessly */
+      });
+    }).catch(function(){});
+  }
+
   /* Scroll reveals */
   if(prm){
     document.querySelectorAll('.reveal,.stagger').forEach(function(el){ el.classList.add('in'); });
