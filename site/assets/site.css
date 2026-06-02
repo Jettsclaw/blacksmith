@@ -90,6 +90,25 @@ p{max-width:62ch}
 .app-badge .ab-small{font-size:.62rem;letter-spacing:.04em;color:#cfcfcf;text-transform:none}
 .app-badge .ab-big{font-family:'Oswald',sans-serif;font-size:1.05rem;font-weight:500;color:#fff;letter-spacing:.01em}
 
+/* Hero App CTA — primary download button */
+.hero-app-cta{
+  display:flex;align-items:center;justify-content:center;gap:.8em;width:100%;
+  padding:1.1em 2em;border-radius:10px;
+  background:var(--gold);color:var(--btn-ink);
+  font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.05em;
+  transition:background .15s,transform .15s var(--ease),box-shadow .15s;
+  box-shadow:0 0 30px rgba(200,164,77,.25);
+}
+.hero-app-cta:hover{background:var(--gold-2);transform:translateY(-2px);box-shadow:0 0 40px rgba(200,164,77,.4)}
+.hero-app-cta svg{flex:none;fill:var(--btn-ink)}
+.hero-app-txt{display:flex;flex-direction:column;line-height:1.15;text-align:left}
+.hero-app-small{font-size:.7rem;letter-spacing:.04em;font-weight:500;color:var(--btn-ink);opacity:.8;text-transform:none}
+.hero-app-big{font-size:1.35rem;font-weight:700;color:var(--btn-ink);letter-spacing:.02em}
+
+/* Hero secondary booking row */
+.hero-secondary{display:flex;flex-direction:column;gap:10px;width:100%}
+.hero-secondary .btn{font-size:.85rem;padding:.75em 1.4em;opacity:.85}
+
 /* ---------- Layout ---------- */
 .wrap{max-width:1240px;margin:0 auto;padding-inline:var(--page)}
 section{position:relative}
