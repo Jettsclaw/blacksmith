@@ -1,32 +1,37 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en-AU">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Blacksmith Barbers — Your chair. Your barber. Every time. | Biggera Waters, Gold Coast</title>
-<meta name="description" content="Ten years in the chair on the Gold Coast. Lock in your barber, your chair and your time — every cut the same, by the same bloke, with zero waiting. Biggera Waters, one minute from Harbour Town.">
-
-<!-- PWA / mobile-first -->
+<title>Blacksmith Barbers — Your Chair. Your Barber. Every Time. | Biggera Waters, Gold Coast</title>
+<meta name="description" content="A decade of sharp cuts, good company and proper craft in Biggera Waters. Book your barber on the app — no taking a number, no getting whoever's free.">
 <meta name="theme-color" content="#0b0b0d">
-<meta name="mobile-web-app-capable" content="yes">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Blacksmith Barbers — Your Chair. Your Barber. Every Time.">
+<meta property="og:description" content="Ten years in the chair. The Gold Coast keeps coming back. Book your barber on the app — Biggera Waters, one minute from Harbour Town.">
+<meta property="og:locale" content="en_AU">
+
+<!-- PWA / iPhone -->
+<link rel="apple-touch-icon" href="assets/logo-white.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Blacksmith">
-<link rel="apple-touch-icon" href="assets/logo-white.png">
-<link rel="icon" href="assets/logo-white.png">
 
-<!-- OG -->
-<meta property="og:type" content="business.business">
-<meta property="og:title" content="Blacksmith Barbers — Your chair. Your barber. Every time.">
-<meta property="og:description" content="Ten years in the chair on the Gold Coast. One barber, your barber, booked ahead — no waiting, no re-explaining, no surprises.">
-<meta property="og:image" content="assets/photos/TLB_4429.jpg">
-
-<!-- Fonts: headlines = Oswald, body = Inter (LOCKED 2026-06-02) -->
+<!-- Fonts (LOCKED): Oswald headlines + Inter body. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+/* ============================================================
+   BLACKSMITH BARBERS — Marketing site v6
+   Fonts (LOCKED): Oswald headlines · Inter body · Scotland = logo image only
+   Palette (LOCKED): ink #0b0b0d / panel #121214 / gold #c8a44d
+   Funnel: hook -> open loop -> stack value + proof -> wow -> ONE booking CTA
+   ============================================================ */
+
 :root{
   --ink:#0b0b0d;
   --panel:#121214;
@@ -38,726 +43,730 @@
   --gold:#c8a44d;
   --gold-2:#e6c879;
   --btn-ink:#1a1407;
-  --maxw:1180px;
-  --pad:clamp(20px,5vw,40px);
+  --ease:cubic-bezier(0.22,1,0.36,1);
+  --t-reveal:0.55s;
+  --space-section:clamp(64px,9vw,128px);
+  --page:clamp(20px,5vw,56px);
 }
 
-*{box-sizing:border-box}
-html{scroll-behavior:auto;-webkit-text-size-adjust:100%}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-padding-top:84px}
 body{
-  margin:0;
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
   background:var(--ink);
   color:var(--body);
-  font-family:'Inter',system-ui,-apple-system,sans-serif;
   font-size:16px;
-  line-height:1.6;
+  line-height:1.65;
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-img{max-width:100%;display:block}
+img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
 
-/* ---------- type ---------- */
+::selection{background:var(--gold);color:var(--btn-ink)}
+
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+.skip-link{position:fixed;top:-80px;left:12px;padding:10px 16px;background:var(--gold);color:var(--btn-ink);border-radius:8px;z-index:9999;font-weight:600;transition:top .2s}
+.skip-link:focus{top:12px}
+
+/* ---------- Type ---------- */
 .eyebrow{
   font-family:'Inter',sans-serif;
-  font-size:12px;
-  font-weight:600;
-  letter-spacing:.18em;
-  text-transform:uppercase;
+  font-size:12px;font-weight:600;
+  letter-spacing:.26em;text-transform:uppercase;
   color:var(--gold);
-  margin:0 0 18px;
 }
-h1,h2,h3{
+h1,h2,h3,.head{
   font-family:'Oswald',sans-serif;
-  color:var(--paper);
-  text-transform:uppercase;
+  font-weight:600;
   letter-spacing:.01em;
-  font-weight:700;
-  line-height:1.02;
-  margin:0;
+  text-transform:uppercase;
+  color:var(--paper);
+  line-height:1.04;
   text-wrap:balance;
 }
-h1{font-size:clamp(40px,9vw,86px)}
-h2{font-size:clamp(30px,5.4vw,56px)}
-h3{font-size:clamp(20px,3vw,28px);font-weight:600}
-p{margin:0 0 18px}
-.lead{font-size:clamp(16px,2vw,19px);color:var(--body);max-width:60ch}
-.gold{color:var(--gold)}
+.h1{font-size:clamp(2.6rem,8vw,5.6rem);line-height:.98}
+.h2{font-size:clamp(2rem,5vw,3.4rem)}
+.h3{font-size:clamp(1.3rem,3vw,1.9rem);line-height:1.1}
+p{max-width:62ch}
 
-.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
-section{padding:clamp(64px,11vw,128px) 0}
-
-/* ---------- buttons ---------- */
+/* ---------- Buttons ---------- */
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  font-family:'Inter',sans-serif;font-weight:700;font-size:14px;letter-spacing:.02em;
-  padding:15px 28px;border-radius:100px;border:1px solid transparent;
-  cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease,color .18s ease;
-  line-height:1;white-space:nowrap;
+  display:inline-flex;align-items:center;justify-content:center;gap:.55em;
+  font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;
+  letter-spacing:.06em;font-size:.95rem;
+  padding:.95em 1.7em;border-radius:2px;
+  transition:transform .15s var(--ease),background .15s,color .15s,border-color .15s;
+  white-space:nowrap;
 }
 .btn-gold{background:var(--gold);color:var(--btn-ink)}
 .btn-gold:hover{background:var(--gold-2);transform:translateY(-2px)}
-.btn-ghost{background:transparent;color:var(--paper);border-color:rgba(255,255,255,.32)}
+.btn-ghost{background:transparent;color:var(--paper);border:1px solid rgba(255,255,255,.32)}
 .btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
 .btn-block{width:100%}
 
-/* Apple App Store badge button */
-.btn-app{
-  display:inline-flex;align-items:center;gap:11px;
-  background:#000;border:1px solid rgba(255,255,255,.28);
-  border-radius:13px;padding:9px 17px;transition:border-color .18s ease,transform .18s ease;
+/* App Store badge */
+.app-badge{
+  display:inline-flex;align-items:center;gap:.6em;
+  padding:.7em 1.2em;border:1px solid rgba(255,255,255,.28);border-radius:8px;
+  background:#000;transition:border-color .15s,transform .15s var(--ease);
 }
-.btn-app:hover{border-color:var(--gold);transform:translateY(-2px)}
-.btn-app svg{width:24px;height:24px;flex:none;fill:#fff}
-.btn-app .app-txt{display:flex;flex-direction:column;line-height:1.1;text-align:left}
-.btn-app .app-txt small{font-family:'Inter';font-size:10px;color:#c9c9d0;letter-spacing:.02em}
-.btn-app .app-txt span{font-family:'Inter';font-size:16px;font-weight:600;color:#fff}
+.app-badge:hover{border-color:var(--gold);transform:translateY(-2px)}
+.app-badge svg{flex:none}
+.app-badge .ab-txt{display:flex;flex-direction:column;line-height:1.1;text-align:left}
+.app-badge .ab-small{font-size:.62rem;letter-spacing:.04em;color:#cfcfcf;text-transform:none}
+.app-badge .ab-big{font-family:'Oswald',sans-serif;font-size:1.05rem;font-weight:500;color:#fff;letter-spacing:.01em}
 
-/* ---------- top nav ---------- */
-header.nav{
-  position:fixed;top:0;left:0;right:0;z-index:60;
+/* ---------- Layout ---------- */
+.wrap{max-width:1240px;margin:0 auto;padding:0 var(--page)}
+section{position:relative}
+.section-pad{padding:var(--space-section) 0}
+
+/* ---------- Topbar / Nav ---------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
   display:flex;align-items:center;justify-content:space-between;
-  padding:14px var(--pad);
-  background:rgba(11,11,13,0);
-  transition:background .3s ease,border-color .3s ease,padding .3s ease;
+  padding:14px var(--page);
+  background:rgba(11,11,13,.72);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid transparent;
+  transition:border-color .3s,background .3s;
 }
-header.nav.scrolled{
-  background:rgba(11,11,13,.92);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border-bottom-color:var(--line);
-  padding-top:11px;padding-bottom:11px;
+.topbar.scrolled{border-bottom-color:var(--line);background:rgba(11,11,13,.92)}
+.topbar-logo img{height:34px;width:auto}
+.nav-desktop{display:none;align-items:center;gap:30px}
+.nav-desktop a{
+  font-family:'Oswald',sans-serif;font-weight:500;text-transform:uppercase;
+  font-size:.86rem;letter-spacing:.08em;color:var(--body);transition:color .15s;
 }
-.brand{display:flex;align-items:center;gap:11px}
-.brand img{height:38px;width:auto}
-.brand .brand-sub{
-  font-family:'Oswald';text-transform:uppercase;letter-spacing:.22em;
-  font-size:11px;color:var(--muted);font-weight:500;
-}
-.nav-right{display:flex;align-items:center;gap:14px}
-.nav-links{display:none;align-items:center;gap:28px}
-.nav-links a{
-  font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;
-  font-size:14px;font-weight:500;color:var(--paper);transition:color .15s ease;
-}
-.nav-links a:hover{color:var(--gold)}
-.nav-book{display:none}
+.nav-desktop a:hover{color:var(--gold)}
+.nav-actions{display:none;align-items:center;gap:14px}
+
 .hamburger{
-  display:inline-flex;flex-direction:column;justify-content:center;gap:5px;
-  width:44px;height:44px;border:1px solid var(--line);border-radius:11px;
-  background:rgba(18,18,20,.6);cursor:pointer;padding:0 11px;
+  display:flex;flex-direction:column;justify-content:center;gap:5px;
+  width:44px;height:44px;align-items:flex-end;z-index:1100;
 }
-.hamburger span{display:block;height:2px;background:var(--paper);transition:transform .25s ease,opacity .25s ease}
+.hamburger span{display:block;height:2px;width:26px;background:var(--paper);transition:transform .3s var(--ease),opacity .2s}
 .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-/* mobile drawer */
+/* Mobile drawer */
 .drawer{
-  position:fixed;inset:0;z-index:55;
-  background:rgba(8,8,10,.98);backdrop-filter:blur(6px);
-  transform:translateX(-100%);transition:transform .35s cubic-bezier(.4,0,.1,1);
+  position:fixed;inset:0;z-index:1050;
+  background:rgba(11,11,13,.985);
+  backdrop-filter:blur(8px);
+  transform:translateX(-100%);transition:transform .35s var(--ease);
   display:flex;flex-direction:column;justify-content:center;
-  padding:0 var(--pad);
+  padding:var(--page);
 }
 .drawer.open{transform:translateX(0)}
-.drawer a.dlink{
-  font-family:'Oswald';text-transform:uppercase;letter-spacing:.04em;
-  font-size:clamp(28px,8vw,40px);font-weight:600;color:var(--paper);
-  padding:13px 0;border-bottom:1px solid var(--line);transition:color .15s ease;
+.drawer nav{display:flex;flex-direction:column;gap:6px;margin-bottom:36px}
+.drawer nav a{
+  font-family:'Oswald',sans-serif;font-weight:500;text-transform:uppercase;
+  font-size:1.9rem;letter-spacing:.02em;color:var(--paper);padding:8px 0;
+  border-bottom:1px solid var(--line);transition:color .15s,padding-left .2s;
 }
-.drawer a.dlink:hover{color:var(--gold)}
-.drawer .drawer-cta{margin-top:30px;display:flex;flex-direction:column;gap:13px}
-.drawer .drawer-foot{margin-top:26px;color:var(--muted);font-size:13px}
+.drawer nav a:hover{color:var(--gold);padding-left:8px}
+.drawer-actions{display:flex;flex-direction:column;gap:14px;max-width:340px}
 
-/* ---------- HERO (RAPPORT) ---------- */
+/* ---------- Hero ---------- */
 .hero{
-  position:relative;min-height:100svh;display:flex;align-items:flex-end;
-  padding-bottom:clamp(50px,9vw,90px);overflow:hidden;
+  min-height:100svh;display:flex;align-items:flex-end;
+  position:relative;overflow:hidden;
 }
-.hero-bg{position:absolute;inset:0;z-index:0}
-.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:url('assets/photos/TLB_4429.jpg') center 30%/cover no-repeat;
+}
 .hero-bg::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(11,11,13,.72) 0%,rgba(11,11,13,.32) 38%,rgba(11,11,13,.78) 82%,rgba(11,11,13,.97) 100%);
+  background:linear-gradient(180deg,rgba(11,11,13,.55) 0%,rgba(11,11,13,.25) 38%,rgba(11,11,13,.82) 80%,var(--ink) 100%),
+             linear-gradient(90deg,rgba(11,11,13,.7) 0%,rgba(11,11,13,0) 60%);
 }
-.hero-inner{position:relative;z-index:2;width:100%}
-.hero h1{margin:0 0 20px}
-.hero .lead{margin-bottom:30px}
-.hero-cta{display:flex;flex-wrap:wrap;gap:13px;align-items:center}
-.hero-meta{margin-top:34px;display:flex;flex-wrap:wrap;gap:10px 26px;color:var(--muted);font-size:13px;letter-spacing:.04em}
-.hero-meta span{display:inline-flex;align-items:center;gap:8px}
-.hero-meta b{color:var(--paper);font-weight:600}
+.hero-inner{position:relative;z-index:2;padding-bottom:clamp(48px,9vw,110px);padding-top:120px;width:100%}
+.hero .eyebrow{margin-bottom:20px}
+.hero h1{margin-bottom:22px;max-width:18ch}
+.hero h1 .gold{color:var(--gold)}
+.hero-sub{font-size:clamp(1.05rem,1.7vw,1.3rem);color:var(--body);max-width:46ch;margin-bottom:34px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 
-/* ---------- generic section bits ---------- */
-.center{text-align:center}
-.center .lead{margin-left:auto;margin-right:auto}
-.two-col{display:grid;gap:clamp(28px,5vw,64px);align-items:center}
-.media-frame{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
-.media-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.scroll-cue{
+  position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:3;
+  font-family:'Oswald',sans-serif;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.scroll-cue .line{width:1px;height:34px;background:linear-gradient(var(--gold),transparent);animation:cue 2s var(--ease) infinite}
+@keyframes cue{0%{opacity:.2;transform:scaleY(.4)}50%{opacity:1;transform:scaleY(1)}100%{opacity:.2;transform:scaleY(.4)}}
 
-/* ---------- proof strip ---------- */
-.proof-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
-.proof-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line)}
-.proof-cell{background:var(--panel);padding:clamp(26px,5vw,40px) 22px;text-align:center}
-.proof-cell .num{font-family:'Oswald';font-weight:700;color:var(--gold);font-size:clamp(32px,6vw,46px);line-height:1}
-.proof-cell .lab{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:9px}
+/* ---------- Trust strip ---------- */
+.trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel)}
+.trust-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
+.trust-cell{padding:30px 20px;text-align:center;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.trust-cell:nth-child(2n){border-right:none}
+.trust-num{font-family:'Oswald',sans-serif;font-weight:600;font-size:clamp(1.8rem,4vw,2.6rem);color:var(--gold);line-height:1}
+.trust-label{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:8px}
 
-/* ---------- services triptych ---------- */
-.cards{display:grid;gap:18px;grid-template-columns:1fr}
+/* ---------- Story / open loop ---------- */
+.story{background:var(--ink)}
+.story-grid{display:grid;gap:clamp(36px,5vw,72px);align-items:center}
+.story-copy .eyebrow{margin-bottom:18px}
+.story-copy h2{margin-bottom:24px}
+.story-copy p{margin-bottom:18px}
+.story-copy p:last-child{margin-bottom:0}
+.story-copy .lead{color:var(--paper);font-size:clamp(1.05rem,1.6vw,1.22rem)}
+.story-media{position:relative;border:1px solid var(--line);overflow:hidden;border-radius:3px}
+.story-media img{width:100%;height:100%;object-fit:cover;aspect-ratio:4/5}
+
+/* ---------- Mechanism reveal (the selling turn) ---------- */
+.mech{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mech-head{text-align:center;max-width:760px;margin:0 auto clamp(40px,5vw,64px)}
+.mech-head .eyebrow{margin-bottom:18px}
+.mech-head h2{margin-bottom:22px}
+.mech-head .problem{color:var(--body);font-size:clamp(1.05rem,1.7vw,1.25rem);margin:0 auto}
+.mech-head .turn{color:var(--paper);font-weight:600;margin-top:18px}
+.mech-head .turn .gold{color:var(--gold)}
+
+.compare{max-width:760px;margin:0 auto;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--ink)}
+.compare-row{display:grid;grid-template-columns:1.3fr 1fr 1fr}
+.compare-row + .compare-row{border-top:1px solid var(--line)}
+.compare-cell{padding:16px 14px;font-size:.92rem}
+.compare-cell.lbl{color:var(--muted);text-align:left}
+.compare-cell.walkin{color:var(--muted);text-align:center;border-left:1px solid var(--line)}
+.compare-cell.bs{color:var(--paper);text-align:center;border-left:1px solid var(--line);background:rgba(200,164,77,.05)}
+.compare-head .compare-cell{
+  font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.8rem;letter-spacing:.08em;
+  color:var(--muted);font-weight:600;
+}
+.compare-head .bs{color:var(--gold)}
+.compare-cell.bs strong{color:var(--gold);font-weight:600}
+
+/* ---------- Services triptych ---------- */
+.services{background:var(--ink)}
+.section-head{max-width:680px;margin-bottom:clamp(36px,5vw,56px)}
+.section-head .eyebrow{margin-bottom:16px}
+.svc-grid{display:grid;grid-template-columns:1fr;gap:18px}
 .svc-card{
-  position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);
-  min-height:380px;display:flex;align-items:flex-end;isolation:isolate;
+  position:relative;overflow:hidden;border-radius:3px;border:1px solid var(--line);
+  min-height:clamp(360px,52vw,460px);display:flex;align-items:flex-end;
+  isolation:isolate;
 }
-.svc-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .6s ease}
-.svc-card::after{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(180deg,rgba(11,11,13,.05) 0%,rgba(11,11,13,.55) 55%,rgba(11,11,13,.95) 100%)}
+.svc-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform .6s var(--ease)}
+.svc-card::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(11,11,13,.15) 0%,rgba(11,11,13,.55) 55%,rgba(11,11,13,.94) 100%)}
 .svc-card:hover img{transform:scale(1.05)}
-.svc-card .svc-body{padding:26px 24px;width:100%}
-.svc-card .eyebrow{margin-bottom:8px}
-.svc-card h3{margin-bottom:10px}
-.svc-card p{font-size:14.5px;color:var(--body);margin-bottom:16px;max-width:36ch}
-.svc-link{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-weight:600;font-size:14px;color:var(--gold);display:inline-flex;align-items:center;gap:7px}
-.svc-link .arr{transition:transform .2s ease}
-.svc-card:hover .svc-link .arr{transform:translateX(4px)}
-
-/* ---------- detail blocks ---------- */
-.detail{padding:clamp(56px,9vw,108px) 0}
-.detail + .detail{padding-top:0}
-.detail-card{
-  background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;
-  display:grid;grid-template-columns:1fr;
+.svc-body{padding:clamp(22px,3vw,32px)}
+.svc-body .eyebrow{margin-bottom:10px}
+.svc-body h3{margin-bottom:8px}
+.svc-body p{font-size:.95rem;color:var(--body);margin-bottom:18px;max-width:40ch}
+.svc-link{
+  font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.82rem;letter-spacing:.08em;font-weight:600;
+  color:var(--gold);display:inline-flex;align-items:center;gap:.5em;transition:gap .2s;
 }
-.detail-card .dc-media{min-height:300px}
-.detail-card .dc-media img{width:100%;height:100%;object-fit:cover;min-height:300px}
-.detail-card .dc-copy{padding:clamp(28px,5vw,52px)}
-.detail-card .dc-copy ul{list-style:none;margin:0 0 24px;padding:0}
-.detail-card .dc-copy li{position:relative;padding-left:24px;margin-bottom:11px;color:var(--body);font-size:15px}
-.detail-card .dc-copy li::before{content:"";position:absolute;left:0;top:9px;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.svc-link:hover{gap:.9em}
 
-/* ---------- gallery (WOW) ---------- */
-.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.gallery-grid a{
-  display:block;border-radius:12px;overflow:hidden;border:1px solid var(--line);
-  aspect-ratio:3/4;
-}
-.gallery-grid img{
-  width:100%;height:100%;object-fit:cover;
-  filter:grayscale(.45) brightness(.92);transition:filter .5s ease,transform .6s ease;
-}
-.gallery-grid a:hover img{filter:grayscale(0) brightness(1);transform:scale(1.04)}
-.gallery-grid .tall{grid-row:span 2}
+/* ---------- Detail blocks (Blackrose + Academy) ---------- */
+.detail{background:var(--panel);border-top:1px solid var(--line)}
+.detail-grid{display:grid;gap:clamp(32px,5vw,64px);align-items:center}
+.detail-media{border:1px solid var(--line);overflow:hidden;border-radius:3px}
+.detail-media img{width:100%;object-fit:cover;aspect-ratio:4/5}
+.detail-copy .eyebrow{margin-bottom:16px}
+.detail-copy h2{margin-bottom:20px}
+.detail-copy p{margin-bottom:24px;color:var(--body)}
+.detail-list{list-style:none;margin:0 0 28px;padding:0;display:flex;flex-direction:column;gap:10px}
+.detail-list li{position:relative;padding-left:24px;color:var(--body);font-size:.95rem}
+.detail-list li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:1px;background:var(--gold)}
 
-/* ---------- CIRCLE reveal (MECHANISM) ---------- */
-.circle{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;overflow:hidden}
-.circle .glow{position:absolute;width:600px;height:600px;border-radius:50%;
-  background:radial-gradient(circle,rgba(200,164,77,.10),transparent 65%);top:-200px;right:-160px;pointer-events:none}
-.circle .problem{color:var(--muted);max-width:62ch;font-size:clamp(16px,2vw,18px)}
-.circle .reveal-line{color:var(--paper);font-family:'Oswald';font-weight:500;text-transform:uppercase;
-  letter-spacing:.02em;font-size:clamp(18px,2.6vw,26px);line-height:1.25;max-width:22ch;margin:22px 0 0}
+/* ---------- Gallery (wow) ---------- */
+.gallery{background:var(--ink)}
+.gallery-head{text-align:center;max-width:620px;margin:0 auto clamp(36px,5vw,56px)}
+.gallery-head .eyebrow{margin-bottom:14px}
+.gallery-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.gallery-grid figure{overflow:hidden;border-radius:3px;border:1px solid var(--line);position:relative}
+.gallery-grid img{width:100%;height:100%;object-fit:cover;aspect-ratio:3/4;filter:grayscale(.45) brightness(.92);transition:filter .5s var(--ease),transform .6s var(--ease)}
+.gallery-grid figure:hover img{filter:grayscale(0) brightness(1);transform:scale(1.04)}
 
-/* comparison */
-.compare{margin:clamp(38px,6vw,56px) 0 0;border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.compare-row{display:grid;grid-template-columns:1.1fr 1fr 1fr;border-bottom:1px solid var(--line)}
-.compare-row:last-child{border-bottom:none}
-.compare-row > div{padding:15px 16px;font-size:14px}
-.compare-row .lbl{color:var(--muted);font-weight:500}
-.compare-row .walkin{color:var(--body);border-left:1px solid var(--line);border-right:1px solid var(--line)}
-.compare-row .member{color:var(--paper);font-weight:600}
-.compare-head > div{font-family:'Oswald';text-transform:uppercase;letter-spacing:.08em;font-size:12.5px;background:var(--panel-2)}
-.compare-head .member{color:var(--gold)}
+/* ---------- Visit / close ---------- */
+.visit{background:var(--panel);border-top:1px solid var(--line)}
+.visit-head{max-width:640px;margin-bottom:clamp(36px,5vw,52px)}
+.visit-head .eyebrow{margin-bottom:14px}
+.visit-grid{display:grid;grid-template-columns:1fr;gap:18px;margin-bottom:clamp(36px,5vw,52px)}
+.visit-card{border:1px solid var(--line);background:var(--ink);border-radius:3px;padding:clamp(24px,3vw,32px)}
+.visit-card .eyebrow{margin-bottom:14px}
+.visit-card h3{margin-bottom:12px}
+.visit-card p,.visit-card address{font-style:normal;color:var(--body);font-size:.95rem;line-height:1.7}
+.visit-card a.tel{color:var(--gold)}
+.visit-card .hours-row{display:flex;justify-content:space-between;gap:16px;padding:6px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.visit-card .hours-row:last-child{border-bottom:none}
+.visit-card .hours-row span:last-child{color:var(--paper)}
+.visit-cta{display:flex;flex-direction:column;gap:12px;margin-top:18px}
 
-/* tiers */
-.tiers{display:grid;grid-template-columns:1fr;gap:16px;margin-top:clamp(34px,5vw,48px)}
-.tier{border:1px solid var(--line);border-radius:18px;padding:28px 26px;background:var(--ink);position:relative}
-.tier.feat{border-color:rgba(200,164,77,.55);background:linear-gradient(180deg,rgba(200,164,77,.06),rgba(11,11,13,0) 60%)}
-.tier .tier-name{font-family:'Oswald';text-transform:uppercase;letter-spacing:.03em;font-weight:700;font-size:24px;color:var(--paper)}
-.tier .tier-tag{color:var(--gold);font-size:13px;letter-spacing:.04em;margin-top:4px}
-.tier .tier-price{font-family:'Oswald';font-weight:700;font-size:34px;color:var(--paper);margin:16px 0 2px}
-.tier .tier-price small{font-family:'Inter';font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0}
-.tier .tier-note{font-size:12.5px;color:var(--muted);margin-bottom:16px}
-.tier ul{list-style:none;margin:0 0 6px;padding:0}
-.tier li{position:relative;padding-left:22px;font-size:14px;margin-bottom:9px;color:var(--body)}
-.tier li::before{content:"";position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;background:var(--gold)}
-.tier .feat-badge{position:absolute;top:-1px;right:22px;transform:translateY(-50%);
-  background:var(--gold);color:var(--btn-ink);font-family:'Oswald';font-size:11px;font-weight:600;
-  letter-spacing:.1em;text-transform:uppercase;padding:5px 12px;border-radius:100px}
-.scarcity{margin-top:26px;color:var(--muted);font-size:13.5px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
-.scarcity::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(200,164,77,.18)}
+.map-frame{border:1px solid var(--line);border-radius:3px;overflow:hidden;height:clamp(260px,40vw,380px)}
+.map-frame iframe{width:100%;height:100%;border:0;filter:grayscale(.6) invert(.92) contrast(.9)}
 
-/* ---------- visit ---------- */
-.visit{background:var(--ink)}
-.visit-grid{display:grid;grid-template-columns:1fr;gap:16px}
-.visit-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px 24px}
-.visit-card h3{margin-bottom:14px;font-size:20px}
-.visit-card .row{display:flex;gap:10px;margin-bottom:7px;font-size:15px;color:var(--body)}
-.visit-card .row b{color:var(--paper);font-weight:600}
-.visit-card a.tel{color:var(--gold);font-weight:600}
-.visit-media{border-radius:18px;overflow:hidden;border:1px solid var(--line)}
-.visit-media img{width:100%;height:100%;object-fit:cover;min-height:280px}
+/* ---------- Final CTA band ---------- */
+.cta-band{background:var(--ink);border-top:1px solid var(--line);text-align:center}
+.cta-band .eyebrow{margin-bottom:18px}
+.cta-band h2{margin-bottom:18px;max-width:18ch;margin-left:auto;margin-right:auto}
+.cta-band p{margin:0 auto 32px;color:var(--body);max-width:48ch}
+.cta-band .hero-cta{justify-content:center}
 
-/* ---------- footer ---------- */
-footer{position:relative;border-top:1px solid var(--line);overflow:hidden;background:var(--ink)}
-footer .foot-bg{position:absolute;inset:0;z-index:0;opacity:.18}
-footer .foot-bg img{width:100%;height:100%;object-fit:cover}
-footer .foot-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,11,13,.85),rgba(11,11,13,.97))}
-footer .wrap{position:relative;z-index:2;padding-top:clamp(56px,8vw,84px);padding-bottom:40px}
-.foot-top{display:grid;grid-template-columns:1fr;gap:34px;margin-bottom:42px}
-.foot-brand img{height:54px;margin-bottom:16px}
-.foot-brand p{color:var(--muted);font-size:14px;max-width:34ch}
-.foot-col h4{font-family:'Oswald';text-transform:uppercase;letter-spacing:.1em;font-size:13px;color:var(--paper);margin:0 0 14px;font-weight:600}
-.foot-col a,.foot-col p{display:block;color:var(--body);font-size:14px;margin-bottom:9px}
-.foot-col a:hover{color:var(--gold)}
-.foot-bottom{border-top:1px solid var(--line);padding-top:24px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
-.foot-bottom small{color:var(--muted);font-size:12.5px}
-.foot-app{margin-top:18px}
+/* ---------- Footer ---------- */
+.footer{background:var(--ink);border-top:1px solid var(--line);padding:clamp(48px,7vw,80px) 0 110px}
+.footer-top{display:grid;grid-template-columns:1fr;gap:36px;margin-bottom:48px}
+.footer-logo img{height:54px;width:auto;margin-bottom:18px}
+.footer-tag{color:var(--muted);font-size:.9rem;max-width:34ch;margin-bottom:18px}
+.footer-col h4{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.82rem;letter-spacing:.12em;color:var(--gold);margin-bottom:16px;font-weight:600}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:10px}
+.footer-col a,.footer-col address{font-style:normal;color:var(--body);font-size:.92rem;transition:color .15s}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid var(--line);padding-top:24px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+.footer-bottom p{font-size:.8rem;color:var(--muted);letter-spacing:.04em}
 
-/* ---------- sticky mobile booking bar ---------- */
-.sticky-book{
-  position:fixed;left:0;right:0;bottom:0;z-index:50;
-  padding:12px var(--pad) calc(12px + env(safe-area-inset-bottom));
-  background:rgba(11,11,13,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+/* ---------- Sticky mobile booking bar ---------- */
+.book-bar{
+  position:fixed;left:0;right:0;bottom:0;z-index:900;
+  padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+  background:rgba(11,11,13,.94);backdrop-filter:blur(12px);
   border-top:1px solid var(--line);
-  transform:translateY(120%);transition:transform .35s ease;
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  transform:translateY(120%);transition:transform .35s var(--ease);
 }
-.sticky-book.show{transform:translateY(0)}
+.book-bar.show{transform:translateY(0)}
 
-/* ---------- reveal animation ---------- */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+/* ---------- Reveal animation ---------- */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity var(--t-reveal) var(--ease),transform var(--t-reveal) var(--ease)}
 .reveal.in{opacity:1;transform:none}
-.stagger > *{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.stagger > *{opacity:0;transform:translateY(16px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
 .stagger.in > *{opacity:1;transform:none}
-.stagger.in > *:nth-child(2){transition-delay:.08s}
+.stagger.in > *:nth-child(1){transition-delay:.04s}
+.stagger.in > *:nth-child(2){transition-delay:.10s}
 .stagger.in > *:nth-child(3){transition-delay:.16s}
-.stagger.in > *:nth-child(4){transition-delay:.24s}
-@media (prefers-reduced-motion:reduce){
-  .reveal,.stagger > *{opacity:1!important;transform:none!important;transition:none}
+.stagger.in > *:nth-child(4){transition-delay:.22s}
+
+/* ---------- Responsive ---------- */
+@media(min-width:560px){
+  .trust-grid{grid-template-columns:repeat(4,1fr)}
+  .trust-cell{border-bottom:none}
+  .trust-cell:nth-child(2n){border-right:1px solid var(--line)}
+  .trust-cell:last-child{border-right:none}
+  .gallery-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-top{grid-template-columns:1.4fr 1fr 1fr}
+}
+@media(min-width:820px){
+  .nav-desktop{display:flex}
+  .nav-actions{display:flex}
+  .hamburger{display:none}
+  .story-grid{grid-template-columns:1.05fr .95fr}
+  .svc-grid{grid-template-columns:repeat(3,1fr)}
+  .detail-grid{grid-template-columns:1fr 1fr}
+  .detail-grid.rev .detail-media{order:2}
+  .gallery-grid{grid-template-columns:repeat(4,1fr)}
+  .visit-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-top{grid-template-columns:1.6fr 1fr 1fr 1fr}
+  .book-bar{display:none}
+  body{scroll-padding-top:90px}
+}
+@media(max-width:819px){
+  .hero{align-items:center}
+  .hero-inner{padding-bottom:130px}
 }
 
-/* ---------- responsive ---------- */
-@media (min-width:680px){
-  .proof-grid{grid-template-columns:repeat(4,1fr)}
-  .cards{grid-template-columns:repeat(3,1fr)}
-  .gallery-grid{grid-template-columns:repeat(4,1fr)}
-  .tiers{grid-template-columns:repeat(3,1fr)}
-  .visit-grid{grid-template-columns:repeat(3,1fr)}
-  .sticky-book{display:none}
-}
-@media (min-width:820px){
-  .nav-links{display:flex}
-  .nav-book{display:inline-flex}
-  .two-col.split{grid-template-columns:1fr 1fr}
-  .detail-card{grid-template-columns:1fr 1fr}
-  .detail-card.rev .dc-media{order:2}
-  .visit-layout{display:grid;grid-template-columns:1.4fr 1fr;gap:clamp(28px,4vw,56px);align-items:stretch}
-  .foot-top{grid-template-columns:1.6fr 1fr 1fr;gap:48px}
-  .hamburger{display:none}
-}
-@media (min-width:1100px){
-  .gallery-grid{grid-template-columns:repeat(4,1fr)}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .reveal,.stagger>*{opacity:1!important;transform:none!important}
 }
 </style>
 </head>
 <body>
+<a href="#main" class="skip-link">Skip to content</a>
 
-<!-- ===================== NAV ===================== -->
-<header class="nav" id="nav">
-  <a class="brand" href="#top" aria-label="Blacksmith Barbers home">
-    <img src="assets/logo-white.png" alt="Blacksmith Barbers">
-    <span class="brand-sub">Est. 2015</span>
-  </a>
-  <nav class="nav-right">
-    <div class="nav-links">
-      <a href="#shop">The Shop</a>
-      <a href="#services">Services</a>
-      <a href="#blackrose">Blackrose</a>
-      <a href="#academy">Academy</a>
-      <a href="#circle">The Circle</a>
-      <a href="#visit">Visit</a>
-    </div>
-    <a class="btn btn-gold nav-book" href="https://web.slikr.com.au/shop/1121/res" target="_blank" rel="noopener">Book a Cut</a>
-    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
-      <span></span><span></span><span></span>
-    </button>
+<!-- ============ TOPBAR ============ -->
+<header class="topbar" id="topbar">
+  <a href="#top" class="topbar-logo" aria-label="Blacksmith Barbers home"><img src="assets/logo-white.png" alt="Blacksmith Barbers"></a>
+
+  <nav class="nav-desktop" aria-label="Primary">
+    <a href="#shop">The Shop</a>
+    <a href="#services">Services</a>
+    <a href="#blackrose">Blackrose</a>
+    <a href="#academy">Academy</a>
+    <a href="#visit">Visit</a>
   </nav>
+
+  <div class="nav-actions">
+    <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store">
+      <svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg>
+      <span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span>
+    </a>
+    <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a>
+  </div>
+
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+    <span></span><span></span><span></span>
+  </button>
 </header>
 
-<!-- mobile drawer -->
-<div class="drawer" id="drawer">
-  <a class="dlink" href="#shop">The Shop</a>
-  <a class="dlink" href="#services">Services</a>
-  <a class="dlink" href="#blackrose">Blackrose</a>
-  <a class="dlink" href="#academy">Academy</a>
-  <a class="dlink" href="#circle">The Circle</a>
-  <a class="dlink" href="#visit">Visit</a>
-  <div class="drawer-cta">
-    <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/1121/res" target="_blank" rel="noopener">Book Barbershop</a>
-    <a class="btn btn-ghost btn-block" href="https://web.slikr.com.au/blackrosesalon" target="_blank" rel="noopener">Book Salon</a>
-    <a class="btn-app" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" target="_blank" rel="noopener" aria-label="Download the Blacksmith app on the App Store">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-      <span class="app-txt"><small>Download on the</small><span>App Store</span></span>
+<!-- ============ MOBILE DRAWER ============ -->
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Site menu">
+  <nav aria-label="Mobile">
+    <a href="#shop" data-close>The Shop</a>
+    <a href="#services" data-close>Services</a>
+    <a href="#blackrose" data-close>Blackrose Salon</a>
+    <a href="#academy" data-close>Academy</a>
+    <a href="#visit" data-close>Visit Us</a>
+  </nav>
+  <div class="drawer-actions">
+    <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/1121/res" data-close>Book a Cut</a>
+    <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store" data-close>
+      <svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg>
+      <span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span>
     </a>
   </div>
-  <div class="drawer-foot">(07) 5563 8960 · 9 Gateway Drive, Biggera Waters QLD</div>
 </div>
 
-<!-- ===================== HERO — RAPPORT / HOOK ===================== -->
-<a id="top"></a>
-<section class="hero">
-  <div class="hero-bg">
-    <img src="assets/photos/TLB_4429.jpg" alt="The Blacksmith barber chair against a wall of reclaimed timber" fetchpriority="high">
-  </div>
+<main id="main">
+<span id="top"></span>
+
+<!-- ============ 1 · HOOK / HERO ============ -->
+<section class="hero" aria-label="Blacksmith Barbers">
+  <div class="hero-bg" aria-hidden="true"></div>
   <div class="wrap hero-inner">
     <p class="eyebrow reveal">Est. 2015 — Biggera Waters, Gold Coast</p>
-    <h1 class="reveal">Your chair.<br>Your barber.<br><span class="gold">Every time.</span></h1>
-    <p class="lead reveal">Ten years in the chair on the Coast. One barber — your barber — who knows your cut before you sit down. No taking a number. No re-explaining. No surprises.</p>
+    <h1 class="h1 reveal">Your chair.<br>Your barber.<br><span class="gold">Every time.</span></h1>
+    <p class="hero-sub reveal">A decade of sharp cuts, good company and proper craft — one minute from Harbour Town. Book your barber on the app. No taking a number. No getting whoever's free.</p>
     <div class="hero-cta reveal">
-      <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res" target="_blank" rel="noopener">Book a Cut</a>
-      <a class="btn btn-ghost" href="https://web.slikr.com.au/shop/421/res" target="_blank" rel="noopener">Check the Wait</a>
-      <a class="btn-app" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" target="_blank" rel="noopener" aria-label="Get the Blacksmith app on the App Store">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-        <span class="app-txt"><small>Download on the</small><span>App Store</span></span>
+      <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a>
+      <a class="btn btn-ghost" href="https://web.slikr.com.au/shop/421/res">Check the Wait</a>
+      <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store">
+        <svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg>
+        <span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span>
       </a>
     </div>
-    <div class="hero-meta reveal">
-      <span><b>4.7★</b> · 200+ Google reviews</span>
-      <span><b>15,000+</b> cuts through the chairs</span>
-      <span><b>1 min</b> from Harbour Town</span>
-    </div>
   </div>
+  <div class="scroll-cue" aria-hidden="true"><span>Scroll</span><span class="line"></span></div>
 </section>
 
-<!-- ===================== PROOF STRIP ===================== -->
-<div class="proof-strip">
-  <div class="proof-grid stagger">
-    <div class="proof-cell"><div class="num">2015</div><div class="lab">In the chair since</div></div>
-    <div class="proof-cell"><div class="num">14</div><div class="lab">Barbers who stay</div></div>
-    <div class="proof-cell"><div class="num">15K+</div><div class="lab">Clients through</div></div>
-    <div class="proof-cell"><div class="num">4.7★</div><div class="lab">200+ reviews</div></div>
-  </div>
-</div>
-
-<!-- ===================== THE SHOP — OPEN LOOP / STORY ===================== -->
-<section id="shop">
-  <div class="wrap two-col split">
-    <div class="reveal">
-      <p class="eyebrow">The Shop</p>
-      <h2>Ten years in the chair.<br>The Coast keeps<br><span class="gold">coming back.</span></h2>
-      <p class="lead" style="margin-top:22px">Reclaimed timber, polished concrete, a cold drink in your hand and barbers who know your name. We built a room that feels like somewhere you belong — not a waiting room with plastic chairs.</p>
-      <p class="lead">People try every barber on the Gold Coast and end up here. Once they sit down, they don't go looking again. There's a reason for that — and it isn't luck.</p>
-    </div>
-    <div class="media-frame reveal" style="aspect-ratio:4/5">
-      <img src="assets/photos/TLB_3394.jpg" alt="A Blacksmith barber finishing a beard line, both relaxed and mid-conversation">
-    </div>
-  </div>
-</section>
-
-<!-- ===================== SERVICES — STACK VALUE (triptych) ===================== -->
-<section id="services" style="padding-top:0">
+<!-- ============ TRUST STRIP ============ -->
+<section class="trust">
   <div class="wrap">
-    <div class="center reveal" style="margin-bottom:clamp(34px,6vw,56px)">
-      <p class="eyebrow">Three rooms, one standard</p>
-      <h2>Pick your chair.</h2>
+    <div class="trust-grid stagger">
+      <div class="trust-cell"><div class="trust-num">10</div><div class="trust-label">Years in the chair</div></div>
+      <div class="trust-cell"><div class="trust-num">15,000+</div><div class="trust-label">Through the chairs</div></div>
+      <div class="trust-cell"><div class="trust-num">4.7&#9733;</div><div class="trust-label">200+ Google reviews</div></div>
+      <div class="trust-cell"><div class="trust-num">7</div><div class="trust-label">Days open</div></div>
     </div>
-    <div class="cards stagger">
+  </div>
+</section>
 
+<!-- ============ 2 · OPEN LOOP / STORY ============ -->
+<section class="story section-pad" id="shop">
+  <div class="wrap">
+    <div class="story-grid">
+      <div class="story-copy reveal">
+        <p class="eyebrow">The Shop</p>
+        <h2 class="h2">Ten years in the chair. The Gold Coast keeps coming back.</h2>
+        <p class="lead">Blacksmith started in Biggera Waters in 2015 and never moved. Same warehouse. Same craft. Reclaimed timber, polished concrete, a cold drink in your hand and barbers who know your name before you sit down.</p>
+        <p>One minute from Harbour Town, easy parking out front, state-of-the-art chairs and an app that lets you skip the wait. We've cut more than 15,000 heads through this room — and the same blokes keep coming back. There's a reason for that.</p>
+      </div>
+      <div class="story-media reveal">
+        <img src="assets/photos/TLB_4814.jpg" alt="A Blacksmith barber sharing a laugh with a client mid-cut" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3 · MECHANISM REVEAL (the selling turn) ============ -->
+<section class="mech section-pad">
+  <div class="wrap">
+    <div class="mech-head reveal">
+      <p class="eyebrow">Why people keep coming back</p>
+      <h2 class="h2">Stop being next in line.</h2>
+      <p class="problem">The walk-in shuffle was built for the barbershop, not for you. You rock up, take a number, get whoever's free, then re-explain "short on the sides, bit of length on top" to a stranger — and walk out hoping it looks like last time. That's not a haircut. That's a gamble.</p>
+      <p class="problem turn">Blacksmith is the end of that. <span class="gold">One barber. Your barber. Booked ahead on the app — no waiting, no re-explaining, no surprises.</span></p>
+    </div>
+
+    <div class="compare reveal" role="table" aria-label="The walk-in shuffle versus booking your barber at Blacksmith">
+      <div class="compare-row compare-head" role="row">
+        <div class="compare-cell lbl" role="columnheader"></div>
+        <div class="compare-cell walkin" role="columnheader">The walk-in shuffle</div>
+        <div class="compare-cell bs" role="columnheader">Your barber, booked</div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell lbl" role="cell">Your barber</div>
+        <div class="compare-cell walkin" role="cell">Whoever's free</div>
+        <div class="compare-cell bs" role="cell"><strong>Always yours</strong></div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell lbl" role="cell">Wait time</div>
+        <div class="compare-cell walkin" role="cell">20&ndash;60 min</div>
+        <div class="compare-cell bs" role="cell"><strong>Booked ahead</strong></div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell lbl" role="cell">Explain your cut</div>
+        <div class="compare-cell walkin" role="cell">Every time</div>
+        <div class="compare-cell bs" role="cell"><strong>He already knows</strong></div>
+      </div>
+      <div class="compare-row" role="row">
+        <div class="compare-cell lbl" role="cell">The result</div>
+        <div class="compare-cell walkin" role="cell">A gamble</div>
+        <div class="compare-cell bs" role="cell"><strong>Same cut, every time</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4 · STACK VALUE / SERVICES ============ -->
+<section class="services section-pad" id="services">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">What we do</p>
+      <h2 class="h2">Three rooms. One standard.</h2>
+    </div>
+    <div class="svc-grid stagger">
       <article class="svc-card">
-        <img src="assets/photos/TLB_4063.jpg" alt="A Blacksmith barber finishing a sharp cut for a regular">
+        <img src="assets/photos/TLB_4429.jpg" alt="A Blacksmith barber's chair against reclaimed timber" loading="lazy">
         <div class="svc-body">
-          <p class="eyebrow">The Barbershop</p>
-          <h3>Cuts, fades &amp; shaves</h3>
-          <p>Skin fades, beard sculpts, hot-towel shaves and proper cuts — the same hands, every time.</p>
-          <a class="svc-link" href="https://web.slikr.com.au/shop/1121/res" target="_blank" rel="noopener">Book a Cut <span class="arr">→</span></a>
+          <p class="eyebrow">The Chair</p>
+          <h3 class="h3">Barbering</h3>
+          <p>Razor fades, beard trims, hot-towel shaves and the exact style you ask for &mdash; done right, by your barber.</p>
+          <a class="svc-link" href="https://web.slikr.com.au/shop/1121/res">Book a Cut &rarr;</a>
         </div>
       </article>
-
       <article class="svc-card">
-        <img src="assets/photos/TLB_4870.jpg" alt="The Blackrose Salon space with LED mirrors and warm timber">
+        <img src="assets/photos/TLB_4870.jpg" alt="The Blackrose Salon space with backlit mirrors" loading="lazy">
         <div class="svc-body">
           <p class="eyebrow">Blackrose Salon</p>
-          <h3>Colour &amp; styling</h3>
-          <p>Precision colour, cut and transformation in a calmer, refined room next door.</p>
-          <a class="svc-link" href="https://web.slikr.com.au/blackrosesalon" target="_blank" rel="noopener">Book Salon <span class="arr">→</span></a>
+          <h3 class="h3">Colour &amp; Style</h3>
+          <p>Precision, colour and transformation &mdash; a calmer room with the same craft. Now booking.</p>
+          <a class="svc-link" href="https://web.slikr.com.au/blackrosesalon">Book Blackrose &rarr;</a>
         </div>
       </article>
-
       <article class="svc-card">
-        <img src="assets/photos/TLB_4234.jpg" alt="A Blacksmith Academy mentor teaching a shave on the shop floor">
+        <img src="assets/photos/TLB_4063.jpg" alt="A senior Blacksmith barber mentoring a student on the floor" loading="lazy">
         <div class="svc-body">
           <p class="eyebrow">The Academy</p>
-          <h3>Learn the trade</h3>
-          <p>Real chairs, real clients, real certification — learn it from people who live it.</p>
-          <a class="svc-link" href="#academy">Enquire <span class="arr">→</span></a>
+          <h3 class="h3">Learn the trade</h3>
+          <p>Real chairs, real clients, real certification &mdash; taught by people who live it.</p>
+          <a class="svc-link" href="#academy">Find out more &rarr;</a>
         </div>
       </article>
-
     </div>
   </div>
 </section>
 
-<!-- ===================== BLACKROSE — PROOF detail ===================== -->
-<div class="detail" id="blackrose">
-  <div class="wrap">
-    <div class="detail-card reveal">
-      <div class="dc-media"><img src="assets/photos/TLB_4423.jpg" alt="The arched Blackrose Salon Co signage and styling station"></div>
-      <div class="dc-copy">
-        <p class="eyebrow">Blackrose Salon Co — Est. 2025</p>
-        <h2>Precision, colour &amp; transformation.</h2>
-        <p class="lead" style="margin:18px 0 22px">Sammi's room is the other side of Blacksmith — softer light, refined timber, a calmer pace. Colour and styling done with the same eye for detail the shop is known for.</p>
-        <ul>
-          <li>Precision colour, balayage and toning</li>
-          <li>Cut &amp; style for every length</li>
-          <li>The same craft standard, a different room</li>
+<!-- ============ 5 · PROOF / BLACKROSE DETAIL ============ -->
+<section class="detail" id="blackrose">
+  <div class="wrap section-pad">
+    <div class="detail-grid">
+      <div class="detail-media reveal">
+        <img src="assets/photos/TLB_3866.jpg" alt="Blackrose Salon Co frosted glass signage" loading="lazy">
+      </div>
+      <div class="detail-copy reveal">
+        <p class="eyebrow">Blackrose Salon Co</p>
+        <h2 class="h2">Precision, colour &amp; transformation.</h2>
+        <p>Soft lighting, refined timber and a calmer pace &mdash; Blackrose is the salon side of the room. The same eye for detail that built the barbershop, pointed at colour, styling and the full transformation.</p>
+        <ul class="detail-list">
+          <li>Precision cutting &amp; styling</li>
+          <li>Colour, balayage &amp; correction</li>
+          <li>Open seven days &mdash; Biggera Waters</li>
         </ul>
-        <a class="btn btn-gold" href="https://web.slikr.com.au/blackrosesalon" target="_blank" rel="noopener">Book Salon</a>
+        <a class="btn btn-gold" href="https://web.slikr.com.au/blackrosesalon">Book Blackrose</a>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ===================== ACADEMY — PROOF detail ===================== -->
-<div class="detail" id="academy">
-  <div class="wrap">
-    <div class="detail-card rev reveal">
-      <div class="dc-media"><img src="assets/photos/TLB_4814.jpg" alt="A Blacksmith Academy mentor guiding an apprentice through a clipper cut"></div>
-      <div class="dc-copy">
+<!-- ============ 5b · ACADEMY DETAIL ============ -->
+<section class="detail" id="academy">
+  <div class="wrap section-pad">
+    <div class="detail-grid rev">
+      <div class="detail-media reveal">
+        <img src="assets/photos/TLB_4234.jpg" alt="A Blacksmith Academy barber working on a client by the shopfront" loading="lazy">
+      </div>
+      <div class="detail-copy reveal">
         <p class="eyebrow">Blacksmith Academy</p>
-        <h2>Learn it from people who live it.</h2>
-        <p class="lead" style="margin:18px 0 22px">No mannequin heads in a back office. You learn on real chairs with real clients, guided by barbers with 30 years combined behind the chair. Walk out able to actually do the job.</p>
-        <ul>
-          <li>Real chairs, real clients — day one</li>
-          <li>Mentored by working barbers, not lecturers</li>
-          <li>Pathway to a chair and certification</li>
+        <h2 class="h2">Learn it from people who live it.</h2>
+        <p>Not a classroom &mdash; a working barbershop floor. Real chairs, real paying clients and barbers with decades on the tools. You learn the trade the way it's actually done, then walk out with the cert to back it.</p>
+        <ul class="detail-list">
+          <li>Hands-on training on the live shop floor</li>
+          <li>Mentored by working Blacksmith barbers</li>
+          <li>Real certification, real clients</li>
         </ul>
-        <a class="btn btn-ghost" href="#visit">Enquire about a spot</a>
+        <a class="btn btn-ghost" href="https://web.slikr.com.au/blacksmithbarbers">Enquire</a>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ===================== GALLERY — WOW / SOCIAL PROOF ===================== -->
-<section style="padding-top:0">
+<!-- ============ 6 · WOW / GALLERY ============ -->
+<section class="gallery section-pad">
   <div class="wrap">
-    <div class="center reveal" style="margin-bottom:clamp(30px,5vw,48px)">
-      <p class="eyebrow">Inside the room</p>
-      <h2>The room does<br>half the talking.</h2>
+    <div class="gallery-head reveal">
+      <p class="eyebrow">The room</p>
+      <h2 class="h2">The room does half the talking.</h2>
     </div>
     <div class="gallery-grid stagger">
-      <a href="assets/photos/TLB_4429.jpg" class="tall" target="_blank" rel="noopener"><img src="assets/photos/TLB_4429.jpg" alt="The Blacksmith chair against reclaimed timber"></a>
-      <a href="assets/photos/TLB_3394.jpg" target="_blank" rel="noopener"><img src="assets/photos/TLB_3394.jpg" alt="The warehouse shop floor during a cut"></a>
-      <a href="assets/photos/TLB_4414-1.jpg" target="_blank" rel="noopener"><img src="assets/photos/TLB_4414-1.jpg" alt="Pomade and product shelf with barbers working in the mirror"></a>
-      <a href="assets/photos/TLB_4063.jpg" class="tall" target="_blank" rel="noopener"><img src="assets/photos/TLB_4063.jpg" alt="A barber and a regular sharing a laugh mid-cut"></a>
-      <a href="assets/photos/TLB_4814.jpg" target="_blank" rel="noopener"><img src="assets/photos/TLB_4814.jpg" alt="An apprentice learning a clipper cut under guidance"></a>
-      <a href="assets/photos/TLB_4234.jpg" target="_blank" rel="noopener"><img src="assets/photos/TLB_4234.jpg" alt="An Academy mentor finishing a hot-towel shave"></a>
-      <a href="assets/photos/TLB_4870.jpg" target="_blank" rel="noopener"><img src="assets/photos/TLB_4870.jpg" alt="The Blackrose Salon styling space"></a>
-      <a href="assets/photos/TLB_3868.jpg" target="_blank" rel="noopener"><img src="assets/photos/TLB_3868.jpg" alt="Blacksmith Barber Co door signage with opening hours"></a>
+      <figure><img src="assets/photos/TLB_3868.jpg" alt="Blacksmith Barber Co frosted signage at the entrance" loading="lazy"></figure>
+      <figure><img src="assets/photos/TLB_3394.jpg" alt="The Blacksmith warehouse floor with barbers at work" loading="lazy"></figure>
+      <figure><img src="assets/photos/TLB_4814.jpg" alt="A barber finishing a client's cut" loading="lazy"></figure>
+      <figure><img src="assets/photos/TLB_4414-1.jpg" alt="Product shelf and leather lounge inside Blacksmith" loading="lazy"></figure>
+      <figure><img src="assets/photos/TLB_4429.jpg" alt="Barber chair against reclaimed timber" loading="lazy"></figure>
+      <figure><img src="assets/photos/TLB_4063.jpg" alt="A senior barber guiding an apprentice" loading="lazy"></figure>
+      <figure><img src="assets/photos/TLB_4423.jpg" alt="Arched doorway through to the Blackrose salon" loading="lazy"></figure>
+      <figure><img src="assets/photos/TLB_4870.jpg" alt="Backlit mirrors in the Blackrose salon" loading="lazy"></figure>
     </div>
   </div>
 </section>
 
-<!-- ===================== THE CIRCLE — MECHANISM REVEAL ===================== -->
-<section class="circle" id="circle">
-  <div class="glow"></div>
+<!-- ============ 7 · VISIT / CLOSE ============ -->
+<section class="visit section-pad" id="visit">
   <div class="wrap">
-    <div class="reveal" style="max-width:780px">
-      <p class="eyebrow">Blacksmith Circle</p>
-      <h2>Stop being<br>next in line.</h2>
-      <p class="problem" style="margin-top:22px">The walk-in was built for the barbershop — not for you. You rock up, take a number, get whoever's free. You re-explain your cut to a stranger. You wait. And you walk out wondering if it'll look the same next time. That's not a haircut. That's a gamble.</p>
-      <p class="reveal-line">The Circle is the end of that. One barber. Your barber. Booked ahead, locked in, no waiting.</p>
+    <div class="visit-head reveal">
+      <p class="eyebrow">Visit us</p>
+      <h2 class="h2">Walk in, or lock in your chair on the app.</h2>
     </div>
-
-    <!-- comparison -->
-    <div class="compare reveal">
-      <div class="compare-row compare-head">
-        <div class="lbl">&nbsp;</div>
-        <div class="walkin">Walk-in</div>
-        <div class="member">Circle Member</div>
+    <div class="visit-grid stagger">
+      <div class="visit-card">
+        <p class="eyebrow">Find us</p>
+        <h3 class="h3">Biggera Waters</h3>
+        <address>9 Gateway Drive<br>Biggera Waters QLD 4216</address>
+        <p style="margin-top:12px">One minute from Harbour Town. Easy parking out front.</p>
+        <p style="margin-top:12px"><a class="tel" href="tel:+61755638960">(07) 5563 8960</a></p>
       </div>
-      <div class="compare-row">
-        <div class="lbl">Your barber</div><div class="walkin">Whoever's free</div><div class="member">Always yours</div>
+      <div class="visit-card">
+        <p class="eyebrow">Hours</p>
+        <h3 class="h3">Open 7 days</h3>
+        <div class="hours-row"><span>Mon &ndash; Fri</span><span>9:00 &ndash; 5:30</span></div>
+        <div class="hours-row"><span>Sat &ndash; Sun</span><span>9:00 &ndash; 3:30</span></div>
       </div>
-      <div class="compare-row">
-        <div class="lbl">Wait time</div><div class="walkin">20–60 min</div><div class="member">Zero</div>
-      </div>
-      <div class="compare-row">
-        <div class="lbl">Explain your cut</div><div class="walkin">Every time</div><div class="member">Once</div>
-      </div>
-      <div class="compare-row">
-        <div class="lbl">The lounge</div><div class="walkin">Doesn't exist</div><div class="member">Yours</div>
-      </div>
-    </div>
-
-    <!-- tiers -->
-    <div class="tiers stagger">
-      <div class="tier">
-        <div class="tier-name">The Cut</div>
-        <div class="tier-tag">Your chair, locked in.</div>
-        <div class="tier-price">$59<small>/mo</small></div>
-        <div class="tier-note">Entry-level lock-in</div>
-        <ul>
-          <li>1 locked recurring slot</li>
-          <li>Priority booking window</li>
-          <li>Back-room lounge access</li>
-        </ul>
-      </div>
-      <div class="tier feat">
-        <span class="feat-badge">Most popular</span>
-        <div class="tier-name">The Club</div>
-        <div class="tier-tag">Tuesday afternoon is yours.</div>
-        <div class="tier-price">$129<small>/mo</small></div>
-        <div class="tier-note">Covers you — or you and your boy</div>
-        <ul>
-          <li>2 locked slots a month</li>
-          <li>Members-only hours</li>
-          <li>First cut with a new barber, free</li>
-          <li>Blackrose member rate</li>
-        </ul>
-      </div>
-      <div class="tier">
-        <div class="tier-name">The Empire</div>
-        <div class="tier-tag">Your name on the wall.</div>
-        <div class="tier-price">$229<small>/mo</small></div>
-        <div class="tier-note">Founding rate · 24-month lock</div>
-        <ul>
-          <li>3 locked slots a month</li>
-          <li>Name on the Members Wall</li>
-          <li>Monthly merch drop</li>
-          <li>Members-only events &amp; gifting</li>
-        </ul>
+      <div class="visit-card">
+        <p class="eyebrow">Book</p>
+        <h3 class="h3">Skip the wait</h3>
+        <p>Book your barber, check the wait or join the queue from your phone.</p>
+        <div class="visit-cta">
+          <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a>
+          <a class="btn btn-ghost btn-block" href="https://web.slikr.com.au/shop/421/res">Join the Queue</a>
+        </div>
       </div>
     </div>
-
-    <div class="scarcity reveal">Founding member spots are limited — first 100, 75 and 30. Once they're gone, the price goes up.</div>
-
-    <div class="reveal" style="margin-top:30px;display:flex;flex-wrap:wrap;gap:13px">
-      <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res" target="_blank" rel="noopener">Find out your number</a>
-      <a class="btn btn-ghost" href="#visit">Ask in the chair</a>
+    <div class="map-frame reveal">
+      <iframe title="Map to Blacksmith Barbers, 9 Gateway Drive, Biggera Waters" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=9+Gateway+Drive,+Biggera+Waters+QLD+4216&output=embed"></iframe>
     </div>
   </div>
 </section>
 
-<!-- ===================== VISIT — PRACTICAL CLOSE ===================== -->
-<section class="visit" id="visit">
-  <div class="wrap">
-    <div class="center reveal" style="margin-bottom:clamp(34px,6vw,52px)">
-      <p class="eyebrow">Come in</p>
-      <h2>Walk in, or<br>lock in your chair.</h2>
-    </div>
-
-    <div class="visit-layout">
-      <div class="visit-grid">
-        <div class="visit-card reveal">
-          <h3>Find us</h3>
-          <div class="row"><b>9 Gateway Drive</b></div>
-          <div class="row">Biggera Waters QLD 4216</div>
-          <div class="row" style="color:var(--muted)">One minute from Harbour Town. Easy parking at the door.</div>
-        </div>
-        <div class="visit-card reveal">
-          <h3>Hours</h3>
-          <div class="row"><b>Mon–Fri</b> 9:00 – 5:30</div>
-          <div class="row"><b>Sat–Sun</b> 9:00 – 3:30</div>
-          <div class="row" style="color:var(--muted)">Open 7 days.</div>
-        </div>
-        <div class="visit-card reveal">
-          <h3>Book</h3>
-          <div class="row">Walk in, or book on the app and skip the wait.</div>
-          <div class="row"><a class="tel" href="tel:+61755638960">(07) 5563 8960</a></div>
-          <div class="foot-app">
-            <a class="btn-app" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" target="_blank" rel="noopener" aria-label="Get the Blacksmith app on the App Store">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-              <span class="app-txt"><small>Download on the</small><span>App Store</span></span>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="visit-media reveal">
-        <img src="assets/photos/TLB_3868.jpg" alt="The Blacksmith Barber Co front door with opening hours">
-      </div>
-    </div>
-
-    <div class="reveal center" style="margin-top:clamp(34px,6vw,52px);display:flex;flex-wrap:wrap;gap:13px;justify-content:center">
-      <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res" target="_blank" rel="noopener">Book Barbershop</a>
-      <a class="btn btn-ghost" href="https://web.slikr.com.au/blackrosesalon" target="_blank" rel="noopener">Book Salon</a>
-      <a class="btn btn-ghost" href="https://web.slikr.com.au/blacksmithbarbers" target="_blank" rel="noopener">Walk-in booking</a>
+<!-- ============ FINAL CTA BAND ============ -->
+<section class="cta-band section-pad">
+  <div class="wrap reveal">
+    <p class="eyebrow">Your barber's waiting</p>
+    <h2 class="h2">Book the same cut, by the same bloke, every time.</h2>
+    <p>Download the app, lock in your barber and never take a number again.</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a>
+      <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store">
+        <svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg>
+        <span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span>
+      </a>
     </div>
   </div>
 </section>
+</main>
 
-<!-- ===================== FOOTER ===================== -->
-<footer>
-  <div class="foot-bg"><img src="assets/photos/footer_bg.webp" alt=""></div>
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
   <div class="wrap">
-    <div class="foot-top">
-      <div class="foot-brand">
+    <div class="footer-top">
+      <div class="footer-col footer-logo">
         <img src="assets/logo-white.png" alt="Blacksmith Barbers">
-        <p>Your chair. Your barber. Every time. Est. 2015 — Biggera Waters, Gold Coast.</p>
-        <div class="foot-app">
-          <a class="btn-app" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" target="_blank" rel="noopener" aria-label="Get the Blacksmith app on the App Store">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-            <span class="app-txt"><small>Download on the</small><span>App Store</span></span>
-          </a>
-        </div>
+        <p class="footer-tag">Est. 2015 &mdash; Biggera Waters, Gold Coast. Sharp cuts, good company, proper craft.</p>
+        <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store">
+          <svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg>
+          <span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span>
+        </a>
       </div>
-      <div class="foot-col">
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="#shop">The Shop</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#blackrose">Blackrose Salon</a></li>
+          <li><a href="#academy">Academy</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
         <h4>Book</h4>
-        <a href="https://web.slikr.com.au/shop/1121/res" target="_blank" rel="noopener">Book Barbershop</a>
-        <a href="https://web.slikr.com.au/shop/421/res" target="_blank" rel="noopener">Check the wait</a>
-        <a href="https://web.slikr.com.au/blackrosesalon" target="_blank" rel="noopener">Book Blackrose Salon</a>
-        <a href="https://web.slikr.com.au/blacksmithbarbers" target="_blank" rel="noopener">Walk-in booking</a>
+        <ul>
+          <li><a href="https://web.slikr.com.au/shop/1121/res">Book a Barber</a></li>
+          <li><a href="https://web.slikr.com.au/shop/421/res">Join the Queue</a></li>
+          <li><a href="https://web.slikr.com.au/blackrosesalon">Book Blackrose</a></li>
+          <li><a href="https://web.slikr.com.au/blacksmithbarbers">Walk-ins</a></li>
+        </ul>
       </div>
-      <div class="foot-col">
+      <div class="footer-col">
         <h4>Visit</h4>
-        <p>9 Gateway Drive<br>Biggera Waters QLD 4216</p>
-        <a class="gold" href="tel:+61755638960">(07) 5563 8960</a>
-        <p>Mon–Fri 9:00–5:30<br>Sat–Sun 9:00–3:30</p>
+        <address>
+          9 Gateway Drive<br>
+          Biggera Waters QLD 4216<br>
+          <a href="tel:+61755638960">(07) 5563 8960</a><br><br>
+          Mon&ndash;Fri 9:00&ndash;5:30<br>
+          Sat&ndash;Sun 9:00&ndash;3:30
+        </address>
       </div>
     </div>
-    <div class="foot-bottom">
-      <small>© 2015–2026 Blacksmith Barbers. Biggera Waters, Gold Coast.</small>
-      <small>Your chair. Your barber. Every time.</small>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Blacksmith Barbers. Biggera Waters, Gold Coast.</p>
+      <p>Your chair. Your barber. Every time.</p>
     </div>
   </div>
 </footer>
 
-<!-- ===================== STICKY MOBILE BOOK BAR ===================== -->
-<div class="sticky-book" id="stickyBook">
-  <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/1121/res" target="_blank" rel="noopener">Book Barbershop</a>
-  <a class="btn btn-ghost btn-block" href="https://web.slikr.com.au/blackrosesalon" target="_blank" rel="noopener">Book Salon</a>
+<!-- ============ STICKY MOBILE BOOKING BAR ============ -->
+<div class="book-bar" id="bookBar">
+  <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/1121/res">Book a Cut</a>
 </div>
 
 <script>
 (function(){
-  var nav=document.getElementById('nav');
-  var sticky=document.getElementById('stickyBook');
-  var ham=document.getElementById('hamburger');
-  var drawer=document.getElementById('drawer');
+  var prm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // scroll state: nav bg + sticky bar
+  /* Topbar scrolled state + sticky book bar */
+  var topbar = document.getElementById('topbar');
+  var bookBar = document.getElementById('bookBar');
   function onScroll(){
-    var y=window.scrollY||window.pageYOffset;
-    nav.classList.toggle('scrolled', y>40);
-    sticky.classList.toggle('show', y>560);
+    var y = window.scrollY || window.pageYOffset;
+    topbar.classList.toggle('scrolled', y > 24);
+    bookBar.classList.toggle('show', y > 520);
   }
-  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  // hamburger drawer
-  function closeDrawer(){drawer.classList.remove('open');ham.classList.remove('open');ham.setAttribute('aria-expanded','false');document.body.style.overflow='';}
-  ham.addEventListener('click',function(){
-    var open=drawer.classList.toggle('open');
-    ham.classList.toggle('open',open);
-    ham.setAttribute('aria-expanded',open?'true':'false');
-    document.body.style.overflow=open?'hidden':'';
-  });
-  drawer.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeDrawer);});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer();});
+  /* Hamburger drawer */
+  var ham = document.getElementById('hamburger');
+  var drawer = document.getElementById('drawer');
+  function setMenu(open){
+    ham.classList.toggle('open', open);
+    drawer.classList.toggle('open', open);
+    ham.setAttribute('aria-expanded', open ? 'true' : 'false');
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  ham.addEventListener('click', function(){ setMenu(!drawer.classList.contains('open')); });
+  drawer.querySelectorAll('[data-close]').forEach(function(a){ a.addEventListener('click', function(){ setMenu(false); }); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setMenu(false); });
+  // Defensive: clear any stale scroll lock on load
+  document.body.style.overflow = '';
 
-  // reveal on scroll
-  var io=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-  },{threshold:0.12,rootMargin:'0px 0px -8% 0px'});
-  document.querySelectorAll('.reveal,.stagger').forEach(function(el){io.observe(el);});
+  /* Scroll reveals (classList toggle pattern — never gsap.from) */
+  if(prm){
+    document.querySelectorAll('.reveal,.stagger').forEach(function(el){ el.classList.add('in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal,.stagger').forEach(function(el){ io.observe(el); });
 })();
 </script>
 </body>
