@@ -1,0 +1,27 @@
+{
+  "name": "Blacksmith Barbers & Salon",
+  "short_name": "Blacksmith",
+  "description": "Your chair. Your barber. Every time. Biggera Waters, Gold Coast.",
+  "lang": "en-AU",
+  "dir": "ltr",
+  "scope": "./",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0b0d",
+  "theme_color": "#0b0b0d",
+  "icons": [
+    {
+      "src": "assets/logo-white.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo-white.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "name": "Bayli",
+    "role": "Head Barber",
+    "shop": "Blacksmith Barbers",
+    "photo": "assets/barbers/bayli.jpg",
+    "photoSource": "blacksmithbarbers.com.au/blacksmith-barbers-team (TLB_4234)",
+    "blurb": "Runs the floor with precision and zero ego. Sets the standard every chair aims for.",
+    "active": true
+  },
+  {
+    "name": "Jarred",
+    "role": "Head Barber",
+    "shop": "Blacksmith Barbers",
+    "photo": "assets/barbers/jarred.jpg",
+    "photoSource": "blacksmithbarbers.com.au/blacksmith-barbers-team (TLB_3270)",
+    "blurb": "Fade obsessive. The kind of barber who won't let you leave until every line is right.",
+    "active": true
+  },
+  {
+    "name": "Ben",
+    "role": "Barber",
+    "shop": "Blacksmith Barbers",
+    "photo": "assets/barbers/ben.jpg",
+    "photoSource": "blacksmithbarbers.com.au/blacksmith-barbers-team (TLB_4814)",
+    "blurb": "Solid hands, clean work. Keeps his chair full and his clients coming back.",
+    "active": true
+  },
+  {
+    "name": "Locky",
+    "role": "Apprentice",
+    "shop": "Blacksmith Barbers",
+    "photo": "assets/barbers/locky.jpg",
+    "photoSource": "blacksmithbarbers.com.au/blacksmith-barbers-team (TLB_3920, listed as Lachlan)",
+    "blurb": "Coming up through the Blacksmith Academy. Learning the craft the right way \u2014 real chairs, real clients.",
+    "active": true
+  },
+  {
+    "name": "Jayden",
+    "role": "Apprentice",
+    "shop": "Blacksmith Barbers",
+    "photo": "assets/barbers/jayden.jpg",
+    "photoSource": "blacksmithbarbers.com.au/blacksmith-barbers-team (TLB_4063)",
+    "blurb": "Academy-trained, building his skills under the Blacksmith roof. Gets better every week.",
+    "active": true
+  },
+  {
+    "name": "Sammi",
+    "role": "Blackrose Stylist",
+    "shop": "Blackrose Salon",
+    "photo": "assets/barbers/sammi.jpg",
+    "photoSource": "PLACEHOLDER \u2014 no real photo found",
+    "needsHeadshot": true,
+    "blurb": "Runs Blackrose. From foils to precision cuts \u2014 the salon side of the Blacksmith world.",
+    "active": true
+  },
+  {
+    "name": "Mubarak",
+    "role": "Barber",
+    "shop": "Blacksmith Barbers",
+    "photo": "assets/barbers/mubarak.svg",
+    "photoSource": "PLACEHOLDER \u2014 no real photo found",
+    "needsHeadshot": true,
+    "blurb": "Steady hands and clean technique. Part of the Blacksmith crew.",
+    "active": true
+  }
+]

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shop — Grooming Gear & Blacksmith Merch | Blacksmith Barbers</title>
+<meta name="description" content="Barbershop-grade grooming gear — hair, beard, shave and styling — plus Blacksmith own-brand merch. The gear our barbers actually use, ready to take home.">
+<meta name="theme-color" content="#0b0b0d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Shop — Grooming Gear & Blacksmith Merch | Blacksmith Barbers">
+<meta property="og:description" content="Barbershop-grade grooming gear — hair, beard, shave and styling — plus Blacksmith own-brand merch.">
+<meta property="og:locale" content="en_AU">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/logo-white.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Blacksmith">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ============ TOPBAR ============ -->
+<header class="topbar" id="topbar">
+  <a href="index.html" class="topbar-logo" aria-label="Blacksmith Barbers home"><img src="assets/logo-white.png" alt="Blacksmith Barbers"></a>
+  <nav class="nav-desktop" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="shop.html" class="active" aria-current="page">Shop</a>
+    <a href="academy.html">Academy</a>
+    <a href="blackrose.html">Blackrose</a>
+    <a href="barbers.html">Barbers</a>
+    <a href="about.html">About</a>
+    <a href="visit.html">Visit</a>
+  </nav>
+  <div class="nav-actions">
+    <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store"><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+    <button class="cart-btn" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
+    <a class="btn btn-gold" href="https://web.slikr.com.au/shop/421/res">Book a Cut</a>
+  </div>
+  <button class="cart-btn cart-btn-mobile" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ============ MOBILE DRAWER ============ -->
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Site menu">
+  <nav aria-label="Mobile">
+    <a href="index.html" data-close>Home</a>
+    <a href="shop.html" class="active" data-close>Shop</a>
+    <a href="academy.html" data-close>Academy</a>
+    <a href="blackrose.html" data-close>Blackrose</a>
+    <a href="barbers.html" data-close>Barbers</a>
+    <a href="about.html" data-close>About</a>
+    <a href="visit.html" data-close>Visit</a>
+  </nav>
+  <div class="drawer-actions">
+    <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/421/res" data-close>Book a Cut</a>
+    <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store" data-close><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+  </div>
+</div>
+
+<main id="main">
+<section class="page-hero has-bg">
+  <div class="page-hero-bg" style="background-image:url('assets/scene/TLB_4852.jpg');background-position:center 35%" aria-hidden="true"></div>
+  <div class="wrap page-hero-inner">
+    <p class="crumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <span>Shop</span></p>
+    <p class="eyebrow reveal">Shop</p>
+    <h1 class="h1 reveal">Take the shop home<br>with you.</h1>
+    <p class="lead reveal">The same barbershop-grade gear we reach for behind the chair &mdash; plus Blacksmith own-brand merch. Add it to your cart and grab it in the chair on your next visit.</p>
+    <div class="hero-cta reveal"><a class="btn btn-gold" href="#grooming">Shop grooming</a><a class="btn btn-ghost" href="#merch">Shop merch</a></div>
+  </div>
+</section>
+
+<!-- ============ GROOMING ============ -->
+<section class="shop-section section-pad" id="grooming">
+  <div class="wrap">
+    <div class="shop-cat-head reveal">
+      <div class="col">
+        <p class="eyebrow">Grooming</p>
+        <h2 class="h2">Barber-grade grooming gear.</h2>
+        <p>No drugstore filler &mdash; the beard, styling, shave and fragrance gear our barbers actually use. Make the cut last past your appointment.</p>
+        <p style="font-size:.85rem;opacity:.65;margin-top:8px">Indicative retail &mdash; final pricing in-store.</p>
+      </div>
+      <div class="col" style="flex:0 0 auto">
+        <img src="assets/scene/TLB_7503.jpg" alt="Grooming products on the Blacksmith shelf" loading="lazy" style="width:min(320px,100%);border-radius:8px;display:block">
+      </div>
+    </div>
+
+    <!-- BEARD -->
+    <div class="section-head reveal" style="margin-bottom:22px">
+      <p class="eyebrow">Beard</p>
+    </div>
+    <div class="product-grid stagger">
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Beard</span><img class="product-photo" src="assets/products/beard-oil-immortal.jpg" alt="Immortal NYC Beard King Beard Oil 100ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Immortal NYC Beard King Beard Oil</p>
+          <p class="product-desc">Premium conditioning oil that softens, hydrates and tames even the roughest beard. 100ml.</p>
+          <div class="product-foot"><span class="product-price">$29.95</span><button class="btn-add" data-add-to-cart data-id="beard-oil-immortal" data-name="Immortal NYC Beard King Beard Oil 100ml" data-price="29.95">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Beard</span><img class="product-photo" src="assets/products/beard-wash-proraso.jpg" alt="Proraso Beard Wash Eucalyptus &amp; Menthol 200ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Proraso Beard Wash</p>
+          <p class="product-desc">Eucalyptus &amp; menthol formula that deep-cleans facial hair and wakes the skin up. 200ml.</p>
+          <div class="product-foot"><span class="product-price">$21.99</span><button class="btn-add" data-add-to-cart data-id="beard-wash-proraso" data-name="Proraso Beard Wash Eucalyptus & Menthol 200ml" data-price="21.99">Add to cart</button></div>
+        </div>
+      </article>
+    </div>
+
+    <!-- STYLING -->
+    <div class="section-head reveal" style="margin:clamp(40px,5vw,56px) 0 22px">
+      <p class="eyebrow">Styling</p>
+    </div>
+    <div class="product-grid stagger">
+      <article class="product-card is-featured">
+        <div class="product-thumb"><span class="product-cat">Styling</span><span class="product-flag">Best seller</span><img class="product-photo" src="assets/products/style-infuse-powder.jpg" alt="Immortal Infuse Styling Powder White 30g" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Immortal Infuse Styling Powder, White</p>
+          <p class="product-desc">The shop favourite. A tiny shake at the roots for instant lift, texture and matte volume &mdash; no residue, no weight. 30g.</p>
+          <div class="product-foot"><span class="product-price">$27.50</span><button class="btn-add" data-add-to-cart data-id="style-infuse-powder" data-name="Immortal Infuse Styling Powder, White 30g" data-price="27.50">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><img class="product-photo" src="assets/products/style-wax-cbd.jpg" alt="Immortal NYC CBD Gel Styling Hair Wax 100ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Immortal NYC CBD Styling Hair Wax</p>
+          <p class="product-desc">CBD-infused wax with a natural finish and flexible hold. Tames without crunch. 100ml.</p>
+          <div class="product-foot"><span class="product-price">$28.95</span><button class="btn-add" data-add-to-cart data-id="style-wax-cbd" data-name="Immortal NYC CBD Styling Hair Wax 100ml" data-price="28.95">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><img class="product-photo" src="assets/products/style-chaos-pomade.jpg" alt="Immortal NYC Chaos Sea Salt Pomade 100ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Immortal NYC Chaos Sea Salt Pomade</p>
+          <p class="product-desc">Sea-salt pomade for textured, matte, beachy volume with strong hold. 100ml.</p>
+          <div class="product-foot"><span class="product-price">$29.95</span><button class="btn-add" data-add-to-cart data-id="style-chaos-pomade" data-name="Immortal NYC Chaos Sea Salt Pomade 100ml" data-price="29.95">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><img class="product-photo" src="assets/products/style-super-spray.jpg" alt="Immortal NYC Deluxe Super Spray 500ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Immortal NYC Deluxe Super Spray</p>
+          <p class="product-desc">Strong-hold finishing spray that locks styles in all day without stiffness. 500ml.</p>
+          <div class="product-foot"><span class="product-price">$25.95</span><button class="btn-add" data-add-to-cart data-id="style-super-spray" data-name="Immortal NYC Deluxe Super Spray 500ml" data-price="25.95">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><img class="product-photo" src="assets/products/style-tobacco-matte.jpg" alt="Immortal NYC Tobacco Matte Pomade 100ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Immortal NYC Tobacco Matte Pomade</p>
+          <p class="product-desc">Strong-hold matte pomade with a dry, no-shine finish and a warm tobacco note. Reworkable all day. 100ml.</p>
+          <div class="product-foot"><span class="product-price">$28.95</span><button class="btn-add" data-add-to-cart data-id="style-tobacco-matte" data-name="Immortal NYC Tobacco Matte Pomade 100ml" data-price="28.95">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><img class="product-photo" src="assets/products/style-marmara-clay.jpg" alt="Barber Marmara Hair Wax Clay 100ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Barber Marmara Hair Wax &mdash; Clay</p>
+          <p class="product-desc">Turkish-barbershop clay wax for textured, matte styling with firm, all-day hold. 100ml.</p>
+          <div class="product-foot"><span class="product-price">$24.95</span><button class="btn-add" data-add-to-cart data-id="style-marmara-clay" data-name="Barber Marmara Hair Wax Clay 100ml" data-price="24.95">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Styling</span><img class="product-photo" src="assets/products/style-marmara-space.jpg" alt="Barber Marmara Hair Wax Space 100ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Barber Marmara Hair Wax &mdash; Space</p>
+          <p class="product-desc">High-hold styling wax with a light sheen and a fresh signature scent. Locks the shape, stays workable. 100ml.</p>
+          <div class="product-foot"><span class="product-price">$24.95</span><button class="btn-add" data-add-to-cart data-id="style-marmara-space" data-name="Barber Marmara Hair Wax Space 100ml" data-price="24.95">Add to cart</button></div>
+        </div>
+      </article>
+    </div>
+
+    <!-- SHAVE & FRAGRANCE -->
+    <div class="section-head reveal" style="margin:clamp(40px,5vw,56px) 0 22px">
+      <p class="eyebrow">Shave &amp; Fragrance</p>
+    </div>
+    <div class="product-grid stagger">
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Shave &amp; Fragrance</span><img class="product-photo" src="assets/products/shave-bayrum-splash.jpg" alt="Immortal Infuse Bay Rum Aftershave Splash 250ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Immortal Infuse Bay Rum Aftershave Splash</p>
+          <p class="product-desc">Classic bay rum splash that cools, tones and finishes the shave clean. 250ml.</p>
+          <div class="product-foot"><span class="product-price">$24.95</span><button class="btn-add" data-add-to-cart data-id="shave-bayrum-splash" data-name="Immortal Infuse Bay Rum Aftershave Splash 250ml" data-price="24.95">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Shave &amp; Fragrance</span><img class="product-photo" src="assets/products/cologne-one-million.jpg" alt="Immortal NYC Cologne One Million Dollars 500ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Immortal NYC Cologne &lsquo;One Million Dollars&rsquo;</p>
+          <p class="product-desc">Bold barbershop cologne with a fresh, long-lasting signature scent. 500ml.</p>
+          <div class="product-foot"><span class="product-price">$29.95</span><button class="btn-add" data-add-to-cart data-id="cologne-one-million" data-name="Immortal NYC Cologne One Million Dollars 500ml" data-price="29.95">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Shave &amp; Fragrance</span><img class="product-photo" src="assets/products/tonic-wahl-bayrum.jpg" alt="Wahl Traditional Bay Rum 250ml" loading="lazy"></div>
+        <div class="product-body">
+          <p class="product-name">Wahl Traditional Bay Rum</p>
+          <p class="product-desc">Old-school bay rum tonic for scalp and skin &mdash; invigorating, antiseptic, built to last. 250ml.</p>
+          <div class="product-foot"><span class="product-price">$16.95</span><button class="btn-add" data-add-to-cart data-id="tonic-wahl-bayrum" data-name="Wahl Traditional Bay Rum 250ml" data-price="16.95">Add to cart</button></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MERCH ============ -->
+<section class="shop-section section-pad" id="merch">
+  <div class="wrap">
+    <div class="shop-cat-head reveal">
+      <div class="col">
+        <p class="eyebrow">Merch</p>
+        <h2 class="h2">Blacksmith own-brand.</h2>
+        <p>Wear the shop. Own-brand caps, tees, hoodies and beanies &mdash; plus a gift card for the bloke who's hard to buy for.</p>
+      </div>
+      <div class="col" style="flex:0 0 auto">
+        <img src="assets/scene/TLB_7526.jpg" alt="Blacksmith merch display in-shop" loading="lazy" style="width:min(320px,100%);border-radius:8px;display:block">
+      </div>
+    </div>
+    <div class="product-grid merch stagger">
+      <article class="product-card" data-merch="hoodie" data-base-id="merch-hoodie" data-base-name="Heavy Hoodie" data-default-colour="Black">
+        <div class="product-thumb">
+          <span class="product-cat">Apparel</span>
+          <img class="merch-photo is-active" data-colour="Black" data-view="front" src="assets/merch/hoodie-black-front.jpg" alt="Blacksmith Heavy Hoodie — Black, front" loading="lazy">
+          <img class="merch-photo" data-colour="Black" data-view="back" src="assets/merch/hoodie-black-back.jpg" alt="Blacksmith Heavy Hoodie — Black, back" loading="lazy">
+          <img class="merch-photo" data-colour="Pine Green" data-view="front" src="assets/merch/hoodie-pine-front.jpg" alt="Blacksmith Heavy Hoodie — Pine Green, front" loading="lazy">
+          <img class="merch-photo" data-colour="Pine Green" data-view="back" src="assets/merch/hoodie-pine-back.jpg" alt="Blacksmith Heavy Hoodie — Pine Green, back" loading="lazy">
+          <button type="button" class="merch-view" data-merch-view aria-label="View back">View back</button>
+        </div>
+        <div class="product-body">
+          <p class="product-name">Heavy Hoodie</p>
+          <p class="product-desc">Brushed-fleece heavyweight hoodie, double-lined hood, embroidered chest mark with the &ldquo;bs&rdquo; print across the back.</p>
+          <div class="merch-swatches" role="group" aria-label="Choose colour">
+            <button type="button" class="merch-swatch is-active" data-colour="Black" style="background:#15151a" aria-label="Black"></button>
+            <button type="button" class="merch-swatch" data-colour="Pine Green" style="background:#2f4136" aria-label="Pine Green"></button>
+            <span class="merch-swatch-label" data-colour-label>Black</span>
+          </div>
+          <div class="product-foot"><span class="product-price">$90.00</span><button class="btn-add" data-add-to-cart data-id="merch-hoodie-black" data-name="Heavy Hoodie &mdash; Black" data-price="90">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card" data-merch="tee" data-base-id="merch-tee" data-base-name="Heavy Tee" data-default-colour="Black">
+        <div class="product-thumb">
+          <span class="product-cat">Apparel</span>
+          <img class="merch-photo is-active" data-colour="Black" data-view="front" src="assets/merch/tee-black-front.jpg" alt="Blacksmith Heavy Tee — Black, front" loading="lazy">
+          <img class="merch-photo" data-colour="Black" data-view="back" src="assets/merch/tee-black-back.jpg" alt="Blacksmith Heavy Tee — Black, back" loading="lazy">
+          <img class="merch-photo" data-colour="Pine Green" data-view="front" src="assets/merch/tee-pine-front.jpg" alt="Blacksmith Heavy Tee — Pine Green, front" loading="lazy">
+          <img class="merch-photo" data-colour="Pine Green" data-view="back" src="assets/merch/tee-pine-back.jpg" alt="Blacksmith Heavy Tee — Pine Green, back" loading="lazy">
+          <button type="button" class="merch-view" data-merch-view aria-label="View back">View back</button>
+        </div>
+        <div class="product-body">
+          <p class="product-name">Heavy Tee</p>
+          <p class="product-desc">Heavyweight cotton tee with the Blacksmith blackletter chest mark and the &ldquo;bs&rdquo; print across the back. Boxy, hard-wearing fit.</p>
+          <div class="merch-swatches" role="group" aria-label="Choose colour">
+            <button type="button" class="merch-swatch is-active" data-colour="Black" style="background:#15151a" aria-label="Black"></button>
+            <button type="button" class="merch-swatch" data-colour="Pine Green" style="background:#2f4136" aria-label="Pine Green"></button>
+            <span class="merch-swatch-label" data-colour-label>Black</span>
+          </div>
+          <div class="product-foot"><span class="product-price">$50.00</span><button class="btn-add" data-add-to-cart data-id="merch-tee-black" data-name="Heavy Tee &mdash; Black" data-price="50">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Headwear</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 14a7 7 0 0 1 14 0v3H5v-3z"/><path d="M5 17h14v3H5z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Cuffed Beanie</p>
+          <p class="product-desc">Fine-knit cuffed beanie with woven Blacksmith tab. One size.</p>
+          <div class="product-foot"><span class="product-price">$35.00</span><button class="btn-add" data-add-to-cart data-id="merch-beanie" data-name="Cuffed Beanie" data-price="35">Add to cart</button></div>
+        </div>
+      </article>
+      <article class="product-card">
+        <div class="product-thumb"><span class="product-cat">Gift</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 12h18"/><path d="M12 8V21"/><path d="M12 8S10 3 7.5 4.5 12 8 12 8z"/><path d="M12 8s2-5 4.5-3.5S12 8 12 8z"/></svg></div>
+        <div class="product-body">
+          <p class="product-name">Gift Card</p>
+          <p class="product-desc">The easy win. Redeemable on cuts, salon and product in-shop. $50 value.</p>
+          <div class="product-foot"><span class="product-price">$50.00</span><button class="btn-add" data-add-to-cart data-id="merch-giftcard" data-name="Gift Card ($50)" data-price="50">Add to cart</button></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band section-pad">
+  <div class="wrap reveal">
+    <p class="eyebrow">In the chair, on us</p>
+    <h2 class="h2">Add it to your cart, grab it in the chair.</h2>
+    <p>Build your order here, then pick it up next time you&rsquo;re in &mdash; or ask your barber what they used on you and take it home.</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="https://web.slikr.com.au/shop/421/res">Book a Cut</a>
+      <a class="btn btn-ghost" href="visit.html">Visit the shop</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-col footer-logo">
+        <img src="assets/logo-white.png" alt="Blacksmith Barbers">
+        <p class="footer-tag">Est. 2015 &mdash; Biggera Waters, Gold Coast. More than a barbershop. We're family.</p>
+        <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store"><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="academy.html">Academy</a></li>
+          <li><a href="blackrose.html">Blackrose Salon</a></li>
+          <li><a href="barbers.html">Our Barbers</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="visit.html">Visit</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Book</h4>
+        <ul>
+          <li><a href="https://web.slikr.com.au/shop/421/res">Book a Cut</a></li>
+          <li><a href="barbers.html">Book with your barber</a></li>
+          <li><a href="https://web.slikr.com.au/blackrosesalon">Book Salon</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <address>
+          9 Gateway Drive<br>
+          Biggera Waters QLD 4216<br>
+          <a href="tel:+61755638960">(07) 5563 8960</a><br>
+          <a class="mail" href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a><br><br>
+          Mon&ndash;Fri 9:00&ndash;5:30<br>
+          Sat&ndash;Sun 9:00&ndash;3:30
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Blacksmith Barbers. Biggera Waters, Gold Coast.</p>
+      <p>Your chair. Your barber. Every time.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ STICKY MOBILE BOOKING BAR ============ -->
+<div class="book-bar" id="bookBar">
+  <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/421/res">Book a Cut</a>
+</div>
+
+<script src="assets/site.js"></script>
+<script src="assets/cart.js"></script>
+<script>
+/* Merch variant switching — colour swatch + front/back view. Lightweight, no deps. */
+(function(){
+  function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+  document.querySelectorAll('[data-merch]').forEach(function(card){
+    var imgs = card.querySelectorAll('.merch-photo');
+    var swatches = card.querySelectorAll('.merch-swatch');
+    var label = card.querySelector('[data-colour-label]');
+    var viewBtn = card.querySelector('[data-merch-view]');
+    var addBtn = card.querySelector('[data-add-to-cart]');
+    var baseId = card.getAttribute('data-base-id');
+    var baseName = card.getAttribute('data-base-name');
+    var colour = card.getAttribute('data-default-colour') || 'Black';
+    var view = 'front';
+
+    function paint(){
+      imgs.forEach(function(img){
+        var on = img.getAttribute('data-colour') === colour && img.getAttribute('data-view') === view;
+        img.classList.toggle('is-active', on);
+      });
+      swatches.forEach(function(sw){ sw.classList.toggle('is-active', sw.getAttribute('data-colour') === colour); });
+      if(label) label.textContent = colour;
+      if(viewBtn){ viewBtn.textContent = view === 'front' ? 'View back' : 'View front';
+        viewBtn.setAttribute('aria-label', view === 'front' ? 'View back' : 'View front'); }
+      if(addBtn){
+        addBtn.setAttribute('data-id', baseId + '-' + slug(colour));
+        addBtn.setAttribute('data-name', baseName + ' — ' + colour);
+      }
+    }
+    swatches.forEach(function(sw){
+      sw.addEventListener('click', function(){ colour = sw.getAttribute('data-colour'); view = 'front'; paint(); });
+    });
+    if(viewBtn){ viewBtn.addEventListener('click', function(){ view = view === 'front' ? 'back' : 'front'; paint(); }); }
+    paint();
+  });
+})();
+</script>
+</body>
+</html>

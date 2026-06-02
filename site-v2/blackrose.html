@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blackrose Salon — Precision, Colour & Transformation | Blacksmith</title>
+<meta name="description" content="Blackrose is the ladies' salon beside Blacksmith Barbers — soft lighting, refined timber, precision cuts, colour and transformations with stylist Sammi.">
+<meta name="theme-color" content="#0b0b0d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Blackrose Salon — Precision, Colour & Transformation | Blacksmith">
+<meta property="og:description" content="Blackrose is the ladies' salon beside Blacksmith Barbers — soft lighting, refined timber, precision cuts, colour and transformations with stylist Sammi.">
+<meta property="og:locale" content="en_AU">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/logo-white.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Blacksmith">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ============ TOPBAR ============ -->
+<header class="topbar" id="topbar">
+  <a href="index.html" class="topbar-logo" aria-label="Blacksmith Barbers home"><img src="assets/logo-white.png" alt="Blacksmith Barbers"></a>
+  <nav class="nav-desktop" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="academy.html">Academy</a>
+    <a href="blackrose.html" class="active" aria-current="page">Blackrose</a>
+    <a href="barbers.html">Barbers</a>
+    <a href="about.html">About</a>
+    <a href="visit.html">Visit</a>
+  </nav>
+  <div class="nav-actions">
+    <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store"><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+    <button class="cart-btn" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
+    <a class="btn btn-gold" href="https://web.slikr.com.au/shop/421/res">Book a Cut</a>
+  </div>
+  <button class="cart-btn cart-btn-mobile" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ============ MOBILE DRAWER ============ -->
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Site menu">
+  <nav aria-label="Mobile">
+    <a href="index.html" data-close>Home</a>
+    <a href="shop.html" data-close>Shop</a>
+    <a href="academy.html" data-close>Academy</a>
+    <a href="blackrose.html" class="active" data-close>Blackrose</a>
+    <a href="barbers.html" data-close>Barbers</a>
+    <a href="about.html" data-close>About</a>
+    <a href="visit.html" data-close>Visit</a>
+  </nav>
+  <div class="drawer-actions">
+    <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/421/res" data-close>Book a Cut</a>
+    <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store" data-close><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+  </div>
+</div>
+
+<main id="main">
+<section class="page-hero has-bg">
+  <div class="page-hero-bg" style="background-image:url('assets/scene/TLB_7436.jpg');background-position:center 35%" aria-hidden="true"></div>
+  <div class="wrap page-hero-inner">
+    <p class="crumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <span>Blackrose Salon</span></p>
+    <p class="eyebrow reveal">Blackrose Salon</p>
+    <h1 class="h1 reveal">The salon side<br>of the room.</h1>
+    <p class="lead reveal">Launched in 2025, Blackrose is the ladies&rsquo; salon beside the barbershop &mdash; soft lighting, refined timber, and the same eye for detail pointed at precision cuts, colour and full transformations. <span class="gold">Men are welcome too, for colour.</span></p>
+    <div class="hero-cta reveal"><a class="btn btn-gold" href="https://web.slikr.com.au/blackrosesalon">Book Salon</a><a class="btn btn-ghost" href="#blackrose-services">See services</a></div>
+  </div>
+</section>
+
+<section class="story section-pad">
+  <div class="wrap">
+    <div class="story-grid">
+      <div class="story-copy reveal">
+        <p class="eyebrow">Est. 2025</p>
+        <h2 class="h2">A calmer room. The same craft.</h2>
+        <p class="lead">Blackrose opened in 2025 as the salon side of the Blacksmith world &mdash; a refined, relaxed lounge with soft lighting and warm timber, built for women who want their hair done properly.</p>
+        <p>It&rsquo;s the same standard that built the barbershop, turned toward colour, styling and transformation. Unhurried, considered, and finished to the detail.</p>
+      </div>
+      <div class="story-media reveal">
+        <img src="assets/scene/TLB_7449.jpg" alt="Inside the Blackrose Salon — soft lighting and refined timber" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="services section-pad" id="blackrose-services">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">What we do</p>
+      <h2 class="h2">Precision, colour &amp; transformation.</h2>
+    </div>
+    <div class="feature-grid stagger">
+      <article class="feature-card">
+        <div class="num">&mdash;</div>
+        <h3 class="h3">Precision Cuts</h3>
+        <p>Considered, tailored cutting and styling &mdash; shaped to you, finished to the detail.</p>
+      </article>
+      <article class="feature-card">
+        <div class="num">&mdash;</div>
+        <h3 class="h3">Colour</h3>
+        <p>Foils, balayage, all-over colour and correction. Rich, lasting, looked-after.</p>
+      </article>
+      <article class="feature-card">
+        <div class="num">&mdash;</div>
+        <h3 class="h3">Transformations</h3>
+        <p>Big-change appointments where colour, cut and styling come together as one result.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="detail">
+  <div class="wrap section-pad">
+    <div class="detail-grid rev">
+      <div class="detail-media reveal">
+        <img src="assets/scene/TLB_7458.jpg" alt="Sammi styling in the Blackrose Salon" loading="lazy">
+      </div>
+      <div class="detail-copy reveal">
+        <p class="eyebrow">Your stylist</p>
+        <h2 class="h2">Sammi runs Blackrose.</h2>
+        <p>Sammi is both stylist and barber &mdash; she heads up the salon side of the Blacksmith world and cuts on the barbering floor too. Salon styling and colour, or a proper barber cut: same hands, same care, a calmer pace.</p>
+        <ul class="detail-list">
+          <li>Salon styling, colour, balayage &amp; correction</li>
+          <li>Barbering &mdash; skin fades, clipper work &amp; finish</li>
+          <li>Soft lighting &amp; refined timber lounge</li>
+          <li>Biggera Waters &mdash; beside Blacksmith Barbers</li>
+        </ul>
+        <div class="hero-cta">
+          <a class="btn btn-gold" href="https://web.slikr.com.au/blackrosesalon">Book salon</a>
+          <a class="btn btn-ghost" href="https://web.slikr.com.au/blackrosesalon">Book a cut with Sammi</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band section-pad">
+  <div class="wrap reveal">
+    <p class="eyebrow">Now booking</p>
+    <h2 class="h2">Book your seat in the Blackrose lounge.</h2>
+    <p>Cut, colour or the full transformation &mdash; lock in your appointment with Sammi.</p>
+    <div class="hero-cta">
+      <a class="btn btn-gold" href="https://web.slikr.com.au/blackrosesalon">Book salon</a>
+      <a class="btn btn-ghost" href="visit.html">Find us</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-col footer-logo">
+        <img src="assets/logo-white.png" alt="Blacksmith Barbers">
+        <p class="footer-tag">Est. 2015 &mdash; Biggera Waters, Gold Coast. More than a barbershop. We're family.</p>
+        <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store"><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="academy.html">Academy</a></li>
+          <li><a href="blackrose.html">Blackrose Salon</a></li>
+          <li><a href="barbers.html">Our Barbers</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="visit.html">Visit</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Book</h4>
+        <ul>
+          <li><a href="https://web.slikr.com.au/shop/421/res">Book a Cut</a></li>
+          <li><a href="barbers.html">Book with your barber</a></li>
+          <li><a href="https://web.slikr.com.au/blackrosesalon">Book Salon</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <address>
+          9 Gateway Drive<br>
+          Biggera Waters QLD 4216<br>
+          <a href="tel:+61755638960">(07) 5563 8960</a><br>
+          <a class="mail" href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a><br><br>
+          Mon&ndash;Fri 9:00&ndash;5:30<br>
+          Sat&ndash;Sun 9:00&ndash;3:30
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Blacksmith Barbers. Biggera Waters, Gold Coast.</p>
+      <p>Your chair. Your barber. Every time.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ STICKY MOBILE BOOKING BAR ============ -->
+<div class="book-bar" id="bookBar">
+  <a class="btn btn-gold btn-block" href="https://web.slikr.com.au/shop/421/res">Book a Cut</a>
+</div>
+
+<script src="assets/site.js"></script>
+<script src="assets/cart.js"></script>
+</body>
+</html>
