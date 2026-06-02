@@ -481,6 +481,11 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 @media(max-width:819px){
   .hero{align-items:center}
   .hero-inner{padding-bottom:130px}
+  /* Header: hamburger left · logo centre · cart right */
+  .topbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+  .hamburger{order:1;justify-self:start;align-items:flex-start}
+  .topbar-logo{order:2;justify-self:center}
+  .cart-btn-mobile{order:3;justify-self:end;margin-right:0}
 }
 /* ---------- Cart button (header) ---------- */
 .cart-btn{
