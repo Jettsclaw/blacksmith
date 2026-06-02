@@ -218,20 +218,44 @@
       </div>
     </div>
     <div class="product-grid merch stagger">
-      <article class="product-card">
-        <div class="product-thumb"><span class="product-cat">Headwear</span><img src="assets/merch/hoodie.jpg" alt="Blacksmith Heavy Hoodie" loading="lazy"></div>
+      <article class="product-card" data-merch="hoodie" data-base-id="merch-hoodie" data-base-name="Heavy Hoodie" data-default-colour="Black">
+        <div class="product-thumb">
+          <span class="product-cat">Apparel</span>
+          <img class="merch-photo is-active" data-colour="Black" data-view="front" src="assets/merch/hoodie-black-front.jpg" alt="Blacksmith Heavy Hoodie — Black, front" loading="lazy">
+          <img class="merch-photo" data-colour="Black" data-view="back" src="assets/merch/hoodie-black-back.jpg" alt="Blacksmith Heavy Hoodie — Black, back" loading="lazy">
+          <img class="merch-photo" data-colour="Pine Green" data-view="front" src="assets/merch/hoodie-pine-front.jpg" alt="Blacksmith Heavy Hoodie — Pine Green, front" loading="lazy">
+          <img class="merch-photo" data-colour="Pine Green" data-view="back" src="assets/merch/hoodie-pine-back.jpg" alt="Blacksmith Heavy Hoodie — Pine Green, back" loading="lazy">
+          <button type="button" class="merch-view" data-merch-view aria-label="View back">View back</button>
+        </div>
         <div class="product-body">
           <p class="product-name">Heavy Hoodie</p>
-          <p class="product-desc">Brushed-fleece hoodie, double-lined hood, embroidered chest mark.</p>
-          <div class="product-foot"><span class="product-price">$90.00</span><button class="btn-add" data-add-to-cart data-id="merch-hoodie" data-name="Heavy Hoodie" data-price="90">Add to cart</button></div>
+          <p class="product-desc">Brushed-fleece heavyweight hoodie, double-lined hood, embroidered chest mark with the &ldquo;bs&rdquo; print across the back.</p>
+          <div class="merch-swatches" role="group" aria-label="Choose colour">
+            <button type="button" class="merch-swatch is-active" data-colour="Black" style="background:#15151a" aria-label="Black"></button>
+            <button type="button" class="merch-swatch" data-colour="Pine Green" style="background:#2f4136" aria-label="Pine Green"></button>
+            <span class="merch-swatch-label" data-colour-label>Black</span>
+          </div>
+          <div class="product-foot"><span class="product-price">$90.00</span><button class="btn-add" data-add-to-cart data-id="merch-hoodie-black" data-name="Heavy Hoodie &mdash; Black" data-price="90">Add to cart</button></div>
         </div>
       </article>
-      <article class="product-card">
-        <div class="product-thumb"><span class="product-cat">Apparel</span><img src="assets/merch/tee.jpg" alt="Blacksmith Heavy Tee" loading="lazy"></div>
+      <article class="product-card" data-merch="tee" data-base-id="merch-tee" data-base-name="Heavy Tee" data-default-colour="Black">
+        <div class="product-thumb">
+          <span class="product-cat">Apparel</span>
+          <img class="merch-photo is-active" data-colour="Black" data-view="front" src="assets/merch/tee-black-front.jpg" alt="Blacksmith Heavy Tee — Black, front" loading="lazy">
+          <img class="merch-photo" data-colour="Black" data-view="back" src="assets/merch/tee-black-back.jpg" alt="Blacksmith Heavy Tee — Black, back" loading="lazy">
+          <img class="merch-photo" data-colour="Pine Green" data-view="front" src="assets/merch/tee-pine-front.jpg" alt="Blacksmith Heavy Tee — Pine Green, front" loading="lazy">
+          <img class="merch-photo" data-colour="Pine Green" data-view="back" src="assets/merch/tee-pine-back.jpg" alt="Blacksmith Heavy Tee — Pine Green, back" loading="lazy">
+          <button type="button" class="merch-view" data-merch-view aria-label="View back">View back</button>
+        </div>
         <div class="product-body">
           <p class="product-name">Heavy Tee</p>
-          <p class="product-desc">Heavyweight cotton tee with the Blacksmith blackletter print. Boxy, hard-wearing fit.</p>
-          <div class="product-foot"><span class="product-price">$50.00</span><button class="btn-add" data-add-to-cart data-id="merch-tee" data-name="Heavy Tee" data-price="50.00">Add to cart</button></div>
+          <p class="product-desc">Heavyweight cotton tee with the Blacksmith blackletter chest mark and the &ldquo;bs&rdquo; print across the back. Boxy, hard-wearing fit.</p>
+          <div class="merch-swatches" role="group" aria-label="Choose colour">
+            <button type="button" class="merch-swatch is-active" data-colour="Black" style="background:#15151a" aria-label="Black"></button>
+            <button type="button" class="merch-swatch" data-colour="Pine Green" style="background:#2f4136" aria-label="Pine Green"></button>
+            <span class="merch-swatch-label" data-colour-label>Black</span>
+          </div>
+          <div class="product-foot"><span class="product-price">$50.00</span><button class="btn-add" data-add-to-cart data-id="merch-tee-black" data-name="Heavy Tee &mdash; Black" data-price="50">Add to cart</button></div>
         </div>
       </article>
       <article class="product-card">
@@ -322,5 +346,42 @@
 
 <script src="assets/site.js"></script>
 <script src="assets/cart.js"></script>
+<script>
+/* Merch variant switching — colour swatch + front/back view. Lightweight, no deps. */
+(function(){
+  function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+  document.querySelectorAll('[data-merch]').forEach(function(card){
+    var imgs = card.querySelectorAll('.merch-photo');
+    var swatches = card.querySelectorAll('.merch-swatch');
+    var label = card.querySelector('[data-colour-label]');
+    var viewBtn = card.querySelector('[data-merch-view]');
+    var addBtn = card.querySelector('[data-add-to-cart]');
+    var baseId = card.getAttribute('data-base-id');
+    var baseName = card.getAttribute('data-base-name');
+    var colour = card.getAttribute('data-default-colour') || 'Black';
+    var view = 'front';
+
+    function paint(){
+      imgs.forEach(function(img){
+        var on = img.getAttribute('data-colour') === colour && img.getAttribute('data-view') === view;
+        img.classList.toggle('is-active', on);
+      });
+      swatches.forEach(function(sw){ sw.classList.toggle('is-active', sw.getAttribute('data-colour') === colour); });
+      if(label) label.textContent = colour;
+      if(viewBtn){ viewBtn.textContent = view === 'front' ? 'View back' : 'View front';
+        viewBtn.setAttribute('aria-label', view === 'front' ? 'View back' : 'View front'); }
+      if(addBtn){
+        addBtn.setAttribute('data-id', baseId + '-' + slug(colour));
+        addBtn.setAttribute('data-name', baseName + ' — ' + colour);
+      }
+    }
+    swatches.forEach(function(sw){
+      sw.addEventListener('click', function(){ colour = sw.getAttribute('data-colour'); view = 'front'; paint(); });
+    });
+    if(viewBtn){ viewBtn.addEventListener('click', function(){ view = view === 'front' ? 'back' : 'front'; paint(); }); }
+    paint();
+  });
+})();
+</script>
 </body>
 </html>
