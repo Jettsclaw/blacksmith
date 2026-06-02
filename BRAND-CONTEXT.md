@@ -3,7 +3,7 @@
 > Read this BEFORE building anything for Blacksmith. Source of truth — use verbatim. Wrong fonts/colours/voice = fail (see `CLAUDE.md`). Tokens are as-built from the live blacksmithbarbers.com.au-style site.
 
 ## Type
-- **Display / headings:** Cormorant Garamond (serif, 500/600) — the editorial, refined feel
+- **Display / headings:** Oswald (serif, 500/600) — the editorial, refined feel
 - **Body / UI:** Inter (400–700)
 - Load both from Google Fonts.
 

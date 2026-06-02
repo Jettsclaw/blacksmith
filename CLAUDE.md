@@ -4,7 +4,7 @@ This repo builds the Blacksmith website, funnels and content. Follow this contra
 
 ## The gate (non-negotiable, in order)
 
-1. **READ `BRAND-CONTEXT.md` first** — locked fonts (Cormorant Garamond + Inter), near-black `#0d0d0f`, gold `#c8a44d`, paper `#f3f1ea`, and the "more than a barbershop, we're family" voice. Use verbatim. Never guess generic defaults.
+1. **READ `BRAND-CONTEXT.md` first** — locked fonts (Oswald (headlines) + Inter (body); wordmark Scotland), near-black `#0d0d0f`, gold `#c8a44d`, paper `#f3f1ea`, and the "more than a barbershop, we're family" voice. Use verbatim. Never guess generic defaults.
 2. **Run the skill in this repo** — `skills/creator-army-x-automaitions/references/00-WINSTON-UNBREAKABLE-FLOW.md` is the gated step-by-step (context scan → strategy → mechanism + offer → build). Build markup with `skills/automaitions-html-builder/` (read its cheat-sheet first).
 3. **Build off real strategy, not vibes.** Blacksmith is a local service business — the mechanism is the room, the craft and "we're family"; the offer paths are book-a-chair (barbering / Blackrose) and the Academy. A page with no clear offer behind it is a fail.
 4. **Self-check before done:** right fonts? right gold/near-black? real logo? one clear booking CTA? If any answer is no, it's not shipped.
