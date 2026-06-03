@@ -167,6 +167,7 @@ section{position:relative}
 .drawer nav a:hover{color:var(--gold);padding-left:8px}
 .drawer nav a.active{color:var(--gold)}
 .drawer-actions{display:flex;flex-direction:column;gap:14px;max-width:340px}
+.drawer-actions .app-badge{justify-content:center;padding:.85em 1.2em}
 
 /* ---------- Page hero (interior pages) ---------- */
 .page-hero{
