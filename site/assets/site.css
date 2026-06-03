@@ -678,3 +678,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .product-thumb-link{display:block;text-decoration:none;color:inherit}
 .product-name-link{text-decoration:none;color:inherit;transition:color .15s}
 .product-name-link:hover .product-name{color:var(--gold)}
+
+/* How it works — 3 step */
+.how-num{font-family:'Oswald',sans-serif;font-size:1.05rem;font-weight:600;letter-spacing:.14em;color:var(--gold);margin-bottom:14px}
+.how-steps .feature-card{display:flex;flex-direction:column}
