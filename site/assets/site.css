@@ -690,3 +690,14 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .how-steps{gap:clamp(16px,2vw,22px)}
 .how-steps .feature-card{padding-block:clamp(30px,3.4vw,40px)}
 @media(max-width:819px){body{padding-bottom:78px}}
+
+/* ---- PDP size selector (CK-style) ---- */
+.pdp-size-head{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.pdp-size-label{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.78rem;letter-spacing:.12em;color:var(--muted)}
+.pdp-size-hint{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:.72rem;letter-spacing:.08em;color:var(--gold)}
+.pdp-sizes{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px;max-width:420px}
+.pdp-size{min-width:54px;padding:13px 12px;border:1px solid var(--line);border-radius:3px;background:transparent;font-family:'Oswald',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.04em;font-size:.95rem;color:var(--paper);cursor:pointer;transition:border-color .15s,color .15s,background .15s,transform .12s var(--ease)}
+.pdp-size:hover{border-color:rgba(200,164,77,.55);transform:translateY(-1px)}
+.pdp-size.is-active{background:var(--gold);color:var(--btn-ink);border-color:var(--gold)}
+.pdp-sizes.shake{animation:pdpShake .42s}
+@keyframes pdpShake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}

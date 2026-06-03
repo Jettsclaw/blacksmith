@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=7">
+<link rel="stylesheet" href="assets/site.css?v=8">
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
@@ -218,6 +218,18 @@
         '</div>';
     }
 
+    function sizeHTML(){
+      if(!p.sizes || !p.sizes.length) return '';
+      return '<div class="pdp-size-head">' +
+          '<span class="pdp-size-label">Size</span>' +
+          '<span class="pdp-size-hint" id="pdpSizeHint"></span>' +
+        '</div>' +
+        '<div class="pdp-sizes" id="pdpSizes" role="group" aria-label="Choose size">' +
+          p.sizes.map(function(sz){
+            return '<button type="button" class="pdp-size" data-size="' + esc(sz) + '">' + esc(sz) + '</button>';
+          }).join('') +
+        '</div>';
+    }
     var addId = isApparel ? colour.variantId : p.id;
     var addName = isApparel ? (p.name + ' — ' + colour.name) : (p.cartName || p.name);
 
@@ -230,6 +242,7 @@
           '<p class="pdp-price">' + money(p.price) + '</p>' +
           '<p class="pdp-desc">' + p.description + '</p>' +
           colourHTML() +
+          sizeHTML() +
           '<div class="pdp-actions">' +
             '<button class="btn btn-gold pdp-add" id="pdpAdd" data-add-to-cart data-id="' + esc(addId) +
               '" data-name="' + esc(addName) + '" data-price="' + p.price + '">Add to cart</button>' +
@@ -283,14 +296,34 @@
     }
 
     /* ---- add to cart (re-uses bs_cart via cart.js global wiring) ---- */
+    /* ---- size selector (apparel) ---- */
+    var selectedSize = null;
+    var sizesWrap = document.getElementById('pdpSizes');
+    if(sizesWrap){
+      var sizeHint = document.getElementById('pdpSizeHint');
+      sizesWrap.querySelectorAll('.pdp-size').forEach(function(b){
+        b.addEventListener('click', function(){
+          selectedSize = b.getAttribute('data-size');
+          sizesWrap.querySelectorAll('.pdp-size').forEach(function(x){ x.classList.toggle('is-active', x===b); });
+          if(sizeHint) sizeHint.textContent = '';
+        });
+      });
+    }
+    /* ---- add to cart ---- */
     var add = document.getElementById('pdpAdd');
     add.addEventListener('click', function(){
+      if(sizesWrap && !selectedSize){
+        var h = document.getElementById('pdpSizeHint');
+        if(h) h.textContent = 'Select a size';
+        sizesWrap.classList.add('shake');
+        setTimeout(function(){ sizesWrap.classList.remove('shake'); }, 460);
+        return;
+      }
+      var cid = isApparel ? colour.variantId : p.id;
+      var cname = isApparel ? (p.name + ' — ' + colour.name) : (p.cartName || p.name);
+      if(selectedSize){ cid += '-' + selectedSize; cname += ' / ' + selectedSize; }
       if(window.BSCart && typeof window.BSCart.add === 'function'){
-        window.BSCart.add({
-          id: add.getAttribute('data-id'),
-          name: add.getAttribute('data-name'),
-          price: parseFloat(add.getAttribute('data-price')) || 0
-        });
+        window.BSCart.add({ id: cid, name: cname, price: parseFloat(add.getAttribute('data-price')) || 0 });
       }
       add.classList.add('added');
       var orig = add.textContent;

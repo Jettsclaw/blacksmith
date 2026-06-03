@@ -8,7 +8,9 @@
       "price": 29.95,
       "category": "Beard",
       "description": "Premium conditioning oil that softens, hydrates and tames even the roughest beard. 100ml.",
-      "images": ["assets/products/beard-oil-immortal.jpg"]
+      "images": [
+        "assets/products/beard-oil-immortal.jpg"
+      ]
     },
     {
       "id": "beard-wash-proraso",
@@ -18,18 +20,22 @@
       "price": 21.99,
       "category": "Beard",
       "description": "Eucalyptus & menthol formula that deep-cleans facial hair and wakes the skin up. 200ml.",
-      "images": ["assets/products/beard-wash-proraso.jpg"]
+      "images": [
+        "assets/products/beard-wash-proraso.jpg"
+      ]
     },
     {
       "id": "style-infuse-powder",
       "slug": "style-infuse-powder",
       "name": "Immortal Infuse Styling Powder, White",
       "cartName": "Immortal Infuse Styling Powder, White 30g",
-      "price": 27.50,
+      "price": 27.5,
       "category": "Styling",
       "flag": "Best seller",
       "description": "The shop favourite. A tiny shake at the roots for instant lift, texture and matte volume — no residue, no weight. 30g.",
-      "images": ["assets/products/style-infuse-powder.jpg"]
+      "images": [
+        "assets/products/style-infuse-powder.jpg"
+      ]
     },
     {
       "id": "style-wax-cbd",
@@ -39,7 +45,9 @@
       "price": 28.95,
       "category": "Styling",
       "description": "CBD-infused wax with a natural finish and flexible hold. Tames without crunch. 100ml.",
-      "images": ["assets/products/style-wax-cbd.jpg"]
+      "images": [
+        "assets/products/style-wax-cbd.jpg"
+      ]
     },
     {
       "id": "style-chaos-pomade",
@@ -49,7 +57,9 @@
       "price": 29.95,
       "category": "Styling",
       "description": "Sea-salt pomade for textured, matte, beachy volume with strong hold. 100ml.",
-      "images": ["assets/products/style-chaos-pomade.jpg"]
+      "images": [
+        "assets/products/style-chaos-pomade.jpg"
+      ]
     },
     {
       "id": "style-super-spray",
@@ -59,7 +69,9 @@
       "price": 25.95,
       "category": "Styling",
       "description": "Strong-hold finishing spray that locks styles in all day without stiffness. 500ml.",
-      "images": ["assets/products/style-super-spray.jpg"]
+      "images": [
+        "assets/products/style-super-spray.jpg"
+      ]
     },
     {
       "id": "style-tobacco-matte",
@@ -69,7 +81,9 @@
       "price": 28.95,
       "category": "Styling",
       "description": "Strong-hold matte pomade with a dry, no-shine finish and a warm tobacco note. Reworkable all day. 100ml.",
-      "images": ["assets/products/style-tobacco-matte.jpg"]
+      "images": [
+        "assets/products/style-tobacco-matte.jpg"
+      ]
     },
     {
       "id": "style-marmara-clay",
@@ -79,7 +93,9 @@
       "price": 24.95,
       "category": "Styling",
       "description": "Turkish-barbershop clay wax for textured, matte styling with firm, all-day hold. 100ml.",
-      "images": ["assets/products/style-marmara-clay.jpg"]
+      "images": [
+        "assets/products/style-marmara-clay.jpg"
+      ]
     },
     {
       "id": "style-marmara-space",
@@ -89,7 +105,9 @@
       "price": 24.95,
       "category": "Styling",
       "description": "High-hold styling wax with a light sheen and a fresh signature scent. Locks the shape, stays workable. 100ml.",
-      "images": ["assets/products/style-marmara-space.jpg"]
+      "images": [
+        "assets/products/style-marmara-space.jpg"
+      ]
     },
     {
       "id": "shave-bayrum-splash",
@@ -99,7 +117,9 @@
       "price": 24.95,
       "category": "Shave & Fragrance",
       "description": "Classic bay rum splash that cools, tones and finishes the shave clean. 250ml.",
-      "images": ["assets/products/shave-bayrum-splash.jpg"]
+      "images": [
+        "assets/products/shave-bayrum-splash.jpg"
+      ]
     },
     {
       "id": "cologne-one-million",
@@ -109,7 +129,9 @@
       "price": 29.95,
       "category": "Shave & Fragrance",
       "description": "Bold barbershop cologne with a fresh, long-lasting signature scent. 500ml.",
-      "images": ["assets/products/cologne-one-million.jpg"]
+      "images": [
+        "assets/products/cologne-one-million.jpg"
+      ]
     },
     {
       "id": "tonic-wahl-bayrum",
@@ -119,13 +141,15 @@
       "price": 16.95,
       "category": "Shave & Fragrance",
       "description": "Old-school bay rum tonic for scalp and skin — invigorating, antiseptic, built to last. 250ml.",
-      "images": ["assets/products/tonic-wahl-bayrum.jpg"]
+      "images": [
+        "assets/products/tonic-wahl-bayrum.jpg"
+      ]
     },
     {
       "id": "merch-hoodie",
       "slug": "merch-hoodie",
       "name": "Heavy Hoodie",
-      "price": 90.00,
+      "price": 90.0,
       "category": "Apparel",
       "description": "Brushed-fleece heavyweight hoodie, double-lined hood, embroidered chest mark with the “bs” print across the back.",
       "colours": [
@@ -133,21 +157,40 @@
           "name": "Black",
           "swatch": "#15151a",
           "variantId": "merch-hoodie-black",
-          "images": ["assets/merch/hoodie-black-front.webp", "assets/merch/hoodie-black-back.webp", "assets/merch/hoodie-black-side.webp", "assets/merch/hoodie-black-leaning.webp", "assets/merch/hoodie-black-product.webp"]
+          "images": [
+            "assets/merch/hoodie-black-front.webp",
+            "assets/merch/hoodie-black-back.webp",
+            "assets/merch/hoodie-black-side.webp",
+            "assets/merch/hoodie-black-leaning.webp",
+            "assets/merch/hoodie-black-product.webp"
+          ]
         },
         {
           "name": "Pine Green",
           "swatch": "#2f4136",
           "variantId": "merch-hoodie-pine-green",
-          "images": ["assets/merch/hoodie-pine-front.webp", "assets/merch/hoodie-pine-back.webp", "assets/merch/hoodie-pine-side.webp", "assets/merch/hoodie-pine-leaning.webp", "assets/merch/hoodie-pine-product.webp"]
+          "images": [
+            "assets/merch/hoodie-pine-front.webp",
+            "assets/merch/hoodie-pine-back.webp",
+            "assets/merch/hoodie-pine-side.webp",
+            "assets/merch/hoodie-pine-leaning.webp",
+            "assets/merch/hoodie-pine-product.webp"
+          ]
         }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
       ]
     },
     {
       "id": "merch-tee",
       "slug": "merch-tee",
       "name": "Heavy Tee",
-      "price": 50.00,
+      "price": 50.0,
       "category": "Apparel",
       "description": "Heavyweight cotton tee with the Blacksmith blackletter chest mark and the “bs” print across the back. Boxy, hard-wearing fit.",
       "colours": [
@@ -155,21 +198,40 @@
           "name": "Black",
           "swatch": "#15151a",
           "variantId": "merch-tee-black",
-          "images": ["assets/merch/tee-black-front.webp", "assets/merch/tee-black-back.webp", "assets/merch/tee-black-side.webp", "assets/merch/tee-black-seated.webp", "assets/merch/tee-black-product.webp"]
+          "images": [
+            "assets/merch/tee-black-front.webp",
+            "assets/merch/tee-black-back.webp",
+            "assets/merch/tee-black-side.webp",
+            "assets/merch/tee-black-seated.webp",
+            "assets/merch/tee-black-product.webp"
+          ]
         },
         {
           "name": "Pine Green",
           "swatch": "#2f4136",
           "variantId": "merch-tee-pine-green",
-          "images": ["assets/merch/tee-pine-front.webp", "assets/merch/tee-pine-back.webp", "assets/merch/tee-pine-side.webp", "assets/merch/tee-pine-seated.webp", "assets/merch/tee-pine-product.webp"]
+          "images": [
+            "assets/merch/tee-pine-front.webp",
+            "assets/merch/tee-pine-back.webp",
+            "assets/merch/tee-pine-side.webp",
+            "assets/merch/tee-pine-seated.webp",
+            "assets/merch/tee-pine-product.webp"
+          ]
         }
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "2XL"
       ]
     },
     {
       "id": "merch-beanie",
       "slug": "merch-beanie",
       "name": "Cuffed Beanie",
-      "price": 35.00,
+      "price": 35.0,
       "category": "Headwear",
       "description": "Fine-knit cuffed beanie with woven Blacksmith tab. One size.",
       "images": [],
@@ -180,7 +242,7 @@
       "slug": "merch-giftcard",
       "name": "Gift Card",
       "cartName": "Gift Card ($50)",
-      "price": 50.00,
+      "price": 50.0,
       "category": "Gift",
       "description": "The easy win. Redeemable on cuts, salon and product in-shop. $50 value.",
       "images": [],
