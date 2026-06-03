@@ -133,13 +133,13 @@
           "name": "Black",
           "swatch": "#15151a",
           "variantId": "merch-hoodie-black",
-          "images": ["assets/merch/hoodie-black-front.jpg", "assets/merch/hoodie-black-back.jpg", "assets/merch/hoodie-onmodel.jpg"]
+          "images": ["assets/merch/hoodie-black-front.webp", "assets/merch/hoodie-black-back.webp", "assets/merch/hoodie-black-side.webp", "assets/merch/hoodie-black-leaning.webp", "assets/merch/hoodie-black-product.webp"]
         },
         {
           "name": "Pine Green",
           "swatch": "#2f4136",
           "variantId": "merch-hoodie-pine-green",
-          "images": ["assets/merch/hoodie-pine-front.jpg", "assets/merch/hoodie-pine-back.jpg", "assets/merch/hoodie-onmodel.jpg"]
+          "images": ["assets/merch/hoodie-pine-front.webp", "assets/merch/hoodie-pine-back.webp", "assets/merch/hoodie-pine-side.webp", "assets/merch/hoodie-pine-leaning.webp", "assets/merch/hoodie-pine-product.webp"]
         }
       ]
     },
@@ -155,13 +155,13 @@
           "name": "Black",
           "swatch": "#15151a",
           "variantId": "merch-tee-black",
-          "images": ["assets/merch/tee-black-front.jpg", "assets/merch/tee-black-back.jpg"]
+          "images": ["assets/merch/tee-black-front.webp", "assets/merch/tee-black-back.webp", "assets/merch/tee-black-side.webp", "assets/merch/tee-black-seated.webp", "assets/merch/tee-black-product.webp"]
         },
         {
           "name": "Pine Green",
           "swatch": "#2f4136",
           "variantId": "merch-tee-pine-green",
-          "images": ["assets/merch/tee-pine-front.jpg", "assets/merch/tee-pine-back.jpg"]
+          "images": ["assets/merch/tee-pine-front.webp", "assets/merch/tee-pine-back.webp", "assets/merch/tee-pine-side.webp", "assets/merch/tee-pine-seated.webp", "assets/merch/tee-pine-product.webp"]
         }
       ]
     },
