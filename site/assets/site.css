@@ -682,3 +682,11 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 /* How it works — 3 step */
 .how-num{font-family:'Oswald',sans-serif;font-size:1.05rem;font-weight:600;letter-spacing:.14em;color:var(--gold);margin-bottom:14px}
 .how-steps .feature-card{display:flex;flex-direction:column}
+
+/* ---- polish pass: how-it-works spacing + sticky-bar clearance ---- */
+.how .eyebrow{margin-bottom:16px}
+.how .h2{margin-bottom:clamp(36px,5.5vw,54px)}
+.how-num{margin-bottom:16px}
+.how-steps{gap:clamp(16px,2vw,22px)}
+.how-steps .feature-card{padding-block:clamp(30px,3.4vw,40px)}
+@media(max-width:819px){body{padding-bottom:78px}}
