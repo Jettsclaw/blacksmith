@@ -710,3 +710,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .keypeople .barber-grid{grid-template-columns:1fr;max-width:780px;margin-inline:auto}
 @media(min-width:680px){.keypeople .barber-grid{grid-template-columns:repeat(2,1fr)}}
 .keypeople .kp-quiz{text-align:center;margin-top:clamp(26px,4vw,38px)}
+
+/* Find-your-barber lead-capture band */
+.quiz-band{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.quiz-band .h2{margin:14px 0}
