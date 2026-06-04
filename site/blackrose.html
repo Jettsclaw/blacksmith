@@ -39,17 +39,22 @@ body.theme-rose{
 body.theme-rose .topbar{background:rgba(247,242,236,.72)}
 body.theme-rose .topbar.scrolled{background:rgba(247,242,236,.94);border-bottom-color:var(--line)}
 body.theme-rose .hamburger span{background:var(--paper)}
-body.theme-rose .topbar-logo img{height:56px}
+body.theme-rose .topbar-logo img{height:40px}
+body.theme-rose .footer-logo img{height:40px}
 /* Mobile drawer: light */
 body.theme-rose .drawer{background:rgba(247,242,236,.99)}
-/* Hero keeps its dark photo — force its text light regardless of theme */
+/* Hero: bright salon image — light scrim fading into the page, dark text */
+body.theme-rose .page-hero.has-bg .page-hero-bg::after{
+  background:linear-gradient(180deg, rgba(247,242,236,.30) 0%, rgba(247,242,236,.12) 36%, rgba(247,242,236,.72) 84%, var(--ink) 100%),
+             linear-gradient(90deg, rgba(247,242,236,.82) 0%, rgba(247,242,236,.30) 58%, rgba(247,242,236,0) 100%);
+}
 body.theme-rose .page-hero .crumb,
 body.theme-rose .page-hero .crumb a,
 body.theme-rose .page-hero .eyebrow,
-body.theme-rose .page-hero .h1,
-body.theme-rose .page-hero .lead{color:#f7f2ec}
+body.theme-rose .page-hero .h1{color:var(--paper)}
+body.theme-rose .page-hero .lead{color:var(--body)}
 body.theme-rose .page-hero .crumb span,
-body.theme-rose .page-hero .lead .gold{color:var(--gold-2)}
+body.theme-rose .page-hero .lead .gold{color:var(--gold)}
 /* Ghost button (was light-on-dark border) */
 body.theme-rose .btn-ghost{color:var(--paper);border-color:rgba(0,0,0,.22)}
 body.theme-rose .btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
@@ -109,7 +114,7 @@ body.theme-rose .book-bar{background:rgba(247,242,236,.94);border-top-color:var(
 
 <main id="main">
 <section class="page-hero has-bg">
-  <div class="page-hero-bg" style="background-image:url('assets/scene/TLB_7436.jpg');background-position:center 35%" aria-hidden="true"></div>
+  <div class="page-hero-bg" style="background-image:url('assets/photos/TLB_4870.jpg');background-position:center 30%" aria-hidden="true"></div>
   <div class="wrap page-hero-inner">
     <p class="crumb"><a href="index.html">Home</a> &nbsp;/&nbsp; <span>Blackrose Salon</span></p>
     <p class="eyebrow reveal">Blackrose Salon</p>
