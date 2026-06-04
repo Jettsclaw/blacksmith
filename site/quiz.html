@@ -259,6 +259,12 @@
       line:"Runs the floor with precision and zero ego. Sets the standard every chair aims for.",
       photo:"assets/barbers/bayli.jpg",
       book:"https://web.slikr.com.au/shop/421/res"
+    },
+    sammi: {
+      name:"Sammi", role:"Blackrose Stylist",
+      line:"Runs Blackrose — the salon side of the Blacksmith world. Colour, foils, precision styling and full transformations.",
+      photo:"assets/barbers/sammi.jpg?v=2",
+      book:"https://web.slikr.com.au/blackrosesalon"
     }
   };
 
@@ -271,7 +277,8 @@
         {label:"Skin fade",            service:"Skin Fade", scores:{jarred:3, locky:2}},
         {label:"Scissor cut & style",  service:"Scissor Cut & Style", scores:{ben:3, bayli:1}},
         {label:"Beard sculpt",         service:"Beard Sculpt & Line-up", scores:{bayli:3, jarred:1}},
-        {label:"Full overhaul",        service:"Full Overhaul (cut + beard)", scores:{jarred:2, bayli:2}}
+        {label:"Full overhaul",        service:"Full Overhaul (cut + beard)", scores:{jarred:2, bayli:2}},
+        {label:"Colour & transformation", service:"Colour & Style", force:"sammi", scores:{}}
       ]
     },
     {
@@ -358,8 +365,10 @@
     btn.parentNode.querySelectorAll('.quiz-opt').forEach(function(b){ b.classList.remove('is-picked'); });
     btn.classList.add('is-picked');
     // advance after a beat so the tick is felt
+    var picked = QUESTIONS[qi].options[oi];
     setTimeout(function(){
-      if(qi < QUESTIONS.length - 1){ current = qi + 1; showStep(current); }
+      if(picked.force){ finish(); }            // e.g. colour -> straight to Sammi
+      else if(qi < QUESTIONS.length - 1){ current = qi + 1; showStep(current); }
       else { finish(); }
     }, 280);
   });
@@ -369,6 +378,9 @@
   });
 
   function score(){
+    // Forced result (colour -> Sammi) short-circuits the scoring entirely.
+    var q1 = answers[0] !== null ? QUESTIONS[0].options[answers[0]] : null;
+    if(q1 && q1.force){ return {winner:q1.force, service:q1.service || "Colour & Style"}; }
     var totals = {jarred:0, locky:0, ben:0, bayli:0};
     var serviceFromQ1 = QUESTIONS[0].options[answers[0]] ? QUESTIONS[0].options[answers[0]].service : "Cut";
     answers.forEach(function(oi, qi){
@@ -398,6 +410,7 @@
       case 'locky':  return "You know what good looks like and you're after a chair that delivers it on repeat — Locky's book is full of regulars for exactly that reason.";
       case 'ben':    return "Clean, classic, no fuss — Ben's solid hands keep clients coming back. A safe, sharp first chair at Blacksmith.";
       case 'bayli':  return "You're after precision or a proper reset — Bayli runs the floor and sets the standard every other chair aims for.";
+      case 'sammi':  return "You're after colour or a full transformation — that's Sammi's world. She runs Blackrose, the salon side of Blacksmith, doing colour, foils and precision styling.";
       default:       return "";
     }
   }
