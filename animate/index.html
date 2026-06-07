@@ -3,195 +3,183 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
 <title>Blacksmith Barbers — Your barber. Your chair. Your time.</title>
-<meta name="description" content="The only Gold Coast barbershop where you lock in your barber, your chair and your time. Same cut, same bloke, zero waiting. More than a barbershop — we're family."/>
+<meta name="description" content="The only Gold Coast barbershop where you lock in your barber, your chair and your time. Same cut, same bloke, zero waiting."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0d0d0f;--panel:#141417;--line:#26262c;--paper:#f3f1ea;--mut:#a2a2aa;--gold:#c8a44d;--goldl:#e3c578}
+  :root{--bg:#0c0a08;--panel:#16120d;--line:#2a241b;--paper:#f3f1ea;--mut:#a89f8e;--gold:#c8a44d;--goldl:#e3c578;--ember:#ff7a1a}
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{background:var(--bg);color:var(--paper);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  html,body{background:var(--bg);color:var(--paper);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
   a{color:inherit;text-decoration:none}::selection{background:rgba(200,164,77,.35)}
-  h1,h2,h3,.dwm,.ey{font-family:"Oswald",system-ui,sans-serif;font-weight:600;letter-spacing:.005em}
-  #stage{position:fixed;inset:0;width:100vw;height:100dvh;z-index:0;overflow:hidden;background:#0d0d0f}
-  #vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
-  #scene{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
-  .scrim{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(130% 110% at 50% 38%,transparent 48%,rgba(13,13,15,.92) 100%)}
-  .grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.06;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-  nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,4vw,56px);transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
-  nav.solid{background:rgba(13,13,15,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-  .dwm{font-size:20px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}.dwm b{color:var(--gold);font-weight:700}
-  .nlinks{display:flex;gap:26px;font-size:13px;align-items:center;text-transform:uppercase;letter-spacing:.08em}.nlinks a{color:#cfcdc4}.nlinks a:hover{color:var(--gold)}
-  .navcta{padding:11px 20px;border:1px solid var(--gold);color:var(--gold);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;transition:.25s}.navcta:hover{background:var(--gold);color:#0d0d0f}
+  h1,h2,h3,.dwm,.ey,.bigwm{font-family:"Oswald",system-ui,sans-serif;font-weight:600}
+  /* fixed transforming canvas + tall scroll story */
+  #scene{position:fixed;inset:0;width:100vw;height:100dvh;z-index:0;display:block}
+  .glow{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(60% 50% at 50% 88%,rgba(255,122,26,var(--gi,.18)),transparent 70%);transition:none}
+  .vig{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(130% 110% at 50% 42%,transparent 46%,rgba(12,10,8,.94) 100%)}
+  .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.06;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  nav{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,4vw,56px);transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+  nav.solid{background:rgba(12,10,8,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .dwm{font-size:20px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}.dwm b{color:var(--gold)}
+  .nlinks{display:flex;gap:24px;font-size:13px;align-items:center;text-transform:uppercase;letter-spacing:.08em}.nlinks a{color:#d7cfc0}.nlinks a:hover{color:var(--gold)}
+  .navcta{padding:11px 20px;border:1px solid var(--gold);color:var(--gold);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;transition:.25s}.navcta:hover{background:var(--gold);color:#0c0a08}
   .burger{display:none;flex-direction:column;gap:5px;cursor:pointer}.burger span{width:22px;height:2px;background:var(--paper);transition:.3s}
-  main{position:relative;z-index:3}
-  section{padding:0 clamp(22px,7vw,150px);position:relative}
-  .reveal{opacity:0;transform:translateY(28px);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1)}.reveal.in{opacity:1;transform:none}
-  .ey{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:20px;display:inline-block}
-  h1,h2{text-shadow:0 3px 50px rgba(13,13,15,.9)}.sub,p{text-shadow:0 2px 24px rgba(13,13,15,.9)}
-  .g{color:var(--gold)}
-  .btn{display:inline-flex;align-items:center;gap:9px;padding:15px 30px;font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:"Inter";transition:.25s}
-  .btn.solid{background:var(--gold);color:#0d0d0f}.btn.solid:hover{background:var(--goldl)}
-  .btn.ghost{border:1px solid rgba(243,241,234,.3);color:var(--paper)}.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
-  .ctarow{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
-  .hero{min-height:106vh;display:flex;flex-direction:column;justify-content:center}
-  .hero h1{font-size:clamp(46px,9vw,150px);line-height:.92;font-weight:700;text-transform:uppercase;letter-spacing:.01em;max-width:14ch}
-  .hero h1 .g{color:var(--gold)}
-  .sub{margin-top:26px;font-size:clamp(16px,1.8vw,21px);line-height:1.6;max-width:42ch;color:#d8d6cd;font-weight:300}
-  .full{min-height:100vh;display:flex;flex-direction:column;justify-content:center}
-  h2{font-size:clamp(32px,5.4vw,82px);line-height:.98;font-weight:700;text-transform:uppercase;max-width:18ch}
+  /* chapters pinned, fade by active range */
+  .chap{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:center;padding:0 clamp(22px,7vw,150px);opacity:0;pointer-events:none;transition:opacity .55s ease}
+  .chap.on{opacity:1;pointer-events:auto}
+  .chap .inner{max-width:62ch;transform:translateY(22px);transition:transform 1s cubic-bezier(.16,1,.3,1)}.chap.on .inner{transform:none}
+  .chap.center{align-items:center;text-align:center}
+  .ey{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:18px;display:inline-block}
+  h1,h2{text-shadow:0 4px 50px rgba(12,10,8,.95)}.sub,p{text-shadow:0 2px 26px rgba(12,10,8,.95)}
+  .g{color:var(--gold)}.dim{color:#6f6655}
+  h1{font-size:clamp(46px,9vw,150px);line-height:.9;font-weight:700;text-transform:uppercase;letter-spacing:.01em;max-width:13ch}
+  h2{font-size:clamp(34px,5.6vw,84px);line-height:.96;font-weight:700;text-transform:uppercase;max-width:17ch}
+  .sub{margin-top:24px;font-size:clamp(16px,1.8vw,21px);line-height:1.6;max-width:42ch;color:#ded7c8;font-weight:300}
   .lead{margin-top:22px;font-size:clamp(15px,1.7vw,20px);line-height:1.6;max-width:46ch;color:var(--mut);font-weight:300}
-  /* three sides */
-  .sides{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;max-width:1100px}
-  .side{padding:34px 28px 38px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);transition:border-color .4s,transform .4s}
-  .side:hover{border-color:var(--gold);transform:translateY(-5px)}
-  .side .n{font-family:"Oswald";font-size:13px;letter-spacing:.2em;color:var(--gold)}.side h3{margin-top:12px;font-size:26px;font-weight:600;text-transform:uppercase}.side p{margin-top:12px;font-size:14px;line-height:1.6;color:var(--mut)}
-  /* circle tiers */
-  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;max-width:1100px}
-  .tier{padding:34px 28px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;transition:border-color .4s,transform .4s}
-  .tier:hover{border-color:var(--gold);transform:translateY(-5px)}
-  .tier.feat{border-color:var(--gold);background:linear-gradient(180deg,rgba(200,164,77,.1),var(--panel))}
-  .tier .tn{font-family:"Oswald";font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
-  .tier .pr{margin-top:14px;font-family:"Oswald";font-size:46px;font-weight:700}.tier .pr small{font-size:15px;color:var(--mut);font-weight:400;font-family:"Inter"}
-  .tier ul{list-style:none;margin:20px 0 24px;display:flex;flex-direction:column;gap:11px}
-  .tier li{font-size:14px;color:#d8d6cd;padding-left:22px;position:relative;line-height:1.4}.tier li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;background:var(--gold);transform:rotate(45deg)}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:15px 30px;font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:"Inter";transition:.25s}
+  .btn.solid{background:var(--gold);color:#0c0a08}.btn.solid:hover{background:var(--goldl)}
+  .btn.ghost{border:1px solid rgba(243,241,234,.3);color:var(--paper)}.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
+  .ctarow{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:34px;max-width:1020px}
+  .tier{padding:26px 22px;border:1px solid var(--line);background:rgba(22,18,13,.66);backdrop-filter:blur(6px);display:flex;flex-direction:column}
+  .tier.feat{border-color:var(--gold)}
+  .tier .tn{font-family:"Oswald";font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+  .tier .pr{margin-top:10px;font-family:"Oswald";font-size:40px;font-weight:700}.tier .pr small{font-size:14px;color:var(--mut);font-weight:400;font-family:"Inter"}
+  .tier ul{list-style:none;margin:16px 0 18px;display:flex;flex-direction:column;gap:9px}.tier li{font-size:13px;color:#ded7c8;padding-left:18px;position:relative;line-height:1.35}.tier li::before{content:"";position:absolute;left:0;top:6px;width:6px;height:6px;background:var(--gold);transform:rotate(45deg)}
   .tier .btn{margin-top:auto;justify-content:center}
-  .founding{margin-top:16px;font-size:12px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase}
-  /* proof */
-  .proof{display:flex;gap:54px;flex-wrap:wrap;margin-top:30px}
-  .pf .v{font-family:"Oswald";font-size:clamp(38px,5vw,68px);font-weight:700;color:var(--gold)}.pf .l{margin-top:4px;font-size:13px;color:var(--mut);max-width:20ch;line-height:1.4}
-  /* family video band */
-  .band{position:relative;min-height:90vh;display:flex;align-items:center;overflow:hidden}
-  .band video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.55}
-  .band .bscrim{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(13,13,15,.9),rgba(13,13,15,.4))}
-  .band .inner{position:relative;z-index:2;padding:0 clamp(22px,7vw,150px)}
-  .end{min-height:104vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
-  .end h2{max-width:16ch}
-  .contactline{margin-top:24px;font-size:14px;color:#d8d6cd;display:flex;gap:22px;flex-wrap:wrap;justify-content:center}.contactline a:hover{color:var(--gold)}
-  footer{position:relative;z-index:3;padding:48px clamp(22px,7vw,150px);border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--mut)}
-  .scrollcue{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:5;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--mut);opacity:.8}
-  @media(max-width:860px){.nlinks a:not(.navcta){display:none}.sides,.tiers{grid-template-columns:1fr}}
-  @media(prefers-reduced-motion:reduce){#vid,.band video{display:none}}
+  .sides{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:34px;max-width:1000px}
+  .side .n{font-family:"Oswald";font-size:13px;letter-spacing:.2em;color:var(--gold)}.side h3{margin-top:8px;font-size:24px;font-weight:600;text-transform:uppercase}.side p{margin-top:9px;font-size:13.5px;line-height:1.55;color:var(--mut)}
+  .proof{display:flex;gap:50px;flex-wrap:wrap;margin-top:26px}.pf .v{font-family:"Oswald";font-size:clamp(36px,5vw,64px);font-weight:700;color:var(--gold)}.pf .l{margin-top:3px;font-size:12.5px;color:var(--mut);max-width:20ch;line-height:1.4}
+  .rail{position:fixed;right:clamp(14px,2.2vw,30px);top:50%;transform:translateY(-50%);z-index:20;display:flex;flex-direction:column;gap:14px;align-items:flex-end}
+  .rail i{width:7px;height:7px;border:1px solid rgba(243,241,234,.35);border-radius:50%;transition:.3s;display:block}.rail i.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px var(--gold)}
+  .pct{position:fixed;bottom:24px;left:clamp(20px,4vw,56px);z-index:20;font-size:11px;letter-spacing:.2em;color:var(--mut);font-family:"Oswald"}.pct b{color:var(--gold)}
+  .story{height:600vh;position:relative;z-index:5}
+  @media(max-width:860px){.nlinks a:not(.navcta){display:none}.tiers,.sides{grid-template-columns:1fr}.rail{display:none}}
 </style>
 </head>
 <body>
-  <div id="stage"><video id="vid" playsinline muted loop autoplay preload="auto" crossorigin="anonymous"></video><canvas id="scene"></canvas></div>
-  <div class="scrim"></div><div class="grain"></div>
+  <canvas id="scene"></canvas><div class="glow"></div><div class="vig"></div><div class="grain"></div>
 
   <nav id="nav">
     <div class="dwm">Black<b>smith</b></div>
-    <div class="nlinks"><a href="#mech">The chair</a><a href="#sides">The trade</a><a href="#circle">Circle</a><a href="#proof">Why us</a><a class="navcta" href="#book">Lock in your chair</a></div>
+    <div class="nlinks"><a data-go="1">The chair</a><a data-go="2">The trade</a><a data-go="3">Circle</a><a data-go="4">Why us</a><a class="navcta" data-go="5">Lock in your chair</a></div>
     <div class="burger"><span></span><span></span><span></span></div>
   </nav>
+  <div class="rail" id="rail"></div>
+  <div class="pct"><b id="pctn">00</b> / 100</div>
 
-  <main>
-    <section class="hero">
-      <span class="ey reveal">Biggera Waters · Gold Coast · est. 10 years</span>
-      <h1 class="reveal">Your barber.<br>Your chair.<br>Your <span class="g">time</span>.</h1>
-      <p class="sub reveal">The only Gold Coast barbershop where you lock it all in — so it's the same cut, by the same bloke, with zero waiting. More than a barbershop. We're family.</p>
-      <div class="ctarow reveal"><a class="btn solid" href="#circle">Lock in your chair</a><a class="btn ghost" href="#book">Book a cut</a></div>
-      <div class="scrollcue">scroll</div>
-    </section>
-
-    <section class="full" id="mech">
-      <span class="ey reveal">The end of barber roulette</span>
-      <h2 class="reveal">Take a number, get whoever's free. <span class="g">Not here.</span></h2>
-      <p class="lead reveal">Everywhere else, a haircut's a gamble — you rock up, wait, and re-explain your cut to a stranger. At Blacksmith you lock your barber, your chair and your slot. Same bloke, same cut, every time. He knows it before you sit down.</p>
-    </section>
-
-    <section class="full" id="sides">
-      <span class="ey reveal">Three sides of the trade</span>
-      <h2 class="reveal">One room. One standard.</h2>
+  <div class="chap center" data-ch="0">
+    <div class="inner"><span class="ey">Biggera Waters · Gold Coast · forged over 10 years</span>
+      <h1>Your barber.<br>Your chair.<br>Your <span class="g">time</span>.</h1>
+      <p class="sub" style="margin-left:auto;margin-right:auto">Lock it all in — same cut, same bloke, zero waiting. More than a barbershop. We're family.</p>
+      <div class="ctarow" style="justify-content:center"><a class="btn solid" data-go="3">Lock in your chair</a><a class="btn ghost" data-go="1">How it works</a></div>
+    </div>
+  </div>
+  <div class="chap" data-ch="1">
+    <div class="inner"><span class="ey">The end of barber roulette</span><h2>Take a number, get whoever's free. <span class="g">Not here.</span></h2>
+      <p class="lead">Everywhere else a cut's a gamble — you wait, then re-explain it to a stranger. Here you lock your barber, your chair, your slot. He knows your cut before you sit down.</p></div>
+  </div>
+  <div class="chap" data-ch="2">
+    <div class="inner"><span class="ey">Three sides of the trade</span><h2>One room. One <span class="g">standard</span>.</h2>
       <div class="sides">
-        <div class="side reveal"><div class="n">01</div><h3>Barbering</h3><p>Old-school craft in a modern room. Skin fades, scissor work, hot towels — by barbers who actually know your name.</p></div>
-        <div class="side reveal"><div class="n">02</div><h3>Blackrose Salon Co.</h3><p>The refined salon side. Colour, styling and care held to the same standard as the chair next door.</p></div>
-        <div class="side reveal"><div class="n">03</div><h3>The Academy</h3><p>We train the trade. The next generation of barbers, taught the craft the way it should be.</p></div>
-      </div>
-    </section>
-
-    <section class="band">
-      <video id="bandvid" playsinline muted loop autoplay preload="auto"></video><div class="bscrim"></div>
-      <div class="inner"><span class="ey reveal">More than a barbershop</span><h2 class="reveal" style="max-width:14ch">We're <span class="g">family</span>.</h2><p class="lead reveal">Ten years, family-owned, 15,000+ blokes through the chair. People don't switch barbers here — they just keep coming back.</p></div>
-    </section>
-
-    <section class="full" id="circle">
-      <span class="ey reveal">Blacksmith Circle</span>
-      <h2 class="reveal">Stop booking. Start belonging.</h2>
-      <p class="lead reveal">Lock your chair for the year. Founding rates, limited slots — for the regulars who already treat this place like theirs.</p>
+        <div class="side"><div class="n">01</div><h3>Barbering</h3><p>Old-school craft, modern room. Fades, scissor work, hot towels — by barbers who know your name.</p></div>
+        <div class="side"><div class="n">02</div><h3>Blackrose Salon</h3><p>The refined salon side. Colour, styling and care, same standard as the chair next door.</p></div>
+        <div class="side"><div class="n">03</div><h3>The Academy</h3><p>We train the trade — the next generation, taught the craft the way it should be.</p></div>
+      </div></div>
+  </div>
+  <div class="chap" data-ch="3">
+    <div class="inner"><span class="ey">Blacksmith Circle</span><h2>Stop booking. <span class="g">Start belonging.</span></h2>
       <div class="tiers">
-        <div class="tier reveal"><div class="tn">The Cut</div><div class="pr">$69<small>/mo</small></div><ul><li>One locked slot a month</li><li>Priority booking, skip the wait</li><li>Members' lounge access</li></ul><div class="founding">Founding · first 100 · 12-mo lock</div><a class="btn ghost" href="#book">Lock it in</a></div>
-        <div class="tier feat reveal"><div class="tn">The Club</div><div class="pr">$129<small>/mo</small></div><ul><li>Two locked slots a month</li><li>Members-only hours</li><li>Store-credit engine + Blackrose discount</li></ul><div class="founding">Founding · first 75 · saves $289/yr</div><a class="btn solid" href="#book">Lock it in</a></div>
-        <div class="tier reveal"><div class="tn">The Empire</div><div class="pr">$229<small>/mo</small></div><ul><li>Three locked slots a month</li><li>Members' Wall + monthly merch</li><li>Events, gifting, partner network</li></ul><div class="founding">Founding · first 30 · lifetime lock</div><a class="btn ghost" href="#book">Apply</a></div>
-      </div>
-    </section>
+        <div class="tier"><div class="tn">The Cut</div><div class="pr">$69<small>/mo</small></div><ul><li>One locked slot a month</li><li>Priority booking, skip the wait</li><li>Members' lounge</li></ul><a class="btn ghost" data-go="5">Lock it in</a></div>
+        <div class="tier feat"><div class="tn">The Club</div><div class="pr">$129<small>/mo</small></div><ul><li>Two locked slots a month</li><li>Members-only hours</li><li>Store credit + Blackrose discount</li></ul><a class="btn solid" data-go="5">Lock it in</a></div>
+        <div class="tier"><div class="tn">The Empire</div><div class="pr">$229<small>/mo</small></div><ul><li>Three locked slots</li><li>Members' Wall + monthly merch</li><li>Events, gifting, partners</li></ul><a class="btn ghost" data-go="5">Apply</a></div>
+      </div></div>
+  </div>
+  <div class="chap" data-ch="4">
+    <div class="inner"><span class="ey">Why blokes stay</span><h2>Ten years. <span class="g">Earned.</span></h2>
+      <div class="proof"><div class="pf"><div class="v">15,191</div><div class="l">Clients through the chair.</div></div><div class="pf"><div class="v">4.7★</div><div class="l">200+ reviews. 94% recommend.</div></div><div class="pf"><div class="v">10 yrs</div><div class="l">Family-owned, Biggera Waters.</div></div></div></div>
+  </div>
+  <div class="chap center" data-ch="5">
+    <div class="inner"><span class="ey">Your chair's waiting</span><h2 style="margin:0 auto">Never gamble a cut <span class="g">again</span>.</h2>
+      <p class="sub" style="margin-left:auto;margin-right:auto">Book a cut, or claim a founding Circle slot before they're gone.</p>
+      <div class="ctarow" style="justify-content:center"><a class="btn solid" href="https://web.slikr.com.au/blacksmithbarbers">Book your cut</a><a class="btn ghost" data-go="3">Join the Circle</a></div></div>
+  </div>
 
-    <section class="full" id="proof">
-      <span class="ey reveal">Why blokes stay</span>
-      <h2 class="reveal">Ten years. <span class="g">Earned.</span></h2>
-      <div class="proof">
-        <div class="pf reveal"><div class="v">15,191</div><div class="l">Clients through the chair — 973 already behave like members.</div></div>
-        <div class="pf reveal"><div class="v">4.7★</div><div class="l">Across 200+ Google reviews. 94% recommend on Facebook.</div></div>
-        <div class="pf reveal"><div class="v">10 yrs</div><div class="l">Family-owned, Biggera Waters. Cam &amp; Beau, since day one.</div></div>
-      </div>
-    </section>
+  <div class="story" id="story"></div>
 
-    <section class="end" id="book">
-      <span class="ey reveal">Your chair's waiting</span>
-      <h2 class="reveal">Lock in your barber.<br>Never gamble a cut <span class="g">again</span>.</h2>
-      <p class="lead reveal" style="text-align:center;margin-left:auto;margin-right:auto">Book a cut, or claim a founding Circle slot before they're gone.</p>
-      <div class="ctarow reveal" style="justify-content:center"><a class="btn solid" href="#">Book your cut</a><a class="btn ghost" href="#circle">Join the Circle</a></div>
-      <div class="contactline reveal"><span>Biggera Waters, Gold Coast</span><span>·</span><span>1 min from Harbour Town</span></div>
-    </section>
-  </main>
-
-  <footer><span>© 2026 Blacksmith Barbers &amp; Academy</span><span>More than a barbershop. We're family.</span></footer>
-
-  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
   <script type="module">
     import * as THREE from 'three';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
     const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const vid=document.getElementById('vid');vid.src="scenes/forge.mp4";
-    document.getElementById('bandvid').src="scenes/shop.mp4";
-    const canvas=document.getElementById('scene'),stage=document.getElementById('stage');
-    const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-    const scene=new THREE.Scene();const cam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
-    const tex=new THREE.VideoTexture(vid);tex.minFilter=THREE.LinearFilter;tex.magFilter=THREE.LinearFilter;tex.generateMipmaps=false;
-    const U={uTex:{value:tex},uTime:{value:0},uScroll:{value:0},uVel:{value:0},uRes:{value:new THREE.Vector2(1,1)},uVR:{value:new THREE.Vector2(16,9)},uGold:{value:new THREE.Color(0xc8a44d)}};
-    function size(){renderer.setSize(stage.clientWidth,stage.clientHeight);U.uRes.value.set(stage.clientWidth,stage.clientHeight);}
-    const mat=new THREE.ShaderMaterial({uniforms:U,
-      vertexShader:`varying vec2 v;void main(){v=uv;gl_Position=vec4(position,1.0);}`,
-      fragmentShader:`precision highp float;uniform sampler2D uTex;uniform float uTime,uScroll,uVel;uniform vec2 uRes,uVR;uniform vec3 uGold;varying vec2 v;
-        vec2 cover(vec2 uv){float sa=uRes.x/uRes.y,va=uVR.x/uVR.y;vec2 s=vec2(1.);if(sa>va)s.y=va/sa;else s.x=sa/va;return (uv-.5)*s+.5;}
-        float hash(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}
-        void main(){vec2 uv=cover(v);
-          uv.y+=sin(uv.x*5.0+uTime*0.3)*(0.004+uVel*0.02);
-          vec3 col=texture2D(uTex,uv).rgb;
-          float lum=dot(col,vec3(0.299,0.587,0.114));
-          col=mix(col,col*uGold*1.6,0.18)+uGold*pow(lum,2.2)*0.25;   // warm gold grade
-          col=(col-0.5)*1.12+0.5; col*=1.06;
-          col*=0.96+0.04*sin(v.y*uRes.y*1.1); col+=(hash(v*uRes+uTime)-0.5)*0.04;
-          float d=distance(v,vec2(0.5));col*=smoothstep(1.2,0.55,d)*0.3+0.7;
-          col*=1.0-uScroll*0.42;
-          gl_FragColor=vec4(col,1.0);}`});
-    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat));
-    size();addEventListener('resize',size);
-    vid.addEventListener('loadedmetadata',()=>{U.uVR.value.set(vid.videoWidth||16,vid.videoHeight||9);size();});
-    const play=v=>{const p=v.play();if(p)p.catch(()=>{});};play(vid);play(document.getElementById('bandvid'));
-    addEventListener('pointerdown',()=>{play(vid);play(document.getElementById('bandvid'));},{once:true});
-    let scrollP=0,vel=0;
-    if(!REDUCED){
-      gsap.registerPlugin(ScrollTrigger);
-      const lenis=new Lenis({lerp:0.09,smoothWheel:true});window.__lenis=lenis;
-      lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0);
-      lenis.on('scroll',e=>document.getElementById('nav').classList.toggle('solid',(e.scroll||0)>40));
-      ScrollTrigger.create({trigger:'main',start:'top top',end:'bottom bottom',scrub:true,onUpdate:s=>{scrollP=s.progress;vel=Math.min(Math.abs(s.getVelocity())/3000,2.0);U.uScroll.value=s.progress;const c=document.querySelector('.scrollcue');if(c)c.style.opacity=s.progress>0.02?0:0.8;}});
+    const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('scene'),antialias:true,alpha:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+    const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,0.1,1400);camera.position.set(0,0,100);
+    const COUNT=8500;const seeds=new Float32Array(COUNT),sizes=new Float32Array(COUNT),bright=new Float32Array(COUNT);
+    for(let i=0;i<COUNT;i++){seeds[i]=Math.random();sizes[i]=0.5+Math.random()*Math.random()*3.4;bright[i]=0.3+Math.pow(Math.random(),2.0)*1.7;}
+    // formations: ember storm → forged LOGO → wide field → glowing ingot
+    const T_EMBER=new Float32Array(COUNT*3),T_LOGO=new Float32Array(COUNT*3),T_FIELD=new Float32Array(COUNT*3),T_INGOT=new Float32Array(COUNT*3);
+    for(let i=0;i<COUNT;i++){
+      // EMBER: rising cone of sparks from the forge (bottom), chaotic
+      const ang=Math.random()*Math.PI*2, rad=Math.pow(Math.random(),0.5)*46*(0.3+Math.random()), yy=-60+Math.random()*150;
+      T_EMBER[i*3]=Math.cos(ang)*rad*(1-(yy+60)/260); T_EMBER[i*3+1]=yy; T_EMBER[i*3+2]=Math.sin(ang)*rad*0.6;
+      // FIELD: wide calm ember band
+      const a2=Math.random()*Math.PI*2,r2=Math.pow(Math.random(),1.7)*80; T_FIELD[i*3]=Math.cos(a2)*r2; T_FIELD[i*3+1]=Math.sin(a2)*r2*0.34; T_FIELD[i*3+2]=(Math.random()*2-1)*70;
+      // INGOT: tight glowing bar (forged metal)
+      T_INGOT[i*3]=(Math.random()*2-1)*26; T_INGOT[i*3+1]=(Math.random()*2-1)*6; T_INGOT[i*3+2]=(Math.random()*2-1)*6;
     }
-    const clock=new THREE.Clock();let vS=0;
-    function loop(){U.uTime.value+=clock.getDelta();vS+=(vel-vS)*0.08;U.uVel.value=vS;if(vid.readyState>=2)tex.needsUpdate=true;renderer.render(scene,cam);requestAnimationFrame(loop);}loop();
-    const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting)en.target.classList.add('in');}),{threshold:0.16});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-    addEventListener('load',()=>document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',ev=>{const t=document.querySelector(a.getAttribute('href'));if(t&&window.__lenis){ev.preventDefault();window.__lenis.scrollTo(t);}})));
+    T_LOGO.set(T_FIELD);
+    const img=new Image();img.onload=()=>{const W=Math.min(img.width,640),H=Math.round(W*img.height/img.width);const cv=document.createElement('canvas');cv.width=W;cv.height=H;const ctx=cv.getContext('2d');ctx.drawImage(img,0,0,W,H);const d=ctx.getImageData(0,0,W,H).data,pts=[];let mnx=1e9,mxx=-1e9,mny=1e9,mxy=-1e9;for(let y=0;y<H;y+=2)for(let x=0;x<W;x+=2){if(d[(y*W+x)*4+3]>90){pts.push([x,y]);if(x<mnx)mnx=x;if(x>mxx)mxx=x;if(y<mny)mny=y;if(y>mxy)mxy=y;}}if(pts.length){for(let k=pts.length-1;k>0;k--){const j=(Math.random()*(k+1))|0;[pts[k],pts[j]]=[pts[j],pts[k]];}const cx=(mnx+mxx)/2,cy=(mny+mxy)/2,range=Math.max(mxx-mnx,mxy-mny)||1,fit=innerWidth<760?120:168;for(let i=0;i<COUNT;i++){const p=pts[i%pts.length];T_LOGO[i*3]=((p[0]-cx)/range)*fit+(Math.random()-0.5)*0.7;T_LOGO[i*3+1]=-((p[1]-cy)/range)*fit+(Math.random()-0.5)*0.7;T_LOGO[i*3+2]=(Math.random()-0.5)*7;}}};
+    img.src='logo.png';
+    const STAGES=[T_EMBER,T_LOGO,T_FIELD,T_INGOT,T_FIELD,T_LOGO];   // hero, mech, sides, circle, proof, book
+    const geo=new THREE.BufferGeometry();const pos=new Float32Array(COUNT*3);pos.set(T_EMBER);
+    geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('aSeed',new THREE.BufferAttribute(seeds,1));geo.setAttribute('aSize',new THREE.BufferAttribute(sizes,1));geo.setAttribute('aBright',new THREE.BufferAttribute(bright,1));
+    const posAttr=geo.attributes.position;
+    const U={uTime:{value:0},uPixel:{value:Math.min(devicePixelRatio,2)},uGold:{value:new THREE.Color(0xe7b24e)},uHot:{value:new THREE.Color(0xfff1c4)},uGlow:{value:0}};
+    const mat=new THREE.ShaderMaterial({uniforms:U,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+      vertexShader:`attribute float aSeed;attribute float aSize;attribute float aBright;uniform float uTime;uniform float uPixel;varying float vB;void main(){vec3 p=position;float fl=0.6+0.4*sin(uTime*3.0+aSeed*40.0);vB=aBright*fl;vec4 mv=modelViewMatrix*vec4(p,1.0);float dist=-mv.z;float size=aSize*(340.0/dist)*uPixel;gl_PointSize=clamp(size,0.0,62.0);gl_Position=projectionMatrix*mv;}`,
+      fragmentShader:`precision highp float;uniform vec3 uGold;uniform vec3 uHot;uniform float uGlow;varying float vB;void main(){vec2 uv=gl_PointCoord-0.5;float d=length(uv);if(d>0.5)discard;float soft=pow(smoothstep(0.5,0.0,d),1.8);vec3 col=mix(uGold,uHot,clamp(vB-0.7,0.0,1.0));gl_FragColor=vec4(col*vB*(1.0+uGlow),soft*0.9);}`});
+    scene.add(new THREE.Points(geo,mat));
+    const composer=new EffectComposer(renderer);composer.addPass(new RenderPass(scene,camera));const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),1.4,0.85,0.0);composer.addPass(bloom);
+
+    const chaps=[...document.querySelectorAll('.chap')], N=chaps.length;
+    const rail=document.getElementById('rail');chaps.forEach((_,k)=>{const i=document.createElement('i');i.dataset.go=k;rail.appendChild(i);});
+    const dots=[...rail.children];
+    function activate(i){chaps.forEach((c,k)=>c.classList.toggle('on',k===i));dots.forEach((d,k)=>d.classList.toggle('on',k===i));}
+    let scrollP=0,vel=0;
+    if(REDUCED){activate(0);}
+    else{
+      gsap.registerPlugin(ScrollTrigger);
+      const lenis=new Lenis({lerp:0.08,smoothWheel:true});window.__lenis=lenis;
+      lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0);
+      ScrollTrigger.create({trigger:'#story',start:'top top',end:'bottom bottom',scrub:true,onUpdate:s=>{scrollP=s.progress;vel=Math.min(Math.abs(s.getVelocity())/3000,2.0);
+        document.getElementById('pctn').textContent=String(Math.round(s.progress*100)).padStart(2,'0');document.getElementById('nav').classList.toggle('solid',s.progress>0.01);}});
+    }
+    document.body.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g&&window.__lenis){const i=+g.dataset.go;const mx=document.documentElement.scrollHeight-innerHeight;window.__lenis.scrollTo((i/(N-1))*mx);}});
+    let tpx=0,tpy=0,px=0,py=0;addEventListener('pointermove',e=>{tpx=e.clientX/innerWidth-0.5;tpy=e.clientY/innerHeight-0.5;});
+    const clock=new THREE.Clock();let vS=0,curM=0,curCh=-1;
+    function animate(){const dt=Math.min(clock.getDelta(),0.05);U.uTime.value+=dt;vS+=(Math.min(vel,2.0)-vS)*0.06;
+      const tgt=scrollP*(N-1);curM+=(tgt-curM)*0.075;
+      const s=Math.min(Math.floor(curM),STAGES.length-2),f=curM-s,e=f*f*(3-2*f);const A=STAGES[s],B=STAGES[s+1],turb=Math.sin(Math.PI*f),tb=turb*9.0,t=U.uTime.value,sw=turb>0.02;
+      for(let i=0;i<COUNT;i++){const ix=i*3,iy=ix+1,iz=ix+2;let x=A[ix]+(B[ix]-A[ix])*e,y=A[iy]+(B[iy]-A[iy])*e,z=A[iz]+(B[iz]-A[iz])*e;
+        // ember life: gentle upward drift + flicker sway always; bigger swirl mid-transition
+        const sd=seeds[i]*30.0; y+=Math.sin(t*0.8+sd)*1.2 + (0.6+ (1.0-bright[i]))*Math.sin(t*0.5+sd)*0.6;
+        x+=Math.sin(t*0.9+sd*1.1)*1.0; if(sw){x+=Math.sin(t*1.0+sd)*tb*0.5;y+=Math.cos(t*0.9+sd*1.1)*tb*0.5+tb*0.4;z+=Math.sin(t*0.8+sd*0.9)*tb;}
+        pos[ix]=x;pos[iy]=y;pos[iz]=z;}
+      posAttr.needsUpdate=true;
+      // forge glow swells toward the ingot (stage 3) + with scroll velocity
+      const ingot=1.0-Math.min(Math.abs(curM-3.0),1.0); U.uGlow.value=ingot*0.7+vS*0.2;
+      document.querySelector('.glow').style.setProperty('--gi',(0.16+ingot*0.5+vS*0.15).toFixed(3));
+      px+=(tpx-px)*0.04;py+=(tpy-py)*0.04;camera.position.x+=(px*16-camera.position.x)*0.05;camera.position.y+=(-py*10-camera.position.y)*0.05;camera.lookAt(0,0,0);
+      bloom.strength=1.25+vS*0.3+ingot*0.5;
+      const ach=Math.round(curM); if(ach!==curCh){curCh=ach;activate(Math.max(0,Math.min(N-1,ach)));}
+      composer.render();requestAnimationFrame(animate);}
+    activate(0);animate();
+    addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);bloom.setSize(innerWidth,innerHeight);U.uPixel.value=Math.min(devicePixelRatio,2);});
   </script>
 </body>
 </html>
