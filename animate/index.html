@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Blacksmith Barbers — Your barber. Your chair. Your time.</title>
+<meta name="description" content="The only Gold Coast barbershop where you lock in your barber, your chair and your time. Same cut, same bloke, zero waiting. More than a barbershop — we're family."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d0d0f;--panel:#141417;--line:#26262c;--paper:#f3f1ea;--mut:#a2a2aa;--gold:#c8a44d;--goldl:#e3c578}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:var(--bg);color:var(--paper);font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}::selection{background:rgba(200,164,77,.35)}
+  h1,h2,h3,.dwm,.ey{font-family:"Oswald",system-ui,sans-serif;font-weight:600;letter-spacing:.005em}
+  #stage{position:fixed;inset:0;width:100vw;height:100dvh;z-index:0;overflow:hidden;background:#0d0d0f}
+  #vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  #scene{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
+  .scrim{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(130% 110% at 50% 38%,transparent 48%,rgba(13,13,15,.92) 100%)}
+  .grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.06;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,4vw,56px);transition:background .4s,border-color .4s;border-bottom:1px solid transparent}
+  nav.solid{background:rgba(13,13,15,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .dwm{font-size:20px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}.dwm b{color:var(--gold);font-weight:700}
+  .nlinks{display:flex;gap:26px;font-size:13px;align-items:center;text-transform:uppercase;letter-spacing:.08em}.nlinks a{color:#cfcdc4}.nlinks a:hover{color:var(--gold)}
+  .navcta{padding:11px 20px;border:1px solid var(--gold);color:var(--gold);font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;transition:.25s}.navcta:hover{background:var(--gold);color:#0d0d0f}
+  .burger{display:none;flex-direction:column;gap:5px;cursor:pointer}.burger span{width:22px;height:2px;background:var(--paper);transition:.3s}
+  main{position:relative;z-index:3}
+  section{padding:0 clamp(22px,7vw,150px);position:relative}
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1)}.reveal.in{opacity:1;transform:none}
+  .ey{font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:20px;display:inline-block}
+  h1,h2{text-shadow:0 3px 50px rgba(13,13,15,.9)}.sub,p{text-shadow:0 2px 24px rgba(13,13,15,.9)}
+  .g{color:var(--gold)}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:15px 30px;font-weight:600;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:"Inter";transition:.25s}
+  .btn.solid{background:var(--gold);color:#0d0d0f}.btn.solid:hover{background:var(--goldl)}
+  .btn.ghost{border:1px solid rgba(243,241,234,.3);color:var(--paper)}.btn.ghost:hover{border-color:var(--gold);color:var(--gold)}
+  .ctarow{margin-top:34px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .hero{min-height:106vh;display:flex;flex-direction:column;justify-content:center}
+  .hero h1{font-size:clamp(46px,9vw,150px);line-height:.92;font-weight:700;text-transform:uppercase;letter-spacing:.01em;max-width:14ch}
+  .hero h1 .g{color:var(--gold)}
+  .sub{margin-top:26px;font-size:clamp(16px,1.8vw,21px);line-height:1.6;max-width:42ch;color:#d8d6cd;font-weight:300}
+  .full{min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+  h2{font-size:clamp(32px,5.4vw,82px);line-height:.98;font-weight:700;text-transform:uppercase;max-width:18ch}
+  .lead{margin-top:22px;font-size:clamp(15px,1.7vw,20px);line-height:1.6;max-width:46ch;color:var(--mut);font-weight:300}
+  /* three sides */
+  .sides{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;max-width:1100px}
+  .side{padding:34px 28px 38px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.03),transparent);transition:border-color .4s,transform .4s}
+  .side:hover{border-color:var(--gold);transform:translateY(-5px)}
+  .side .n{font-family:"Oswald";font-size:13px;letter-spacing:.2em;color:var(--gold)}.side h3{margin-top:12px;font-size:26px;font-weight:600;text-transform:uppercase}.side p{margin-top:12px;font-size:14px;line-height:1.6;color:var(--mut)}
+  /* circle tiers */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;max-width:1100px}
+  .tier{padding:34px 28px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;transition:border-color .4s,transform .4s}
+  .tier:hover{border-color:var(--gold);transform:translateY(-5px)}
+  .tier.feat{border-color:var(--gold);background:linear-gradient(180deg,rgba(200,164,77,.1),var(--panel))}
+  .tier .tn{font-family:"Oswald";font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+  .tier .pr{margin-top:14px;font-family:"Oswald";font-size:46px;font-weight:700}.tier .pr small{font-size:15px;color:var(--mut);font-weight:400;font-family:"Inter"}
+  .tier ul{list-style:none;margin:20px 0 24px;display:flex;flex-direction:column;gap:11px}
+  .tier li{font-size:14px;color:#d8d6cd;padding-left:22px;position:relative;line-height:1.4}.tier li::before{content:"";position:absolute;left:0;top:7px;width:7px;height:7px;background:var(--gold);transform:rotate(45deg)}
+  .tier .btn{margin-top:auto;justify-content:center}
+  .founding{margin-top:16px;font-size:12px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase}
+  /* proof */
+  .proof{display:flex;gap:54px;flex-wrap:wrap;margin-top:30px}
+  .pf .v{font-family:"Oswald";font-size:clamp(38px,5vw,68px);font-weight:700;color:var(--gold)}.pf .l{margin-top:4px;font-size:13px;color:var(--mut);max-width:20ch;line-height:1.4}
+  /* family video band */
+  .band{position:relative;min-height:90vh;display:flex;align-items:center;overflow:hidden}
+  .band video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.55}
+  .band .bscrim{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(13,13,15,.9),rgba(13,13,15,.4))}
+  .band .inner{position:relative;z-index:2;padding:0 clamp(22px,7vw,150px)}
+  .end{min-height:104vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+  .end h2{max-width:16ch}
+  .contactline{margin-top:24px;font-size:14px;color:#d8d6cd;display:flex;gap:22px;flex-wrap:wrap;justify-content:center}.contactline a:hover{color:var(--gold)}
+  footer{position:relative;z-index:3;padding:48px clamp(22px,7vw,150px);border-top:1px solid var(--line);display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--mut)}
+  .scrollcue{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:5;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--mut);opacity:.8}
+  @media(max-width:860px){.nlinks a:not(.navcta){display:none}.sides,.tiers{grid-template-columns:1fr}}
+  @media(prefers-reduced-motion:reduce){#vid,.band video{display:none}}
+</style>
+</head>
+<body>
+  <div id="stage"><video id="vid" playsinline muted loop autoplay preload="auto" crossorigin="anonymous"></video><canvas id="scene"></canvas></div>
+  <div class="scrim"></div><div class="grain"></div>
+
+  <nav id="nav">
+    <div class="dwm">Black<b>smith</b></div>
+    <div class="nlinks"><a href="#mech">The chair</a><a href="#sides">The trade</a><a href="#circle">Circle</a><a href="#proof">Why us</a><a class="navcta" href="#book">Lock in your chair</a></div>
+    <div class="burger"><span></span><span></span><span></span></div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <span class="ey reveal">Biggera Waters · Gold Coast · est. 10 years</span>
+      <h1 class="reveal">Your barber.<br>Your chair.<br>Your <span class="g">time</span>.</h1>
+      <p class="sub reveal">The only Gold Coast barbershop where you lock it all in — so it's the same cut, by the same bloke, with zero waiting. More than a barbershop. We're family.</p>
+      <div class="ctarow reveal"><a class="btn solid" href="#circle">Lock in your chair</a><a class="btn ghost" href="#book">Book a cut</a></div>
+      <div class="scrollcue">scroll</div>
+    </section>
+
+    <section class="full" id="mech">
+      <span class="ey reveal">The end of barber roulette</span>
+      <h2 class="reveal">Take a number, get whoever's free. <span class="g">Not here.</span></h2>
+      <p class="lead reveal">Everywhere else, a haircut's a gamble — you rock up, wait, and re-explain your cut to a stranger. At Blacksmith you lock your barber, your chair and your slot. Same bloke, same cut, every time. He knows it before you sit down.</p>
+    </section>
+
+    <section class="full" id="sides">
+      <span class="ey reveal">Three sides of the trade</span>
+      <h2 class="reveal">One room. One standard.</h2>
+      <div class="sides">
+        <div class="side reveal"><div class="n">01</div><h3>Barbering</h3><p>Old-school craft in a modern room. Skin fades, scissor work, hot towels — by barbers who actually know your name.</p></div>
+        <div class="side reveal"><div class="n">02</div><h3>Blackrose Salon Co.</h3><p>The refined salon side. Colour, styling and care held to the same standard as the chair next door.</p></div>
+        <div class="side reveal"><div class="n">03</div><h3>The Academy</h3><p>We train the trade. The next generation of barbers, taught the craft the way it should be.</p></div>
+      </div>
+    </section>
+
+    <section class="band">
+      <video id="bandvid" playsinline muted loop autoplay preload="auto"></video><div class="bscrim"></div>
+      <div class="inner"><span class="ey reveal">More than a barbershop</span><h2 class="reveal" style="max-width:14ch">We're <span class="g">family</span>.</h2><p class="lead reveal">Ten years, family-owned, 15,000+ blokes through the chair. People don't switch barbers here — they just keep coming back.</p></div>
+    </section>
+
+    <section class="full" id="circle">
+      <span class="ey reveal">Blacksmith Circle</span>
+      <h2 class="reveal">Stop booking. Start belonging.</h2>
+      <p class="lead reveal">Lock your chair for the year. Founding rates, limited slots — for the regulars who already treat this place like theirs.</p>
+      <div class="tiers">
+        <div class="tier reveal"><div class="tn">The Cut</div><div class="pr">$69<small>/mo</small></div><ul><li>One locked slot a month</li><li>Priority booking, skip the wait</li><li>Members' lounge access</li></ul><div class="founding">Founding · first 100 · 12-mo lock</div><a class="btn ghost" href="#book">Lock it in</a></div>
+        <div class="tier feat reveal"><div class="tn">The Club</div><div class="pr">$129<small>/mo</small></div><ul><li>Two locked slots a month</li><li>Members-only hours</li><li>Store-credit engine + Blackrose discount</li></ul><div class="founding">Founding · first 75 · saves $289/yr</div><a class="btn solid" href="#book">Lock it in</a></div>
+        <div class="tier reveal"><div class="tn">The Empire</div><div class="pr">$229<small>/mo</small></div><ul><li>Three locked slots a month</li><li>Members' Wall + monthly merch</li><li>Events, gifting, partner network</li></ul><div class="founding">Founding · first 30 · lifetime lock</div><a class="btn ghost" href="#book">Apply</a></div>
+      </div>
+    </section>
+
+    <section class="full" id="proof">
+      <span class="ey reveal">Why blokes stay</span>
+      <h2 class="reveal">Ten years. <span class="g">Earned.</span></h2>
+      <div class="proof">
+        <div class="pf reveal"><div class="v">15,191</div><div class="l">Clients through the chair — 973 already behave like members.</div></div>
+        <div class="pf reveal"><div class="v">4.7★</div><div class="l">Across 200+ Google reviews. 94% recommend on Facebook.</div></div>
+        <div class="pf reveal"><div class="v">10 yrs</div><div class="l">Family-owned, Biggera Waters. Cam &amp; Beau, since day one.</div></div>
+      </div>
+    </section>
+
+    <section class="end" id="book">
+      <span class="ey reveal">Your chair's waiting</span>
+      <h2 class="reveal">Lock in your barber.<br>Never gamble a cut <span class="g">again</span>.</h2>
+      <p class="lead reveal" style="text-align:center;margin-left:auto;margin-right:auto">Book a cut, or claim a founding Circle slot before they're gone.</p>
+      <div class="ctarow reveal" style="justify-content:center"><a class="btn solid" href="#">Book your cut</a><a class="btn ghost" href="#circle">Join the Circle</a></div>
+      <div class="contactline reveal"><span>Biggera Waters, Gold Coast</span><span>·</span><span>1 min from Harbour Town</span></div>
+    </section>
+  </main>
+
+  <footer><span>© 2026 Blacksmith Barbers &amp; Academy</span><span>More than a barbershop. We're family.</span></footer>
+
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script type="module">
+    import * as THREE from 'three';
+    const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const vid=document.getElementById('vid');vid.src="scenes/forge.mp4";
+    document.getElementById('bandvid').src="scenes/shop.mp4";
+    const canvas=document.getElementById('scene'),stage=document.getElementById('stage');
+    const renderer=new THREE.WebGLRenderer({canvas,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+    const scene=new THREE.Scene();const cam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+    const tex=new THREE.VideoTexture(vid);tex.minFilter=THREE.LinearFilter;tex.magFilter=THREE.LinearFilter;tex.generateMipmaps=false;
+    const U={uTex:{value:tex},uTime:{value:0},uScroll:{value:0},uVel:{value:0},uRes:{value:new THREE.Vector2(1,1)},uVR:{value:new THREE.Vector2(16,9)},uGold:{value:new THREE.Color(0xc8a44d)}};
+    function size(){renderer.setSize(stage.clientWidth,stage.clientHeight);U.uRes.value.set(stage.clientWidth,stage.clientHeight);}
+    const mat=new THREE.ShaderMaterial({uniforms:U,
+      vertexShader:`varying vec2 v;void main(){v=uv;gl_Position=vec4(position,1.0);}`,
+      fragmentShader:`precision highp float;uniform sampler2D uTex;uniform float uTime,uScroll,uVel;uniform vec2 uRes,uVR;uniform vec3 uGold;varying vec2 v;
+        vec2 cover(vec2 uv){float sa=uRes.x/uRes.y,va=uVR.x/uVR.y;vec2 s=vec2(1.);if(sa>va)s.y=va/sa;else s.x=sa/va;return (uv-.5)*s+.5;}
+        float hash(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}
+        void main(){vec2 uv=cover(v);
+          uv.y+=sin(uv.x*5.0+uTime*0.3)*(0.004+uVel*0.02);
+          vec3 col=texture2D(uTex,uv).rgb;
+          float lum=dot(col,vec3(0.299,0.587,0.114));
+          col=mix(col,col*uGold*1.6,0.18)+uGold*pow(lum,2.2)*0.25;   // warm gold grade
+          col=(col-0.5)*1.12+0.5; col*=1.06;
+          col*=0.96+0.04*sin(v.y*uRes.y*1.1); col+=(hash(v*uRes+uTime)-0.5)*0.04;
+          float d=distance(v,vec2(0.5));col*=smoothstep(1.2,0.55,d)*0.3+0.7;
+          col*=1.0-uScroll*0.42;
+          gl_FragColor=vec4(col,1.0);}`});
+    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat));
+    size();addEventListener('resize',size);
+    vid.addEventListener('loadedmetadata',()=>{U.uVR.value.set(vid.videoWidth||16,vid.videoHeight||9);size();});
+    const play=v=>{const p=v.play();if(p)p.catch(()=>{});};play(vid);play(document.getElementById('bandvid'));
+    addEventListener('pointerdown',()=>{play(vid);play(document.getElementById('bandvid'));},{once:true});
+    let scrollP=0,vel=0;
+    if(!REDUCED){
+      gsap.registerPlugin(ScrollTrigger);
+      const lenis=new Lenis({lerp:0.09,smoothWheel:true});window.__lenis=lenis;
+      lenis.on('scroll',ScrollTrigger.update);gsap.ticker.add(t=>lenis.raf(t*1000));gsap.ticker.lagSmoothing(0);
+      lenis.on('scroll',e=>document.getElementById('nav').classList.toggle('solid',(e.scroll||0)>40));
+      ScrollTrigger.create({trigger:'main',start:'top top',end:'bottom bottom',scrub:true,onUpdate:s=>{scrollP=s.progress;vel=Math.min(Math.abs(s.getVelocity())/3000,2.0);U.uScroll.value=s.progress;const c=document.querySelector('.scrollcue');if(c)c.style.opacity=s.progress>0.02?0:0.8;}});
+    }
+    const clock=new THREE.Clock();let vS=0;
+    function loop(){U.uTime.value+=clock.getDelta();vS+=(vel-vS)*0.08;U.uVel.value=vS;if(vid.readyState>=2)tex.needsUpdate=true;renderer.render(scene,cam);requestAnimationFrame(loop);}loop();
+    const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting)en.target.classList.add('in');}),{threshold:0.16});document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+    addEventListener('load',()=>document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',ev=>{const t=document.querySelector(a.getAttribute('href'));if(t&&window.__lenis){ev.preventDefault();window.__lenis.scrollTo(t);}})));
+  </script>
+</body>
+</html>
