@@ -420,10 +420,11 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 
 /* ---------- Hero (home full-bleed) ---------- */
 .hero{min-height:100svh;display:flex;align-items:flex-end;position:relative;overflow:hidden}
+@media(min-width:820px){.hero{align-items:center}.hero-inner{padding-bottom:clamp(28px,4vw,56px)}.hero h1 .gold{white-space:nowrap}}
 .hero-bg{position:absolute;inset:0;z-index:0;background-position:center 30%;background-size:cover;background-repeat:no-repeat}
 .hero-bg::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(11,11,13,.55) 0%,rgba(11,11,13,.25) 38%,rgba(11,11,13,.82) 80%,var(--ink) 100%),
+  background:linear-gradient(180deg,rgba(11,11,13,.38) 0%,rgba(11,11,13,.16) 38%,rgba(11,11,13,.82) 80%,var(--ink) 100%),
              linear-gradient(90deg,rgba(11,11,13,.7) 0%,rgba(11,11,13,0) 60%);
 }
 .hero-inner{position:relative;z-index:2;padding-bottom:clamp(48px,9vw,110px);padding-top:120px;width:100%}
