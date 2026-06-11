@@ -30,7 +30,7 @@
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
       MASSAGE: { x: 118, y: 534 },
-      HOST: { x: 1336, y: 466, h: 64 }, IDLE_SPOT: { x: 1060, y: 560 },
+      HOST: { x: 1484, y: 642, h: 206, sprite: 'host-lean', flip: true, stroll: { x0: 620, x1: 1484, y: 646 } }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
@@ -88,7 +88,7 @@
   // ---------- live state ----------
   var snap = null, lastWaiting = 0, walkers = [], catX = null, lastCat = 0;
   var sweeps = {};        // name -> {until, x0} active sweep
-  var stroll = null, nextStrollAt = 90000; // host takes a wander now and then
+  var stroll = null, nextStrollAt = 25000; // host takes a wander now and then
   var nextSweepAt = 25000; // first sweep ~25s in, then every few minutes
   var bubbleUntil = 0, bubbleText = '', nextBubbleAt = 5000;
   var HOST = LAY.HOST;
@@ -369,25 +369,23 @@
     // the host at the till — tap him to open the shop chat
     if (snap) {
       var hb;
-      if (HOST.stroll && !reduced && snap && snap.open) {
+      if (HOST.stroll && !reduced) {
         if (!stroll && t > nextStrollAt) {
           stroll = { dir: -1, x: HOST.stroll.x1 };
           nextStrollAt = t + 150000 + Math.random() * 150000;
         }
-        if (stroll && snap && !snap.open) stroll = null; // lights off, back to the desk
-      if (stroll) {
+        if (stroll) {
           stroll.x += stroll.dir * 0.55;
           if (stroll.x <= HOST.stroll.x0) stroll.dir = 1;
           if (stroll.dir === 1 && stroll.x >= HOST.stroll.x1) stroll = null;
         }
       }
-      if (stroll && snap && !snap.open) stroll = null; // lights off, back to the desk
       if (stroll) {
         var wf = 'host-walk-' + (1 + Math.floor(t / 320) % 2);
         hb = drawSprite(wf, stroll.x, HOST.stroll.y, HOST.h * 0.97, stroll.dir === 1);
       } else {
         hb = HOST.sprite
-          ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
+          ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, !!HOST.flip)
           : drawTorso('host-1', HOST.x, HOST.y, HOST.h);
       }
       // bobbing gold "?" so people know he's tappable
@@ -434,69 +432,6 @@
     if (snap && !snap.open) {
       ctx.fillStyle = 'rgba(5,5,8,0.62)';
       ctx.fillRect(0, 0, W, H);
-      // the host at the till — tap him to open the shop chat
-    if (snap) {
-      var hb;
-      if (HOST.stroll && !reduced && snap && snap.open) {
-        if (!stroll && t > nextStrollAt) {
-          stroll = { dir: -1, x: HOST.stroll.x1 };
-          nextStrollAt = t + 150000 + Math.random() * 150000;
-        }
-        if (stroll && snap && !snap.open) stroll = null; // lights off, back to the desk
-      if (stroll) {
-          stroll.x += stroll.dir * 0.55;
-          if (stroll.x <= HOST.stroll.x0) stroll.dir = 1;
-          if (stroll.dir === 1 && stroll.x >= HOST.stroll.x1) stroll = null;
-        }
-      }
-      if (stroll && snap && !snap.open) stroll = null; // lights off, back to the desk
-      if (stroll) {
-        var wf = 'host-walk-' + (1 + Math.floor(t / 320) % 2);
-        hb = drawSprite(wf, stroll.x, HOST.stroll.y, HOST.h * 0.97, stroll.dir === 1);
-      } else {
-        hb = HOST.sprite
-          ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
-          : drawTorso('host-1', HOST.x, HOST.y, HOST.h);
-      }
-      // bobbing gold "?" so people know he's tappable
-      var qx = stroll ? stroll.x : HOST.x;
-      var qy = (stroll ? HOST.stroll.y : HOST.y) - HOST.h - 14 + Math.round(Math.sin(t / 450) * 4);
-      ctx.save();
-      ctx.font = '700 26px Oswald, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.shadowColor = 'rgba(200,164,77,.8)';
-      ctx.shadowBlur = 10;
-      ctx.fillStyle = '#e3c578';
-      ctx.fillText('?', qx, qy);
-      ctx.restore();
-      hb = { x: hb.x - 12, y: qy - 30, w: hb.w + 24, h: ((stroll ? HOST.stroll.y : HOST.y) - (qy - 30)) }; // generous hit area incl. the marker
-      hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
-      if (!reduced && t > nextBubbleAt) {
-        nextBubbleAt = t + 40000 + Math.random() * 50000;
-        bubbleUntil = t + 6500;
-        bubbleText = !snap.open ? 'We\u2019re closed \u2014 book ahead?'
-          : snap.wait_mins === 0 ? 'No wait right now \u2014 jump in!'
-          : snap.wait_mins != null ? '~' + snap.wait_mins + ' min wait \u2014 need a hand?'
-          : 'Need a hand?';
-      }
-      if (t < bubbleUntil && bubbleText) {
-        ctx.save();
-        ctx.font = '500 ' + (W < 900 ? 19 : 22) + 'px Inter, sans-serif';
-        var tw = ctx.measureText(bubbleText).width;
-        var bx = Math.min(HOST.x, W - tw / 2 - 40), by = HOST.y - HOST.h - 26;
-        ctx.fillStyle = '#f3f1ea';
-        ctx.beginPath();
-        ctx.roundRect(bx - tw / 2 - 14, by - 22, tw + 28, 38, 10);
-        ctx.fill();
-        ctx.moveTo(bx + 2, by + 16); ctx.lineTo(bx + 16, by + 16); ctx.lineTo(bx + 4, by + 30);
-        ctx.fill();
-        ctx.fillStyle = '#141417';
-        ctx.textAlign = 'center';
-        ctx.fillText(bubbleText, bx, by + 5);
-        ctx.restore();
-      }
-    }
-
     drawSign(t); // sign stays readable above the dimmer
     }
   }
