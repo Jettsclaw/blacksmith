@@ -48,5 +48,61 @@ black dome pendants).
 B was the stronger spec-correct frame pre-fix; A has more old-school-craft charm
 and is closer to brand voice. With counts fixed, both are now fair candidates.
 
-**GATE STATUS: Phase 0 artifacts complete. Awaiting Jett's style pick — hard
-gate before any Phase 2 engine work. Phase 1 data spine is style-independent.**
+**GATE STATUS Phase 0: complete. Jett picked HI-BIT PIXEL (2026-06-11).**
+
+---
+
+# Phase 1 verify — data spine + live wait card (2026-06-11)
+
+Second independent adversarial pass (separate agent, briefed to refute
+"Phase 1 complete, correct, private, safe"). It audited the poller, publisher,
+the LIVE public feed, the widget, the launchd job, and the production branch.
+
+## Round 1 verdict: FAIL → all required fixes applied same session
+
+1. **BLOCKER — wrong SLIKR status string.** Poller tested `processing`; SLIKR
+   uses `in_progress`. Live feed said Bayli was free while he was mid-fade.
+   **FIXED:** match `in_progress/processing/started`; verified live — feed now
+   shows `cutting:true` during his actual 11:41–12:11 cut. Late-running queue
+   members also now stay counted as "waiting" (start-slipped pendings).
+2. **MAJOR — client staleness bypass.** On fetch failure the card froze on the
+   last good number forever. **FIXED:** last snapshot is re-rendered on every
+   tick so the stale check always fires; dead feed decays to "call for wait
+   time". Verified in-browser.
+3. **MAJOR — CDN reality.** raw.githubusercontent ignores `?t=` cache-busts
+   (verified `x-cache: HIT` with random queries); worst-case payload age ≈
+   6 min. **FIXED honestly:** stale cutoff widened to 8 min + spec amended
+   (section 6) + documented swap path to Vercel KV (needs a token from Jett)
+   to get true 60s freshness.
+4. **MAJOR — null wait coerced to 0** ("~0 min wait" = the worst wrong number).
+   **FIXED:** poller publishes null, widget renders null as "Call for wait
+   time". Verified via test hook.
+5. Minors fixed: PII guard now if/raise + regex incl. 04xx numbers (survives
+   `python -O`); GitHub token moved off the command line (GIT_ASKPASS +
+   credential-helper disabled — keychain was hijacking pushes as Jettsclaw);
+   manual/holiday closure honoured via SLIKR `suspend` flag; stale docstring
+   claim removed.
+6. Accepted as-is: `is_open` still trusts weekly timings if SLIKR's suspend
+   flag isn't used for ad-hoc closures (real fix = Phase 2 scene reading
+   seats-all-closed as shut).
+
+## Verified clean by the adversary (survived attack)
+- **Privacy:** public payload = timestamp/open/hours/wait/counts/barber first
+  names ONLY; SLIKR's client objects are never read; feed repo history is one
+  rolling commit of one file; de-name config flag present. (Noted: SLIKR's own
+  API serves client names+phones UNAUTHENTICATED — their hole, reported to
+  Jett; our feed publishes none of it.)
+- **Crash safety:** any poller exception publishes nothing (never wrong-but-
+  fresh), failure counter + ntfy alerts at 10/60 consecutive misses.
+- **Feature flag:** `origin/main` untouched, section `hidden` + JS no-op
+  without `?livewait`; branch pushed (heartbeat-reset safe).
+- **XSS/timezone/as_of parsing:** all hold (regex verified against the real
+  published string).
+
+## Post-fix state
+Poller re-run end-to-end: snapshot coherent (`wait 22 · Bayli cutting · Jayden
+free`), push green, launchd job healthy, JS syntax-checked, all three card
+states re-verified in the browser at desktop + 390px.
+
+**GATE STATUS Phase 1: built + adversarially verified. Remaining gate = Jett
+confirms the live numbers against the room once, then `LIVE_WAIT_ON = true`.**

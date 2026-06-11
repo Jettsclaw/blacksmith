@@ -6,7 +6,11 @@
   var LIVE_WAIT_ON = false; // flip true on Jett's approval
   var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
   var PHONE = '0479 087 782';
-  var STALE_MS = 5 * 60 * 1000;
+  // raw.githubusercontent's CDN ignores query strings and caches 300s, so a
+  // healthy feed can legitimately read up to ~6 min old (300s CDN + 60s poll).
+  // 8 min = genuinely dead feed, not CDN lag. (True 60s freshness needs the
+  // Vercel KV endpoint — swap FEED + tighten this when that lands.)
+  var STALE_MS = 8 * 60 * 1000;
 
   var section = document.getElementById('live-wait');
   if (!section) return;
@@ -46,7 +50,7 @@
       return;
     }
 
-    if (stale) {
+    if (stale || snap.wait_mins == null) {
       el('lw-big').textContent = 'Call for wait time';
       el('lw-sub').textContent = PHONE;
       el('lw-asof').textContent = '';
@@ -70,11 +74,16 @@
 
   window.__lwRender = render; // test hook
 
+  var lastSnap = null;
   function tick() {
     fetch(FEED + '?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
-      .then(render)
-      .catch(function () { /* keep last good render; stale rule covers it */ });
+      .then(function (snap) { lastSnap = snap; render(snap); })
+      .catch(function () {
+        // Re-render the last snapshot so the staleness check keeps running:
+        // a dead feed must decay to "call for wait time", never freeze live.
+        if (lastSnap) render(lastSnap);
+      });
   }
   tick();
   setInterval(tick, 60000);

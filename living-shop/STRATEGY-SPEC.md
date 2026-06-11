@@ -45,8 +45,15 @@ flashy), which survives mobile scale-down, which he's proud to show barbers.
 **His pick gates all engine work.**
 
 ## 6. Truth + privacy rails (non-negotiable, from the prompt)
-- Staleness: show "as of HH:MM"; >5 min stale → "call for wait time" — never a
-  wrong number presented as live.
+- Staleness: show "as of HH:MM"; stale → "call for wait time" — never a wrong
+  number presented as live. **Phase 1 transport amendment (2026-06-11):** the
+  Mac has no Vercel CLI/KV credentials, so V1 publishes via a public GitHub
+  repo raw URL. That CDN caches 300s → honest worst-case freshness ≈ 6 min, so
+  the widget's stale cutoff is 8 min (vs the spec's ideal 5) and every render
+  carries its true "as of" stamp. When Jett supplies a Vercel KV token, swap
+  FEED in `assets/live-wait.js` + add a KV PUT to the poller, tighten to 5.
+- Wait number = SLIKR's own `wait_time` field, verbatim — never a homebrew
+  estimate; if SLIKR returns none, publish null and the card says "call us".
 - Zero client PII anywhere public: anonymous sprites, counts only; barbers by
   first name (per-barber de-name config flag built in from day one).
 - SLIKR creds live on the Mac poller only; one-way Mac → cloud publish.
