@@ -257,10 +257,23 @@
     fsLayout();
     window.addEventListener('resize', fsLayout);
   }
+  // Pull the site chat INTO the rotated wrapper so booking happens without
+  // flipping the phone back. Inside a transformed ancestor its fixed
+  // positioning anchors to the wrapper, i.e. landscape coords.
+  function fsAdoptChat() {
+    if (!fs.on) return;
+    var p = document.querySelector('.sc-panel');
+    if (p && !fs.wrap.contains(p)) {
+      fs.chatHome = p.parentNode; fs.chatNext = p.nextSibling;
+      fs.wrap.appendChild(p);
+    }
+  }
   function fsClose() {
     if (!fs.on) return;
     fs.on = false; fs.rot = false;
     card.hidden = true;
+    var p = fs.overlay.querySelector('.sc-panel');
+    if (p && fs.chatHome) fs.chatHome.insertBefore(p, fs.chatNext);
     var stage = fs.overlay.querySelector('.ls-stage');
     fs.anchor.parentNode.insertBefore(stage, fs.anchor);
     fs.anchor.parentNode.insertBefore(card, fs.anchor);
@@ -288,8 +301,8 @@
       var h = hits[i];
       if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
         if (h.host) {
-          if (fs.on) fsClose(); // chat panel lives in the portrait page
           if (window.__scOpen) window.__scOpen();
+          fsAdoptChat(); // chat joins the landscape view — no flipping back
           return;
         }
         if (h.toy) {
@@ -330,8 +343,8 @@
           btn.onclick = function (ev) {
             ev.stopPropagation();
             card.hidden = true;
-            if (fs.on) fsClose(); // chat panel lives in the portrait page
             if (window.__scBook) window.__scBook(btn.getAttribute('data-b'));
+            fsAdoptChat(); // chat joins the landscape view — no flipping back
           };
         });
         card.style.left = Math.min(86, Math.max(4, (h.x / W) * 100)) + '%';
