@@ -36,10 +36,12 @@
   function route(text) {
     var t = text.toLowerCase();
     if (/cancel|reschedule|change my/.test(t)) return 'cancel';
+    if (/(have to|need to|gotta).*(wait|stand|come in)|wait (in|at) the shop|remote|from home|without (coming|walking)/.test(t)) return 'remote';
     if (/book|appoint|reserve|lock in|get in/.test(t)) return 'book';
     if (/price|cost|how much|\$|charge/.test(t)) return 'prices';
     if (/service|menu|fade|beard|shave|what do you (do|offer)|kids|child/.test(t)) return 'services';
     if (/cancel|reschedule|change my/.test(t)) return 'cancel';
+    if (/(have to|need to|gotta).*(wait|stand|come in)|wait (in|at) the shop|remote|from home|without (coming|walking)/.test(t)) return 'remote';
     if (/pay|card|cash|eftpos|afterpay/.test(t)) return 'pay';
     if (/walk.?in|queue work|how does/.test(t)) return 'how';
     if (/app\b|app store|iphone app/.test(t)) return 'app';
@@ -78,6 +80,7 @@
       if (!menu.length) return 'Call us for the menu: ' + PHONE;
       return 'The menu:\n' + menu.map(function (m) { return m.name + ' — $' + m.cost; }).join('\n') + '\nTap Book and I’ll lock one in.';
     }
+    if (kind === 'remote') return 'You never have to stand around — join the queue from right here, watch your spot live, and walk in when it’s your turn. Tap Book and I’ll set you up.';
     if (kind === 'cancel') return 'To change or cancel a booking, give us a quick call on ' + PHONE + ' and we’ll sort it.';
     if (kind === 'pay') return 'You pay at the shop after your cut — card or cash both sweet.';
     if (kind === 'how') return 'Two ways in: join the live queue (walk-in, I’ll show you the wait) or book a time with Jarred or Locky. Tap Book and I’ll walk you through it.';
@@ -112,6 +115,25 @@
 
   // ---------- booking wizard ----------
   var BOOK_API = 'https://blacksmith-wait-bot.vercel.app/api/book';
+  var ASK_API = 'https://blacksmith-wait-bot.vercel.app/api/ask';
+
+  function askTheMac(q) {
+    bubble('Let me check that for you…', 'bot');
+    fetch(ASK_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: q }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.id) { bubble(d.error || 'Hmm — best to call us on 0479 087 782.', 'bot'); return; }
+        var tries = 0;
+        var poll = setInterval(function () {
+          tries++;
+          fetch(ASK_API + '?id=' + d.id).then(function (r) { return r.json(); }).then(function (st) {
+            if (st.done) { clearInterval(poll); bubble(st.answer, 'bot'); }
+            else if (tries > 14) { clearInterval(poll); bubble('That one needs a human — call us on 0479 087 782.', 'bot'); }
+          }).catch(function () {});
+        }, 2500);
+      })
+      .catch(function () { bubble('Network hiccup — try again or call 0479 087 782.', 'bot'); });
+  }
   var wiz = null; // {step, barber, shop, service, slot}
 
   function chipRow(opts, onPick, grid) {
@@ -169,7 +191,7 @@
     if (!names.length) { bubble('Tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning.', 'bot'); setWizUI(false); return; }
     wiz = { step: 'barber', ahead: true, date: snap.next_date };
     if (pref && names.map(function (n) { return n.toLowerCase(); }).indexOf(String(pref).toLowerCase()) < 0) {
-      bubble(String(pref).charAt(0).toUpperCase() + String(pref).slice(1) + ' is walk-in only — come in when we open, or lock in ' + snap.next_label + ' with one of these:', 'bot');
+      bubble(String(pref).charAt(0).toUpperCase() + String(pref).slice(1) + ' runs the live queue rather than timed slots — when we open I can put you straight in the queue from here (no standing around in the shop). Right now you can lock in ' + snap.next_label + ' with one of these:', 'bot');
     } else {
       bubble('We\u2019re closed right now, but you can lock in ' + snap.next_label + '. Who with?', 'bot');
     }
@@ -400,6 +422,7 @@
         }, 250);
         return;
       }
+      if (kind === 'menu' && lower.length > 12) { askTheMac(t); return; }
       setTimeout(function () {
         bubble(answer(kind, snap), 'bot', kind === 'wait' || (snap && !snap.open));
       }, 300);

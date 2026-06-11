@@ -263,6 +263,12 @@ export default async function handler(req, res) {
           text = b ? `${b.name.split(' ')[0]} is on — ${b.cutting ? 'cutting now' : 'free'}${(+b.free_in||0) > 0 ? `, free in ~${b.free_in} min` : ' now'}. Tap Book me in!`
                    : `${nm[0].toUpperCase()+nm.slice(1)} isn't on today — tap Who's on to see the floor.`;
         }
+        else if (kind === 'menu' && raw.trim().length > 12) {
+          const id = globalThis.crypto.randomUUID().toLowerCase();
+          await put(`ask/${id}.json`, JSON.stringify({ q: raw.slice(0, 240), tg_chat: chatId, at: new Date().toISOString() }),
+            { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+          text = 'Let me check that for you — one sec…';
+        }
         else if (kind === 'menu') text = menuText();
         else text = await answerFor(kind);
         await tg(token, 'sendMessage', { chat_id: chatId, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
