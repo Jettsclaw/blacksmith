@@ -29,6 +29,7 @@
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
+      MASSAGE: { x: 1230, y: 628 },
       HOST: { x: 1336, y: 466, h: 64 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
@@ -39,7 +40,7 @@
       COUCH: [{ x: 120, y: 1045 }, { x: 195, y: 1045 }, { x: 268, y: 1045 }],
       DOOR: { x: 690, y: 1090 }, SIGN: { x: 384, y: 128, font: 30 },
       HOST: { x: 512, y: 982, h: 84 }, IDLE_SPOT: { x: 560, y: 890 },
-      CAT_Y: 935,
+      CAT_Y: 935, MASSAGE: { x: 372, y: 1028 },
       SCALE: { barber: 150, cape: 118, couch: 108, walk: 135, cat: 50 }
     }
   };
@@ -70,7 +71,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp';
+    im.src = A + n + '.webp?v=3';
     IMGS[n] = im;
   });
 
@@ -106,6 +107,7 @@
     fetch(FEED + '?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (s) {
+        if (frozen) return;
         if (snap && s.waiting > lastWaiting && s.open && !reduced) spawnWalker();
         lastWaiting = s.waiting;
         snap = s;
@@ -308,10 +310,13 @@
       for (var i2 = 0; i2 < waitN; i2++)
         drawSprite('client-couch', COUCH[i2].x,
           COUCH[i2].y + Math.round(Math.sin(t / 900 + i2 * 2.3)), SCALE.couch, i2 === 1);
-      if (snap.waiting > 3) {
+      // 4th waiter scores the massage chair (it's real — D.Core by the couch)
+      if (snap.waiting > 3 && LAY.MASSAGE)
+        drawSprite('client-couch', LAY.MASSAGE.x, LAY.MASSAGE.y, SCALE.couch * 0.92, true);
+      if (snap.waiting > 4) {
         ctx.font = '600 26px Oswald, sans-serif';
         ctx.fillStyle = '#e3c578';
-        ctx.fillText('+' + (snap.waiting - 3), COUCH[2].x + 70, COUCH[2].y - 90);
+        ctx.fillText('+' + (snap.waiting - 4), COUCH[2].x + 70, COUCH[2].y - 90);
       }
 
       // walk-in animation: door -> couch
@@ -406,7 +411,7 @@
   var running = false, rafId = null;
   function frame(t) {
     if (!running) return;
-    draw(t);
+    try { draw(t); } catch (e) { /* one bad frame must never kill the shop */ }
     rafId = requestAnimationFrame(frame);
   }
   function setRunning(on) {
@@ -449,5 +454,6 @@
     setRunning(true);
   }
 
-  window.__lsState = function (s) { snap = s; renderInfo(); }; // test hook
+  var frozen = false;
+  window.__lsState = function (s) { snap = s; frozen = true; renderInfo(); try { draw(performance.now()); } catch (e) {} }; // test hook (freezes ticks, forces a frame)
 })();
