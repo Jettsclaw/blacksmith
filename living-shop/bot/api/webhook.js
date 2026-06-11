@@ -5,6 +5,8 @@
    It has NO SLIKR access, NO path to the Mac, NO connection to any
    other bot/bridge. Separate token, separate runtime, zero shared state. */
 
+import { put, head, del } from '@vercel/blob';
+
 const FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
 const BOOK_URL = 'https://web.slikr.com.au/shop/421/res';
 const PHONE = '0479 087 782';
@@ -46,10 +48,94 @@ function fmtT(t) {
 const KEYBOARD = {
   inline_keyboard: [
     [{ text: '⏱ Wait time', callback_data: 'wait' }, { text: '💈 Who\'s on', callback_data: 'who' }],
-    [{ text: '✂️ Join the queue', url: BOOK_URL }],
+    [{ text: '✂️ Book me in', callback_data: 'bk' }],
     [{ text: '🕐 Hours & parking', callback_data: 'hours' }]
   ]
 };
+
+async function getState(chat) {
+  try {
+    const m = await head(`state/${chat}.json`);
+    return await (await fetch(m.downloadUrl)).json();
+  } catch { return null; }
+}
+async function setState(chat, st) {
+  await put(`state/${chat}.json`, JSON.stringify(st),
+    { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+}
+async function clearState(chat) {
+  try { await del(`state/${chat}.json`); } catch {}
+}
+
+async function bkStart(token, chat) {
+  const s = await feed().catch(() => null);
+  if (!s || !s.open) {
+    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now — book ahead: ${BOOK_URL}` });
+    return;
+  }
+  await setState(chat, { step: 'barber' });
+  const rows = s.barbers.map(b => [{ text: b.name.split(' ')[0], callback_data: 'bk1:' + b.name.split(' ')[0] }]);
+  rows.push([{ text: 'Anyone', callback_data: 'bk1:any' }]);
+  await tg(token, 'sendMessage', { chat_id: chat, text: 'Let’s get you booked. Who with?', reply_markup: { inline_keyboard: rows } });
+}
+
+async function bkStep(token, chat, data) {
+  const s = await feed().catch(() => null);
+  if (!s) return clearState(chat);
+  const st = (await getState(chat)) || {};
+  if (data.startsWith('bk1:')) {
+    const first = data.slice(4);
+    const b = s.barbers.find(x => x.name.split(' ')[0] === first);
+    st.barber = first === 'any' ? 'any' : (b ? b.name : first);
+    st.shop = b && (b.book || [])[0] === 'bookings' ? 'bookings' : 'barber';
+    st.step = 'service';
+    await setState(chat, st);
+    const menu = (s.services && s.services[st.shop]) || [];
+    await tg(token, 'sendMessage', { chat_id: chat, text: 'What are we doing?',
+      reply_markup: { inline_keyboard: menu.map(m => [{ text: `${m.name} · $${m.cost}`, callback_data: 'bk2:' + m.id }]) } });
+  } else if (data.startsWith('bk2:')) {
+    st.service = parseInt(data.slice(4), 10);
+    if (st.shop === 'bookings') {
+      const b = s.barbers.find(x => x.name === st.barber);
+      const slots = (b && b.slots) || [];
+      if (!slots.length) {
+        await tg(token, 'sendMessage', { chat_id: chat, text: `${st.barber} is booked out today — tap Book me in and pick someone else.`, reply_markup: KEYBOARD });
+        return clearState(chat);
+      }
+      st.step = 'slot';
+      await setState(chat, st);
+      await tg(token, 'sendMessage', { chat_id: chat, text: 'What time today?',
+        reply_markup: { inline_keyboard: slots.map(t => [{ text: t, callback_data: 'bk3:' + t }]) } });
+    } else {
+      st.slot = 'now'; st.step = 'details';
+      await setState(chat, st);
+      await tg(token, 'sendMessage', { chat_id: chat, text: `You'll join the live queue (~${s.wait_mins || 0} min). Last bit — reply with your name and mobile, like:\nJack Smith, 0400 123 456` });
+    }
+  } else if (data.startsWith('bk3:')) {
+    st.slot = data.slice(4); st.step = 'details';
+    await setState(chat, st);
+    await tg(token, 'sendMessage', { chat_id: chat, text: 'Last bit — reply with your name and mobile, like:\nJack Smith, 0400 123 456' });
+  }
+}
+
+async function bkDetails(token, chat, text) {
+  const st = await getState(chat);
+  if (!st || st.step !== 'details') return false;
+  const m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
+  if (!m) {
+    await tg(token, 'sendMessage', { chat_id: chat, text: 'Almost — send it like: Jack Smith, 0400 123 456' });
+    return true;
+  }
+  const phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
+  const id = globalThis.crypto.randomUUID().toLowerCase();
+  await put(`req/${id}.json`, JSON.stringify({
+    service_id: st.service, shop: st.shop, barber: st.barber, slot: st.slot,
+    name: m[1].trim(), phone, tg_chat: chat, at: new Date().toISOString()
+  }), { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+  await clearState(chat);
+  await tg(token, 'sendMessage', { chat_id: chat, text: 'Locking it in… you’ll get a confirmation here in a few seconds.' });
+  return true;
+}
 
 async function answerFor(kind) {
   let s;
@@ -104,18 +190,26 @@ export default async function handler(req, res) {
   try {
     if (u.callback_query) {
       const cq = u.callback_query;
-      if (!limited(cq.message.chat.id)) {
-        const text = await answerFor(cq.data);
-        await tg(token, 'sendMessage', { chat_id: cq.message.chat.id, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
+      const chat = cq.message.chat.id;
+      if (!limited(chat)) {
+        if (cq.data === 'bk') await bkStart(token, chat);
+        else if (cq.data.startsWith('bk')) await bkStep(token, chat, cq.data);
+        else {
+          const text = await answerFor(cq.data);
+          await tg(token, 'sendMessage', { chat_id: chat, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
+        }
       }
       await tg(token, 'answerCallbackQuery', { callback_query_id: cq.id });
     } else if (u.message && u.message.chat) {
       const chatId = u.message.chat.id;
       if (!limited(chatId)) {
-        const t = (u.message.text || '').toLowerCase();
+        const raw = u.message.text || '';
+        if (await bkDetails(token, chatId, raw)) return res.status(200).send('ok');
+        const t = raw.toLowerCase();
         const kind = t.includes('wait') ? 'wait' : (t.includes('who') || t.includes('barber')) ? 'who'
           : (t.includes('hour') || t.includes('park') || t.includes('open')) ? 'hours'
           : (t.includes('book') || t.includes('queue') || t.includes('join')) ? 'book' : 'menu';
+        if (kind === 'book') { await bkStart(token, chatId); return res.status(200).send('ok'); }
         const text = kind === 'menu' ? menuText() : await answerFor(kind);
         await tg(token, 'sendMessage', { chat_id: chatId, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
       }

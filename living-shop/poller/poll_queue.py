@@ -49,6 +49,17 @@ DUAL_SHOP = {"Sami", "Sammy"}
 # their reservations appear; this is just the fallback for quiet days.
 BOOKINGS_DEFAULT = {"Locky", "Jarred"}
 
+# Bookings-shop service menu (ids differ from the walk-in shop's). Refreshed
+# manually if pricing changes; kept static to avoid a 4th fetch per minute.
+SERVICES_BOOKINGS = [
+    {"id": 5542, "name": "Men's Cut", "cost": 50, "mins": 40},
+    {"id": 5588, "name": "Men's Cut + Beard (Combo)", "cost": 78, "mins": 60},
+    {"id": 5553, "name": "Zero/Skin/Burst Fade", "cost": 62, "mins": 45},
+    {"id": 5589, "name": "Zero/Skin Fade + Beard (Combo)", "cost": 88, "mins": 60},
+    {"id": 5551, "name": "Beard trim", "cost": 35, "mins": 30},
+    {"id": 5549, "name": "Cut Throat Shave", "cost": 60, "mins": 40},
+]
+
 
 def fetch(path: str) -> dict:
     req = urllib.request.Request(BASE + path)
@@ -197,6 +208,23 @@ def build_snapshot() -> dict:
     # estimate (which tracks the queue, not chair availability).
     shortest = min((b["free_in"] for b in barbers), default=None)
 
+    # Real bookable times straight from SLIKR's own availability engine
+    # (it knows shifts/breaks; our gap-maths didn't). First name -> ["HH:MM"].
+    slots_map = {}
+    try:
+        times = fetch(f"/shops/{BOOKINGS_SHOP_ID}/seats/times?services%5B%5D=5542")
+        for k, v in (times.get("barbers") or {}).items():
+            if k == "all" or not isinstance(v, dict):
+                continue
+            nm = ((v.get("user") or {}).get("first_name") or "").strip().title()
+            avail = [t[:5] for t in (v.get("available_times") or [])][:4]
+            if nm:
+                slots_map[nm] = avail
+    except Exception:
+        pass  # slots are an enhancement; the scene survives without them
+    for b in barbers:
+        b["slots"] = slots_map.get(b["name"].split(" ")[0], []) if is_open else []
+
     snap = {
         "as_of": now.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "open": is_open,
@@ -213,6 +241,14 @@ def build_snapshot() -> dict:
         "waiting": waiting if is_open else 0,
         "barbers_on": len(barbers) if is_open else 0,
         "barbers": barbers if is_open else [],
+        # bookable menu (id/name/cost/mins per shop) — no PII, tiny
+        "services": {
+            "barber": [{"id": s["id"], "name": s["name"], "cost": s["cost"],
+                        "mins": s["average_time"]}
+                       for v in (shop.get("prices") or {}).values() for s in v
+                       if s.get("is_active", 1)][:8],
+            "bookings": SERVICES_BOOKINGS,
+        },
     }
     return snap
 

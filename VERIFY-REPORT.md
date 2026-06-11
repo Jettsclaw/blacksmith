@@ -196,3 +196,35 @@ living-shop/poller/.
   Go-live needs Jett: BotFather token + `npx vercel login` (SETUP.md, ~5 min).
 - Measurement beacon deferred: needs Vercel dashboard (Analytics toggle or KV)
   — batched into the same Jett ask.
+
+---
+
+# In-chat booking — full native flow (2026-06-11 evening)
+Jett's ask: the customer never leaves the site/Telegram to book. Built as a
+ONE-WAY RELAY honouring the security manifest: chat/bot → /api/book (validates,
+rate-limits 5/10min, no SLIKR access) → private-path blob request → **Mac
+executor** (holds the SLIKR key, launchd every 12s) → creates the real SLIKR
+reservation → result blob → chat polls / Telegram gets a push. SLIKR creds
+never leave the Mac; request blobs hold only requester-submitted name+mobile at
+unguessable UUID paths and are deleted within seconds of processing.
+
+## Verified live (real bookings created then cancelled)
+- Timed booking: Jarred 17:50 via SLIKR's OWN availability endpoint
+  (`seats/times` — replaced my gap-maths after it offered slots SLIKR refused;
+  Locky showed -1 booked-out, explaining every earlier bounce). Booked ✓ →
+  status poll "Booked 17:50 with Jarred" ✓ → cancelled ✓.
+- Walk-in queue join ("now", no slot): processed by the LAUNCHD executor
+  unattended, queue position 18:16 ✓ → cancelled ✓.
+- Failure path: SLIKR business rejections (4xx JSON) surface as honest
+  user-facing messages ("try another time"), not generic errors.
+- Site wizard verified in-browser: barber chips (live roster) → services with
+  prices (per correct shop) → real slot chips → name+mobile parse.
+- Telegram flow deployed (same steps via inline keyboards, per-chat state in
+  blobs, confirmation pushed by the executor); awaiting a real-chat smoke test.
+
+## Notes
+- Feed now carries `services` menus + per-barber `slots` (SLIKR truth, 4 max).
+- SMS reminders ON for chat bookings (SLIKR sends the confirmation texts).
+- Bookings land as the real customer (find-or-create by mobile) — they appear
+  in SLIKR exactly like front-desk entries, `track_code: livingshop` for
+  attribution.
