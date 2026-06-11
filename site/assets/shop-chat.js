@@ -61,6 +61,105 @@
     return 'I’ve got live answers for the wait, who’s on, hours & parking, or booking — tap a chip below.';
   }
 
+  // ---------- booking wizard ----------
+  var BOOK_API = 'https://blacksmith-wait-bot.vercel.app/api/book';
+  var wiz = null; // {step, barber, shop, service, slot}
+
+  function chipRow(opts, onPick) {
+    var row = el('div', 'sc-msg bot sc-choices');
+    opts.forEach(function (o) {
+      var c = el('button', 'sc-chip', o.label);
+      c.onclick = function () { row.remove(); onPick(o); };
+      row.appendChild(c);
+    });
+    body.appendChild(row);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function startBooking() {
+    if (!snap || !snap.open) { bubble(answer('book', snap), 'bot', true); return; }
+    wiz = { step: 'barber' };
+    bubble('Let’s get you booked. Who with?', 'bot');
+    var opts = snap.barbers.map(function (b) {
+      return { label: b.name.split(' ')[0], barber: b.name, book: b.book || ['barber'] };
+    });
+    opts.push({ label: 'Anyone', barber: 'any', book: ['barber'] });
+    chipRow(opts, function (o) {
+      bubble(o.label, 'me');
+      wiz.barber = o.barber;
+      wiz.shop = (o.book[0] === 'bookings') ? 'bookings' : 'barber';
+      askService();
+    });
+  }
+
+  function askService() {
+    var menu = (snap.services && snap.services[wiz.shop]) || [];
+    if (!menu.length) { bubble('Menu’s offline — tap Join the queue instead.', 'bot', true); wiz = null; return; }
+    bubble('What are we doing?', 'bot');
+    chipRow(menu.map(function (s) {
+      return { label: s.name + ' · $' + s.cost, service: s.id };
+    }), function (o) {
+      bubble(o.label, 'me');
+      wiz.service = o.service;
+      askTime();
+    });
+  }
+
+  function askTime() {
+    if (wiz.shop === 'bookings') {
+      var b = snap.barbers.filter(function (x) { return x.name === wiz.barber; })[0];
+      var slots = (b && b.slots) || [];
+      if (!slots.length) {
+        bubble((wiz.barber.split(' ')[0]) + ' is booked out today — pick someone else or join the walk-in queue.', 'bot');
+        wiz = null; return;
+      }
+      bubble('What time today?', 'bot');
+      chipRow(slots.map(function (t) { return { label: fmtT(t), slot: t }; }), function (o) {
+        bubble(o.label, 'me'); wiz.slot = o.slot; askDetails();
+      });
+    } else {
+      wiz.slot = 'now';
+      bubble('You’ll join the live queue — current wait ~' + (snap.wait_mins || 0) + ' min.', 'bot');
+      askDetails();
+    }
+  }
+
+  function askDetails() {
+    wiz.step = 'details';
+    bubble('Last bit — type your name and mobile.\nLike: Jack Smith, 0400 123 456', 'bot');
+  }
+
+  function submitBooking(name, phone) {
+    bubble('Locking it in…', 'bot');
+    fetch(BOOK_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ shop: wiz.shop, service_id: wiz.service, barber: wiz.barber, slot: wiz.slot, name: name, phone: phone }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.id) { bubble(d.error || 'That didn’t go through — try again.', 'bot'); wiz = null; return; }
+        var tries = 0;
+        var poll = setInterval(function () {
+          tries++;
+          fetch(BOOK_API + '?id=' + d.id).then(function (r) { return r.json(); }).then(function (st) {
+            if (st.done) {
+              clearInterval(poll);
+              bubble(st.ok ? '✅ Booked! ' + (st.time === 'now' ? 'You’re in the queue — head in.' :
+                fmtT(st.time) + ' with ' + st.barber + '. You’ll get an SMS confirmation.') :
+                '❌ ' + (st.msg || 'Couldn’t book that — try another time.'), 'bot');
+              wiz = null;
+            } else if (tries > 25) { clearInterval(poll); bubble('Taking longer than usual — you’ll get an SMS if it landed, or call 0479 087 782.', 'bot'); wiz = null; }
+          }).catch(function () {});
+        }, 2500);
+      })
+      .catch(function () { bubble('Network hiccup — try again.', 'bot'); wiz = null; });
+  }
+
+  function handleDetails(text) {
+    var m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
+    if (!m) { bubble('Almost — send it like: Jack Smith, 0400 123 456', 'bot'); return; }
+    var phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
+    submitBooking(m[1].trim(), phone);
+  }
+
   // ---------- UI ----------
   var snap = null;
   function tick() {
@@ -149,7 +248,10 @@
     var chips = el('div', 'sc-chips');
     [['wait', '⏱ Wait time'], ['who', '💈 Who’s on'], ['hours', '🕐 Hours & parking'], ['book', '✂️ Book']].forEach(function (c) {
       var ch = el('button', 'sc-chip', c[1]);
-      ch.onclick = function () { ask(c[0], c[1].replace(/^\S+\s/, '')); };
+      ch.onclick = function () {
+        if (c[0] === 'book') { bubble('Book me in', 'me'); startBooking(); }
+        else ask(c[0], c[1].replace(/^\S+\s/, ''));
+      };
       chips.appendChild(ch);
     });
     panel.appendChild(chips);
@@ -167,9 +269,11 @@
       if (!t) return;
       input.value = '';
       bubble(t, 'me');
+      if (wiz && wiz.step === 'details') { handleDetails(t); return; }
       var kind = route(t);
+      if (kind === 'book') { startBooking(); return; }
       setTimeout(function () {
-        bubble(answer(kind, snap), 'bot', kind === 'book' || kind === 'wait' || (snap && !snap.open));
+        bubble(answer(kind, snap), 'bot', kind === 'wait' || (snap && !snap.open));
       }, 300);
     };
     panel.appendChild(form);

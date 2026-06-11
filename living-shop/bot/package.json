@@ -1,0 +1,7 @@
+{
+  "name": "blacksmith-wait-bot",
+  "private": true,
+  "dependencies": {
+    "@vercel/blob": "latest"
+  }
+}
