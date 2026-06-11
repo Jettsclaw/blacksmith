@@ -394,6 +394,34 @@
     requestAnimationFrame(function () {
       stage.scrollLeft = Math.max(0, (canvas.clientWidth - stage.clientWidth) * 0.38);
     });
+
+    // close-up <-> full-shop toggle
+    var tog = document.createElement('button');
+    tog.className = 'ls-zoom';
+    tog.textContent = 'See the full shop';
+    tog.onclick = function () {
+      var fit = stage.classList.toggle('ls-fit');
+      tog.textContent = fit ? 'Close-up' : 'See the full shop';
+      if (!fit) requestAnimationFrame(function () {
+        stage.scrollLeft = Math.max(0, (canvas.clientWidth - stage.clientWidth) * 0.38);
+      });
+    };
+    host.querySelector('.wrap').appendChild(tog);
+
+    // one-time drag hint
+    if (!sessionStorage.getItem('lsDragHint')) {
+      sessionStorage.setItem('lsDragHint', '1');
+      var hint = document.createElement('div');
+      hint.className = 'ls-hint';
+      hint.textContent = '← drag to look around →';
+      host.querySelector('.wrap').appendChild(hint);
+      setTimeout(function () { hint.classList.add('show'); }, 1200);
+      setTimeout(function () { hint.classList.remove('show'); setTimeout(function(){hint.remove();},400); }, 5200);
+      stage.addEventListener('scroll', function once() {
+        hint.classList.remove('show');
+        stage.removeEventListener('scroll', once);
+      });
+    }
   }
 
   function start() {
