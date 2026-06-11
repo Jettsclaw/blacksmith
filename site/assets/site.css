@@ -629,7 +629,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .exp-card h3{font-size:1.3rem}
 .exp-card p{font-size:.92rem;color:var(--body);margin:0}
 @media(min-width:560px){ .exp-grid{grid-template-columns:repeat(2,1fr)} }
-@media(min-width:900px){ .exp-grid{grid-template-columns:repeat(4,1fr)} }
+@media(min-width:900px){ .exp-grid{grid-template-columns:repeat(3,1fr);max-width:1040px;margin-inline:auto} }
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
@@ -843,8 +843,9 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 
 /* ===== Experience band: image as living background, copy rides over it ===== */
 .exp-band{position:relative;min-height:78vh;display:flex;align-items:flex-end;overflow:hidden}
-.exp-band-img{position:absolute;inset:-12% 0;background-size:cover;background-position:center 62%;will-change:transform;transform:translateY(0)}
+.exp-band-img{position:absolute;inset:-12% 0;background-size:cover;background-position:center 60%;will-change:transform;transform:translateY(0)}
 .exp-band::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--ink) 0%,rgba(11,11,13,.25) 30%,rgba(11,11,13,.3) 70%,var(--ink) 100%)}
 .exp-band-copy{position:relative;z-index:2;padding-bottom:clamp(40px,6vw,72px)}
+@media(min-width:820px){.exp-band-img{background-position:center 74%}}
 .exp-band-copy .lead{max-width:44ch}
 @media(max-width:640px){.exp-band{min-height:60vh}}
