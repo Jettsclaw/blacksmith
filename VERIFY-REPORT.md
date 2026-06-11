@@ -168,3 +168,15 @@ Oswald gold; mobile 390px shows the full scaled scene.
 **GATE STATUS Phase 2: built + adversarially verified, live behind
 `?livingshop` on production. Remaining gate = Jett's reveal approval →
 flip `LIVING_SHOP_ON`.**
+
+## Phase 2 addendum — Bookings feed merged (2026-06-11, Jett's catch)
+Jett asked whether Blacksmith Bookings + Blackrose were included. They weren't —
+and live proof showed the gap mattered: Locky + Jarred were mid-cut on bookings
+(shop 1121) while the scene showed only the walk-in shop's two barbers. Fix:
+poller now merges 1121 activity into per-barber cutting/on status (name-keyed —
+barber ids differ between shops). Walk-in queue (421) alone still drives the
+wait number and "waiting" count (a 4pm appointment is not a couch-waiter), and
+Blackrose (422) stays excluded by Jett's call (different room + brand). Locky
+sprite added (8 barbers in scene). Verified live: 4 on, 3 cutting, 2 waiting —
+matches SLIKR across both shops. Poller reference copy versioned in
+living-shop/poller/.
