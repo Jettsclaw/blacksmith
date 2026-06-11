@@ -777,3 +777,11 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 @media(max-width:640px){.sc-fab{right:14px;bottom:14px}.sc-panel{right:14px;bottom:82px}}
 .ls-x{position:absolute;top:6px;right:10px;background:none;border:none;color:#a2a2aa;font-size:1.2rem;cursor:pointer;line-height:1}
 .ls-card-pop{padding-top:20px}
+
+.sc-fab img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.sc-fab{padding:0;overflow:hidden}
+.sc-fab.pulse{animation:scpulse 1.6s ease-out 2}
+@keyframes scpulse{0%{box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 0 0 rgba(200,164,77,.55)}70%{box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 0 14px rgba(200,164,77,0)}100%{box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 0 0 rgba(200,164,77,0)}}
+.sc-pill{position:fixed;right:90px;bottom:34px;z-index:90;background:#141417;border:1px solid var(--gold,#c8a44d);color:#f3f1ea;border-radius:999px;padding:10px 16px;font-size:.85rem;cursor:pointer;opacity:0;transform:translateX(8px);transition:opacity .3s,transform .3s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5);white-space:nowrap}
+.sc-pill.show{opacity:1;transform:none;pointer-events:auto}
+@media(max-width:640px){.sc-pill{right:82px;bottom:26px;font-size:.8rem}}

@@ -72,9 +72,28 @@
 
   var fab = document.createElement('button');
   fab.className = 'sc-fab';
-  fab.setAttribute('aria-label', 'Chat with the shop');
-  fab.innerHTML = '✂️';
+  fab.setAttribute('aria-label', 'Chat with the shop — live wait times');
+  fab.innerHTML = '<img src="assets/living-shop/bot-mark.webp" alt="">';
   document.body.appendChild(fab);
+
+  // One-time nudge so people know the bubble exists.
+  if (!sessionStorage.getItem('scNudged')) {
+    sessionStorage.setItem('scNudged', '1');
+    var pill = document.createElement('button');
+    pill.className = 'sc-pill';
+    pill.textContent = 'Live wait times — tap to ask';
+    pill.onclick = function () { pill.remove(); fab.click(); };
+    document.body.appendChild(pill);
+    setTimeout(function () {
+      pill.classList.add('show');
+      fab.classList.add('pulse');
+      setTimeout(function () {
+        pill.classList.remove('show');
+        fab.classList.remove('pulse');
+        setTimeout(function () { pill.remove(); }, 400);
+      }, 7000);
+    }, 3000);
+  }
 
   var panel = null, body = null, opened = false;
 
