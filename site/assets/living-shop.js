@@ -30,7 +30,7 @@
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
       MASSAGE: { x: 118, y: 534 },
-      HOST: { x: 1484, y: 642, h: 206, sprite: 'host-lean', flip: true, stroll: { x0: 620, x1: 1484, y: 646 } }, IDLE_SPOT: { x: 1060, y: 560 },
+      HOST: { x: 1224, y: 589, h: 206, sprite: 'host-lean', flip: false, stroll: { x0: 620, x1: 1224, y: 646 } }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
@@ -65,7 +65,7 @@
   BARBER_NAMES.forEach(function (n) {
     for (var i = 0; i < 4; i++) toLoad.push(n + '-' + i);
   });
-  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','host-couch','host-stand','host-lean','host-walk-1','host-walk-2','chair']
+  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','host-couch','host-stand','host-lean','host-walk-1','host-walk-2','host-walk-3','host-walk-4','chair']
     .forEach(function (n) { toLoad.push(n); });
 
   var loaded = 0, failed = false;
@@ -73,7 +73,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=9';
+    im.src = A + n + '.webp?v=10';
     IMGS[n] = im;
   });
 
@@ -375,14 +375,19 @@
           nextStrollAt = t + 150000 + Math.random() * 150000;
         }
         if (stroll) {
-          stroll.x += stroll.dir * 0.55;
+          stroll.x += stroll.dir * 0.8;
           if (stroll.x <= HOST.stroll.x0) stroll.dir = 1;
           if (stroll.dir === 1 && stroll.x >= HOST.stroll.x1) stroll = null;
         }
       }
       if (stroll) {
-        var wf = 'host-walk-' + (1 + Math.floor(t / 320) % 2);
-        hb = drawSprite(wf, stroll.x, HOST.stroll.y, HOST.h * 0.97, stroll.dir === 1);
+        var wf = 'host-walk-' + (1 + Math.floor(t / 160) % 4);
+        var wy = HOST.stroll.y + Math.round(Math.sin(t / 160 * Math.PI) * 1.5);
+        if (stroll.dir === 1) { // coming home — drift up to the lean spot
+          var left = HOST.stroll.x1 - stroll.x;
+          if (left < 120) wy = HOST.y + (HOST.stroll.y - HOST.y) * (left / 120) + Math.round(Math.sin(t / 160 * Math.PI) * 1.5);
+        }
+        hb = drawSprite(wf, stroll.x, wy, HOST.h * 0.97, stroll.dir === 1);
       } else {
         hb = HOST.sprite
           ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, !!HOST.flip)
