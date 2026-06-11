@@ -134,9 +134,13 @@
     }
     card.hidden = true;
   });
-  document.addEventListener('click', function (e) {
-    if (!host.contains(e.target)) card.hidden = true;
-  });
+  // pointerdown (not click): iOS Safari doesn't deliver document-level
+  // clicks for taps on non-interactive elements, so "tap anywhere to close"
+  // must hook the pointer itself. Taps on the card keep it open; a tap on
+  // another barber closes-then-reopens via the canvas click handler.
+  document.addEventListener('pointerdown', function (e) {
+    if (!card.hidden && !card.contains(e.target)) card.hidden = true;
+  }, true);
 
   // ---------- info line under the canvas ----------
   function renderInfo() {
