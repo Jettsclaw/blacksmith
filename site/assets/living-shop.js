@@ -4,7 +4,7 @@
    context-loss gotchas), one render loop, pauses offscreen & when tab hidden.
    Feature flag: renders only with ?livingshop until Jett's reveal approval. */
 (function () {
-  var LIVING_SHOP_ON = false; // flip true on Jett's Phase 2 reveal approval
+  var LIVING_SHOP_ON = true; // revealed — authorised by Jett 2026-06-11
   var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
   var BOOK_URL = 'https://web.slikr.com.au/shop/421/res?ref=livingshop'; // ref ignored by SLIKR today; future measurement hook
   var STALE_MS = 8 * 60 * 1000;
