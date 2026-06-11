@@ -819,3 +819,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .ls-stage.ls-portrait{height:auto;overflow:visible;border-radius:0;border-left:none;border-right:none}
 .ls-stage.ls-portrait .ls-canvas{width:100%;height:auto;aspect-ratio:768/1376}
 .sc-choices{display:flex;flex-wrap:wrap;gap:6px;background:transparent;border:none;padding:4px 0}
+
+/* polish: centered text blocks must centre their own box (global p max-width pins them left) */
+.kp-demand,.kp-quiz,.ls-info,.keypeople .kp-head .lead,.cta-band .eyebrow,.kp-head .eyebrow,.quiz-band .eyebrow,.gallery-head .eyebrow{margin-inline:auto;display:block;max-width:max-content}
+.cta-band .eyebrow{display:block}
