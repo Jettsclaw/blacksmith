@@ -45,7 +45,8 @@
 
   // Two rooms, one engine: landscape for desktop, a portrait recomposition
   // for phones (fills the screen, no zoom/pan). Anchors are per-layout.
-  var ROOM_V2 = true; // Jett's 2026-06-11 refresh: honey bench, left plant corner, sprite massage chair (reclines). false = original room.
+  var ROOM_V2 = true;
+  var HOST_JETT = true; // Jett as the concierge (test) — false restores the original host // Jett's 2026-06-11 refresh: honey bench, left plant corner, sprite massage chair (reclines). false = original room.
   var LAYOUTS = {
     landscape: {
       room: ROOM_V2 ? 'room-v2' : 'room', W: 1584, H: 672,
@@ -55,7 +56,7 @@
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
       MASSAGE: ROOM_V2 ? { x: 74, y: 656, h: 172, sprite: true } : { x: 118, y: 534 },
       FRIDGE: null,
-      HOST: { x: 1224, y: 589, h: 206, sprite: 'host-lean', flip: false }, IDLE_SPOT: { x: 1060, y: 560 },
+      HOST: { x: 1224, y: 589, h: 206, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
@@ -94,6 +95,7 @@
     .forEach(function (n) { toLoad.push(n); });
   if (LAY.MASSAGE && LAY.MASSAGE.sprite) toLoad.push('massage-up', 'massage-lay');
   if (LAY.FRIDGE) toLoad.push('fridge');
+  if (HOST_JETT) toLoad.push('jett-lean');
 
   var loaded = 0, failed = false;
   toLoad.forEach(function (n) {
