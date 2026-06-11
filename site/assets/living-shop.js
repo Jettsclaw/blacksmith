@@ -53,7 +53,7 @@
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      MASSAGE: ROOM_V2 ? { x: 74, y: 656, h: 172, sprite: true } : { x: 118, y: 534 },
+      MASSAGE: ROOM_V2 ? { x: 98, y: 656, h: 172, sprite: true } : { x: 118, y: 534 },
       HOST: { x: 1224, y: 589, h: 206, sprite: 'host-lean', flip: false }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
