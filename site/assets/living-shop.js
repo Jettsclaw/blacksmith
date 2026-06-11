@@ -141,7 +141,8 @@
   var people = {}, couchPos = [];       // positions resolved each frame
   var catSay = 0;
   var CUT_LINES = ['Keeping it sharp ✂', 'Loving this fade', 'Clean as always', 'Almost done here'];
-  var FREE_LINES = ['Walk right in', 'Chair’s ready', 'No wait — come down'];
+  var FREE_LINES = ['Walk right in', 'Chair’s ready', 'No wait — come down', 'I’m free — tap me to book ✂'];
+  var LOUNGE_LINES = ['I’m free — tap me to book in ✂', 'Catching a breather — tap me to book', 'Chair’s open, I’m ready — tap to book'];
   var WAIT_LINES = ['Worth the wait', 'Best cut on the coast', 'Massage chair’s mine next', 'Love this place'];
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
 
@@ -613,12 +614,14 @@
         // v2: the chair is its own layer — reclines with a client in it
         // (or a spare barber having a breather; tap them to book)
         var occupied = snap.waiting > 3 || !!lounger;
-        drawSprite(occupied ? 'massage-lay' : 'massage-up',
+        var mb = drawSprite(occupied ? 'massage-lay' : 'massage-up',
           LAY.MASSAGE.x + (occupied ? (LAY.FIT ? 8 : 26) : 0) * (LAY.MASSAGE.flip ? -1 : 1), LAY.MASSAGE.y, LAY.MASSAGE.h * (occupied ? 0.88 : 1), !!LAY.MASSAGE.flip);
-        if (lounger)
+        if (lounger) {
           hits.push({ x: LAY.MASSAGE.x - 95, y: LAY.MASSAGE.y - 175, w: 230, h: 185,
                       name: lounger.name, cutting: false, free_in: lounger.free_in,
                       cutting_at: lounger.cutting_at, book: lounger.book });
+          people[lounger.name] = { cx: mb.x + mb.w / 2, top: mb.y }; // bubble anchor
+        }
       } else if (snap.waiting > 3 && LAY.MASSAGE)
         drawTorso('client-couch', LAY.MASSAGE.x, LAY.MASSAGE.y, 42, 0.32);
       var mOcc = LAY.MASSAGE && LAY.MASSAGE.sprite && snap.waiting > 3;
@@ -665,6 +668,8 @@
           if (b.cutting && b.cutting_at !== 'salon') lines.push({ who: b.name, text: pick(CUT_LINES) });
           else if (!b.cutting) lines.push({ who: b.name, text: snap.waiting > 0 ? 'Next!' : pick(FREE_LINES) });
         });
+        // the massage-chair lounger pitches himself (twice the odds — he's the free one)
+        if (lounger) { var ll = { who: lounger.name, text: pick(LOUNGE_LINES) }; lines.push(ll, ll); }
         for (var li = 0; li < waitN; li++) lines.push({ couch: li, text: pick(WAIT_LINES) });
         if (lines.length) {
           var L = pick(lines);
