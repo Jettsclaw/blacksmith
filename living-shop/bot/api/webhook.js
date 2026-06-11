@@ -84,7 +84,25 @@ async function bkStart(token, chat) {
   await setState(chat, { step: 'barber' });
   const rows = s.barbers.map(b => [{ text: b.name.split(' ')[0], callback_data: 'bk1:' + b.name.split(' ')[0] }]);
   rows.push([{ text: 'Anyone', callback_data: 'bk1:any' }]);
+  rows.push([{ text: '🌹 Blackrose Salon', callback_data: 'bks' }]);
   await tg(token, 'sendMessage', { chat_id: chat, text: 'Let’s get you booked. Who with?', reply_markup: { inline_keyboard: rows } });
+}
+
+async function bkSalon(token, chat) {
+  const s = await feed().catch(() => null);
+  if (!s) return;
+  const sal = s.salon || {};
+  let stylist = null, slots = [];
+  for (const k of Object.keys(sal.slots || {})) {
+    if ((sal.slots[k] || []).length) { stylist = k; slots = sal.slots[k]; break; }
+  }
+  if (!(sal.services || []).length || !stylist) {
+    await tg(token, 'sendMessage', { chat_id: chat, text: `Blackrose's book is closed right now — call ${PHONE}, or book online: https://web.slikr.com.au/blackrosesalon` });
+    return;
+  }
+  await setState(chat, { step: 'service', shop: 'salon', barber: stylist, date: sal.date, label: sal.label });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `🌹 Blackrose Salon — ${stylist} has times ${sal.label || 'today'}. What are we doing?`,
+    reply_markup: { inline_keyboard: sal.services.map(m => [{ text: `${m.name} · $${m.cost}`, callback_data: 'bk2:' + m.id }]) } });
 }
 
 async function bkStep(token, chat, data) {
@@ -103,6 +121,15 @@ async function bkStep(token, chat, data) {
       reply_markup: { inline_keyboard: menu.map(m => [{ text: `${m.name} · $${m.cost}`, callback_data: 'bk2:' + m.id }]) } });
   } else if (data.startsWith('bk2:')) {
     st.service = parseInt(data.slice(4), 10);
+    if (st.shop === 'salon') {
+      const slots = ((s.salon || {}).slots || {})[st.barber] || [];
+      if (!slots.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `No salon times left — call ${PHONE}.` }); return clearState(chat); }
+      st.step = 'slot';
+      await setState(chat, st);
+      await tg(token, 'sendMessage', { chat_id: chat, text: `What time ${st.label || 'today'}?`,
+        reply_markup: { inline_keyboard: slots.map(t => [{ text: t, callback_data: 'bk3:' + t }]) } });
+      return;
+    }
     if (st.ahead) {
       const slots = (s.slots_next && s.slots_next[st.barber.split(' ')[0]]) || [];
       if (!slots.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `No times left ${s.next_label} — try another barber.` }); return clearState(chat); }
@@ -211,6 +238,7 @@ export default async function handler(req, res) {
       const chat = cq.message.chat.id;
       if (!limited(chat)) {
         if (cq.data === 'bk') await bkStart(token, chat);
+        else if (cq.data === 'bks') await bkSalon(token, chat);
         else if (cq.data.startsWith('bk')) await bkStep(token, chat, cq.data);
         else {
           const text = await answerFor(cq.data);
@@ -228,6 +256,7 @@ export default async function handler(req, res) {
         const nm = NAMES.find(n => t.includes(n));
         let kind = 'menu';
         if (/cancel|reschedule|change my/.test(t)) kind = 'cancel';
+        else if (/salon|colour|color|women|ladies|blackrose/.test(t)) kind = 'salon';
         else if (/book|appoint|reserve|lock in|get in/.test(t)) kind = 'book';
         else if (/price|cost|how much|\$|charge|service|menu|fade|beard|shave/.test(t)) kind = 'prices';
         else if (/cancel|reschedule|change my/.test(t)) kind = 'cancel';
@@ -252,7 +281,11 @@ export default async function handler(req, res) {
         else if (kind === 'cancel') text = `To change or cancel a booking, call us on ${PHONE} and we'll sort it.`;
         else if (kind === 'pay') text = 'You pay at the shop after your cut — card or cash both sweet.';
         else if (kind === 'app') text = 'The Blacksmith app: https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905';
-        else if (kind === 'salon') text = 'Blackrose Salon Co. is our salon side: https://web.slikr.com.au/blackrosesalon';
+        else if (kind === 'salon') {
+          await tg(token, 'sendMessage', { chat_id: chatId, text: 'Blackrose Salon Co. is our salon side — colour, styling, cuts. I can book you in right here:',
+            reply_markup: { inline_keyboard: [[{ text: '🌹 Book Blackrose', callback_data: 'bks' }]] } });
+          return res.status(200).send('ok');
+        }
         else if (kind === 'jobs') text = `Keen to join the trade? Call ${PHONE} or drop in — we also run the Blacksmith Academy.`;
         else if (kind === 'gift') text = `Ask at the counter or call ${PHONE}.`;
         else if (kind === 'human') text = `Call the shop: ${PHONE}.`;

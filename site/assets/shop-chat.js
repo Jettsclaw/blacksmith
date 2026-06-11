@@ -36,6 +36,7 @@
   function route(text) {
     var t = text.toLowerCase();
     if (/cancel|reschedule|change my/.test(t)) return 'cancel';
+    if (/salon|colour|color|women|ladies|blackrose/.test(t)) return 'salon';
     if (/(have to|need to|gotta).*(wait|stand|come in)|wait (in|at) the shop|remote|from home|without (coming|walking)/.test(t)) return 'remote';
     if (/book|appoint|reserve|lock in|get in/.test(t)) return 'book';
     if (/price|cost|how much|\$|charge/.test(t)) return 'prices';
@@ -178,11 +179,41 @@
     opts.push({ label: 'Anyone', barber: 'any', book: ['barber'] });
     opts.push({ label: '🌹 Blackrose Salon', salon: true });
     chipRow(opts, function (o) {
-      if (o.salon) { bubble('Blackrose Salon', 'me'); bubble('Blackrose runs its own book — tap to book the salon.', 'bot'); var a = el('a', 'sc-book', 'Book Blackrose →'); a.href = 'https://web.slikr.com.au/blackrosesalon'; a.target = '_blank'; a.rel='noopener'; body.lastChild.appendChild(document.createElement('br')); body.lastChild.appendChild(a); return; }
+      if (o.salon) { bubble('Blackrose Salon', 'me'); startSalon(); return; }
       bubble(o.label, 'me');
       wiz.barber = o.barber;
       wiz.shop = (o.book[0] === 'bookings') ? 'bookings' : 'barber';
       askService();
+    });
+  }
+
+  function startSalon() {
+    setWizUI(true);
+    if (!snap) { setTimeout(function () { startSalon(); }, 800); return; }
+    var sal = snap.salon || {};
+    var stylist = null, slots = [];
+    Object.keys(sal.slots || {}).forEach(function (k) {
+      if (!stylist && (sal.slots[k] || []).length) { stylist = k; slots = sal.slots[k]; }
+    });
+    if (!(sal.services || []).length || !stylist) {
+      bubble('Blackrose’s book is closed right now — call 0479 087 782, or book online:', 'bot');
+      var a = el('a', 'sc-book', 'Book Blackrose →');
+      a.href = 'https://web.slikr.com.au/blackrosesalon'; a.target = '_blank'; a.rel = 'noopener';
+      body.lastChild.appendChild(document.createElement('br'));
+      body.lastChild.appendChild(a);
+      setWizUI(false); return;
+    }
+    wiz = { step: 'service', shop: 'salon', barber: stylist, salonSlots: slots, date: sal.date, salonLabel: sal.label };
+    bubble('🌹 Blackrose Salon — what are we doing?', 'bot');
+    chipRow(sal.services.map(function (s) {
+      return { label: s.name + ' · $' + s.cost, service: s.id };
+    }), function (o) {
+      bubble(o.label, 'me');
+      wiz.service = o.service;
+      bubble('What time ' + (wiz.salonLabel || 'today') + ' with ' + stylist + '?', 'bot');
+      chipRow(wiz.salonSlots.map(function (t) { return { label: fmtT(t), slot: t }; }), function (o2) {
+        bubble(o2.label, 'me'); wiz.slot = o2.slot; askDetails();
+      }, true);
     });
   }
 
@@ -409,6 +440,7 @@
       var lower = t.toLowerCase();
       var kind = route(lower);
       if (kind === 'book') { startBooking(barberIn(lower)); return; }
+      if (kind === 'salon') { startSalon(); return; }
       if (kind === 'hours') {
         var dh = dayHours(lower);
         if (dh) { setTimeout(function () { bubble(dh, 'bot'); }, 250); return; }
