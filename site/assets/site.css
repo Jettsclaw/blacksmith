@@ -748,3 +748,6 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .living-shop .wrap{position:relative}
 .ls-info{color:#a2a2aa;font-size:.9rem;margin:10px 4px 0;text-align:center}
 @media(max-width:640px){.living-shop{padding-top:8px}.ls-info{font-size:.82rem}}
+
+.lw-bot{color:var(--gold,#c8a44d);font-size:.9rem;text-decoration:none;border-bottom:1px solid rgba(200,164,77,.35);padding-bottom:2px}
+.lw-bot:hover{color:var(--gold-2,#e3c578);border-color:currentColor}
