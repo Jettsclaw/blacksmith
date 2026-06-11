@@ -85,7 +85,7 @@
     }
   };
   var MOBILE_V1 = true; // Jett 2026-06-12: phone shows the full landscape scene as a card (the first mobile version)
-  var MOBILE_PAN = /[?&]lsmob/.test(location.search); // preview: the EXACT desktop scene at full height, swipe sideways to pan (?lsmob=1)
+  var MOBILE_PAN = true; // Jett 2026-06-12: phones get the EXACT desktop scene at full height, swipe sideways to pan. false = V1 wide card.
   var LAY = LAYOUTS[(!MOBILE_V1 && !MOBILE_PAN && window.innerWidth <= 640) ? 'portrait' : 'landscape'];
   var W = LAY.W, H = LAY.H, BARBER_OFF = LAY.BARBER_OFF, CAPE_OFF = LAY.CAPE_OFF,
       COUCH = LAY.COUCH, DOOR = LAY.DOOR, SIGN = LAY.SIGN, SCALE = LAY.SCALE;
