@@ -1,0 +1,281 @@
+/* Living Shop — Phase 2 scene engine.
+   A real-time pixel miniature of the shop, driven by the same PII-free feed
+   as the wait card. Plain Canvas 2D (no WebGL: dodges the iOS hidden-video /
+   context-loss gotchas), one render loop, pauses offscreen & when tab hidden.
+   Feature flag: renders only with ?livingshop until Jett's reveal approval. */
+(function () {
+  var LIVING_SHOP_ON = false; // flip true on Jett's Phase 2 reveal approval
+  var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
+  var BOOK_URL = 'https://web.slikr.com.au/shop/421/res';
+  var STALE_MS = 8 * 60 * 1000;
+  var A = 'assets/living-shop/';
+
+  var host = document.getElementById('living-shop');
+  if (!host) return;
+  if (!LIVING_SHOP_ON && !/[?&]livingshop/.test(location.search)) return;
+  host.hidden = false;
+
+  // Scene-space anchors (room.webp is 1584x672, drawn at native coords).
+  var W = 1584, H = 672;
+  var CHAIRS = [
+    { x: 317, y: 545 }, { x: 521, y: 545 }, { x: 725, y: 545 }, { x: 936, y: 545 }
+  ];
+  var BARBER_OFF = { x: 72, y: 12 };       // barber stands right of chair
+  var COUCH = [ { x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 } ];
+  var DOOR = { x: 1500, y: 640 };
+  var SIGN = { x: 620, y: 118 };
+  var SCALE = { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 };
+
+  var canvas = document.createElement('canvas');
+  canvas.className = 'ls-canvas';
+  host.querySelector('.ls-stage').appendChild(canvas);
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- assets ----------
+  var IMGS = {}, toLoad = ['room'], BARBER_KEYS = {};
+  // barber sprite frames: 0 stand, 1+2 cutting, 3 idle
+  var BARBER_NAMES = ['bayli','ben','cam','jarred','jayden','mubarak','sami'];
+  BARBER_NAMES.forEach(function (n) {
+    for (var i = 0; i < 4; i++) toLoad.push(n + '-' + i);
+  });
+  ['client-cape-1','client-cape-2','client-cape-3','client-walk','client-couch','cat']
+    .forEach(function (n) { toLoad.push(n); });
+
+  var loaded = 0, failed = false;
+  toLoad.forEach(function (n) {
+    var im = new Image();
+    im.onload = function () { if (++loaded === toLoad.length) start(); };
+    im.onerror = function () { failed = true; };
+    im.src = A + n + '.webp';
+    IMGS[n] = im;
+  });
+
+  // Map a feed name ("Jayden (Apprentice)") to a sprite key.
+  function spriteKey(name) {
+    var k = name.toLowerCase();
+    for (var i = 0; i < BARBER_NAMES.length; i++)
+      if (k.indexOf(BARBER_NAMES[i]) === 0) return BARBER_NAMES[i];
+    return null; // unknown barber -> generic idle silhouette (use 'ben' tinted)
+  }
+
+  // ---------- live state ----------
+  var snap = null, lastWaiting = 0, walkers = [], catX = null, lastCat = 0;
+
+
+  function fmtT(t) {
+    if (!t) return 'soon';
+    var p = t.trim().split(':'), h = +p[0], ap = h >= 12 ? 'pm' : 'am';
+    return (h % 12 || 12) + (p[1] && p[1] !== '00' ? ':' + p[1] : '') + ap;
+  }
+
+  function fresh(s) {
+    if (!s) return false;
+    var d = new Date(s.as_of.replace(/(\d{2})(\d{2})$/, '$1:$2'));
+    return !isNaN(d) && (Date.now() - d.getTime()) <= STALE_MS;
+  }
+
+  function tick() {
+    fetch(FEED + '?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (s) {
+        if (snap && s.waiting > lastWaiting && s.open && !reduced) spawnWalker();
+        lastWaiting = s.waiting;
+        snap = s;
+        renderInfo();
+      })
+      .catch(function () { /* keep last; fresh() decays the sign */ });
+  }
+
+  function spawnWalker() {
+    walkers.push({ x: DOOR.x, t: 0 });
+  }
+
+  // ---------- barber hit areas + status card ----------
+  var hits = [];
+  var card = host.querySelector('.ls-card-pop');
+  canvas.addEventListener('click', function (e) {
+    var r = canvas.getBoundingClientRect();
+    var sx = W / r.width, sy = H / r.height;
+    var x = (e.clientX - r.left) * sx, y = (e.clientY - r.top) * sy;
+    for (var i = 0; i < hits.length; i++) {
+      var h = hits[i];
+      if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
+        card.innerHTML = '<strong>' + h.name + '</strong><span>' +
+          (h.cutting ? 'Cutting now' : 'Free now') +
+          (snap && snap.wait_mins != null ? ' · ~' + snap.wait_mins + ' min wait' : '') +
+          '</span><a class="btn btn-gold" href="' + BOOK_URL + '">Book with ' + h.name.split(' ')[0] + '</a>';
+        card.style.left = Math.min(86, Math.max(4, (h.x / W) * 100)) + '%';
+        card.hidden = false;
+        e.stopPropagation();
+        return;
+      }
+    }
+    card.hidden = true;
+  });
+  document.addEventListener('click', function (e) {
+    if (!host.contains(e.target)) card.hidden = true;
+  });
+
+  // ---------- info line under the canvas ----------
+  function renderInfo() {
+    var el = host.querySelector('.ls-info');
+    if (!snap) return;
+    if (!snap.open) { el.textContent = 'Lights off — back ' + fmtT(snap.hours_today.split('–')[0]) + '.'; return; }
+    if (!fresh(snap) || snap.wait_mins == null) { el.textContent = 'Call for wait time — 0479 087 782'; return; }
+    el.textContent = '~' + snap.wait_mins + ' min wait · ' + snap.waiting + ' waiting · ' +
+      snap.barbers_on + ' on — tap a barber to book';
+  }
+
+  // ---------- drawing ----------
+  function px(n) { return Math.round(n); }
+
+  function drawSprite(key, cx, baseY, targetH, flip) {
+    var im = IMGS[key];
+    if (!im || !im.naturalWidth) return { x: 0, y: 0, w: 0, h: 0 };
+    var s = targetH / im.naturalHeight;
+    var w = im.naturalWidth * s, h = targetH;
+    var x = cx - w / 2, y = baseY - h;
+    ctx.save();
+    if (flip) { ctx.translate(px(cx), 0); ctx.scale(-1, 1); ctx.translate(-px(cx), 0); }
+    ctx.drawImage(im, px(x), px(y), px(w), px(h));
+    ctx.restore();
+    return { x: x, y: y, w: w, h: h };
+  }
+
+  function drawSign(t) {
+    var live = snap && snap.open && fresh(snap) && snap.wait_mins != null;
+    var line = !snap ? '' :
+      !snap.open ? 'CLOSED — BACK ' + fmtT(snap.hours_today.split('–')[0]).toUpperCase() :
+      !live ? 'CALL FOR WAIT TIME' :
+      '~' + snap.wait_mins + ' MIN WAIT · ' + snap.waiting + ' WAITING';
+    if (!line) return;
+    ctx.save();
+    ctx.font = '600 34px Oswald, sans-serif';
+    ctx.textAlign = 'center';
+    var w = ctx.measureText(line).width + 56;
+    var glow = live ? 0.55 + 0.08 * Math.sin(t / 600) : 0.35;
+    ctx.globalAlpha = 0.92;
+    ctx.fillStyle = '#15130c';
+    ctx.fillRect(SIGN.x - w / 2, SIGN.y - 34, w, 56);
+    ctx.strokeStyle = 'rgba(200,164,77,' + glow + ')';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(SIGN.x - w / 2, SIGN.y - 34, w, 56);
+    ctx.shadowColor = 'rgba(200,164,77,' + glow + ')';
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = '#e3c578';
+    ctx.fillText(line, SIGN.x, SIGN.y + 6);
+    ctx.restore();
+  }
+
+  var capeCycle = ['client-cape-1', 'client-cape-2', 'client-cape-3'];
+
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(IMGS.room, 0, 0, W, H);
+    hits = [];
+
+    var open = snap && snap.open;
+    var anim = Math.floor(t / 480) % 2; // 2-frame cutting cadence
+
+    if (open && snap.barbers) {
+      var bs = snap.barbers.slice(0, 4);
+      bs.forEach(function (b, i) {
+        var c = CHAIRS[i], key = spriteKey(b.name) || 'ben';
+        if (b.cutting) {
+          drawSprite(capeCycle[i % 3], c.x, c.y - 6, SCALE.cape, false);
+          var frame = key + '-' + (1 + anim);
+          var bb = drawSprite(frame, c.x + BARBER_OFF.x, c.y + BARBER_OFF.y, SCALE.barber, true);
+          hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true });
+        } else {
+          var bb2 = drawSprite(key + '-3', c.x + BARBER_OFF.x, c.y + BARBER_OFF.y, SCALE.barber, false);
+          hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false });
+        }
+      });
+      // overflow barbers idle by the shelf
+      snap.barbers.slice(4).forEach(function (b, i) {
+        var key = spriteKey(b.name) || 'ben';
+        var bb = drawSprite(key + '-0', 1060 + i * 60, 560, SCALE.barber * 0.95, false);
+        hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting });
+      });
+
+      // waiting queue on the chesterfield
+      var waitN = Math.min(snap.waiting, 3);
+      for (var i2 = 0; i2 < waitN; i2++)
+        drawSprite('client-couch', COUCH[i2].x, COUCH[i2].y, SCALE.couch, i2 === 1);
+      if (snap.waiting > 3) {
+        ctx.font = '600 26px Oswald, sans-serif';
+        ctx.fillStyle = '#e3c578';
+        ctx.fillText('+' + (snap.waiting - 3), COUCH[2].x + 70, COUCH[2].y - 90);
+      }
+
+      // walk-in animation: door -> couch
+      walkers = walkers.filter(function (wk) {
+        wk.t += 1 / 160;
+        wk.x = DOOR.x + (COUCH[Math.min(snap.waiting, 3) - 1 < 0 ? 0 : Math.min(snap.waiting, 3) - 1].x - DOOR.x) * Math.min(wk.t, 1);
+        drawSprite('client-walk', wk.x, DOOR.y, SCALE.walk, true);
+        return wk.t < 1;
+      });
+
+      // shop cat: rare amble (roughly every 6-12 min of open watching)
+      if (catX === null && t - lastCat > 360000 && Math.random() < 0.0006) catX = -80;
+      if (catX !== null) {
+        catX += 0.9;
+        drawSprite('cat', catX, 655, SCALE.cat, false);
+        if (catX > W + 80) { catX = null; lastCat = t; }
+      }
+    }
+
+    drawSign(t);
+
+    if (snap && !snap.open) {
+      ctx.fillStyle = 'rgba(5,5,8,0.62)';
+      ctx.fillRect(0, 0, W, H);
+      drawSign(t); // sign stays readable above the dimmer
+    }
+  }
+
+  // ---------- loop ----------
+  var running = false, rafId = null;
+  function frame(t) {
+    if (!running) return;
+    draw(t);
+    rafId = requestAnimationFrame(frame);
+  }
+  function setRunning(on) {
+    if (on === running) return;
+    running = on;
+    if (on) rafId = requestAnimationFrame(frame);
+    else if (rafId) cancelAnimationFrame(rafId);
+  }
+
+  function start() {
+    if (failed) { host.hidden = true; return; }
+    canvas.width = W * dpr / 2; // scene is pixel art upscaled in CSS; half-res buffer keeps it crisp + cheap
+    canvas.height = H * dpr / 2;
+    ctx = canvas.getContext('2d');
+    ctx.scale(dpr / 2, dpr / 2);
+    ctx.imageSmoothingEnabled = false;
+
+    tick();
+    setInterval(tick, 60000);
+
+    if (reduced) { // one static frame, no loop
+      var once = function () { draw(0); };
+      setTimeout(once, 600); setInterval(once, 60000);
+      return;
+    }
+    var io = new IntersectionObserver(function (es) {
+      setRunning(es[0].isIntersecting && !document.hidden);
+    }, { threshold: 0.05 });
+    io.observe(host);
+    document.addEventListener('visibilitychange', function () {
+      setRunning(!document.hidden);
+    });
+    setRunning(true);
+  }
+
+  window.__lsState = function (s) { snap = s; renderInfo(); }; // test hook
+})();
