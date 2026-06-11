@@ -66,7 +66,8 @@
       BARBER_OFF: { x: 64, y: 6 }, CAPE_OFF: { x: 0, y: -52 },
       COUCH: [{ x: 170, y: 1305 }, { x: 350, y: 1305 }, { x: 520, y: 1305 }],
       DOOR: { x: 740, y: 1100 }, SIGN: { x: 384, y: 238, font: 30 },
-      HOST: { x: 175, y: 1345, h: 238, sprite: 'host-couch' },
+      HOST: { x: 175, y: 1345, h: 238, sprite: HOST_JETT ? 'jett-couch' : 'host-couch', qoff: HOST_JETT ? -17 : 0 },
+      MASSAGE: ROOM_V2 ? { x: 618, y: 1118, h: 185, sprite: true } : null,
       IDLE_SPOT: { x: 660, y: 1000 },
       CAT_Y: 1110,
       SCALE: { barber: 235, cape: 185, couch: 172, walk: 165, cat: 56 }
@@ -95,7 +96,7 @@
     .forEach(function (n) { toLoad.push(n); });
   if (LAY.MASSAGE && LAY.MASSAGE.sprite) toLoad.push('massage-up', 'massage-lay');
   if (LAY.FRIDGE) toLoad.push('fridge');
-  if (HOST_JETT) toLoad.push('jett-lean');
+  if (HOST_JETT) toLoad.push(LAY.HOST.sprite);
 
   var loaded = 0, failed = false;
   toLoad.forEach(function (n) {
@@ -458,7 +459,7 @@
         // v2: the chair is its own layer — reclines with a client in it
         var occupied = snap.waiting > 3;
         drawSprite(occupied ? 'massage-lay' : 'massage-up',
-          LAY.MASSAGE.x + (occupied ? 26 : 0), LAY.MASSAGE.y, LAY.MASSAGE.h * (occupied ? 0.88 : 1), false);
+          LAY.MASSAGE.x + (occupied ? (LAY.FIT ? 8 : 26) : 0), LAY.MASSAGE.y, LAY.MASSAGE.h * (occupied ? 0.88 : 1), false);
       } else if (snap.waiting > 3 && LAY.MASSAGE)
         drawTorso('client-couch', LAY.MASSAGE.x, LAY.MASSAGE.y, 42, 0.32);
       if (snap.waiting > 4) {
