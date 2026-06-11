@@ -53,7 +53,7 @@
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      MASSAGE: ROOM_V2 ? { x: 285, y: 660, h: 165, sprite: true } : { x: 118, y: 534 },
+      MASSAGE: ROOM_V2 ? { x: 262, y: 608, h: 172, sprite: true } : { x: 118, y: 534 },
       HOST: { x: 1224, y: 589, h: 206, sprite: 'host-lean', flip: false, stroll: { x0: 620, x1: 1224, y: 646 } }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
@@ -610,10 +610,10 @@
   function start() {
     if (failed) { host.hidden = true; return; }
     immersiveMobile();
-    canvas.width = W * dpr / 2; // scene is pixel art upscaled in CSS; half-res buffer keeps it crisp + cheap
-    canvas.height = H * dpr / 2;
+    canvas.width = W * dpr; // full-res buffer — half-res read as blur on large desktops
+    canvas.height = H * dpr;
     ctx = canvas.getContext('2d');
-    ctx.scale(dpr / 2, dpr / 2);
+    ctx.scale(dpr, dpr);
     ctx.imageSmoothingEnabled = false;
 
     tick();
