@@ -3,7 +3,7 @@
    once Jett approves). Data: PII-free snapshot published from the shop every
    60s. Staleness rule: >5 min old = never show the number as live. */
 (function () {
-  var LIVE_WAIT_ON = false; // flip true on Jett's approval
+  var LIVE_WAIT_ON = true; // approved by Jett 2026-06-11 (numbers verified vs the room)
   var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
   var PHONE = '0479 087 782';
   // raw.githubusercontent's CDN ignores query strings and caches 300s, so a
