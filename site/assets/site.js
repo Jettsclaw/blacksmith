@@ -27,6 +27,12 @@
     ham.addEventListener('click', function(){ setMenu(!drawer.classList.contains('open')); });
     drawer.querySelectorAll('[data-close]').forEach(function(a){ a.addEventListener('click', function(){ setMenu(false); }); });
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape') setMenu(false); });
+    /* tap anywhere off the panel closes it (pointerdown: reliable on iPad) */
+    document.addEventListener('pointerdown', function(e){
+      if(!drawer.classList.contains('open')) return;
+      if(drawer.contains(e.target) || ham.contains(e.target)) return;
+      setMenu(false);
+    }, true);
   }
   document.body.style.overflow = '';
 

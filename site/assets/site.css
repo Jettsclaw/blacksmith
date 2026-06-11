@@ -157,6 +157,11 @@ section{position:relative}
   padding:var(--page);
 }
 .drawer.open{transform:translateX(0)}
+/* tablets+: drawer is a side panel, page stays visible (dimmed) and tappable-to-close */
+@media(min-width:600px){
+  .drawer{inset:0 auto 0 0;width:min(420px,85vw);justify-content:flex-start;padding-top:110px}
+  .drawer.open{box-shadow:0 0 0 100vmax rgba(5,5,8,.55)}
+}
 .drawer nav{display:flex;flex-direction:column;gap:8px;margin-bottom:32px}
 .drawer nav a{
   display:flex;align-items:center;min-height:48px;
