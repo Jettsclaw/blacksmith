@@ -775,3 +775,5 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .sc-input:focus{border-color:var(--gold,#c8a44d)}
 .sc-send{width:40px;border-radius:10px;background:var(--gold,#c8a44d);border:none;color:#141417;font-size:1.1rem;cursor:pointer;font-weight:700}
 @media(max-width:640px){.sc-fab{right:14px;bottom:14px}.sc-panel{right:14px;bottom:82px}}
+.ls-x{position:absolute;top:6px;right:10px;background:none;border:none;color:#a2a2aa;font-size:1.2rem;cursor:pointer;line-height:1}
+.ls-card-pop{padding-top:20px}

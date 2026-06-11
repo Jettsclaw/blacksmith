@@ -45,13 +45,17 @@
       return 'Lights are off — we’re back ' + (s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])) + '. You can book ahead any time.';
     if (kind === 'wait') {
       if (stale || s.wait_mins == null) return 'Live feed’s catching its breath — call us for the wait: ' + PHONE;
+      if (s.wait_mins === 0) return '🟢 No wait right now — ' + s.barbers_on + ' barbers on, walk straight in (' + asOf(s) + ')';
       return '⏱ ~' + s.wait_mins + ' min wait · ' + s.waiting + ' waiting · ' + s.barbers_on + ' barbers on (' + asOf(s) + ')';
     }
     if (kind === 'book') return 'Lock your chair — tap below.';
     if (kind === 'who') {
       if (stale || !s.barbers.length) return 'Can’t see the floor right now — call us: ' + PHONE;
       return 'On the floor ' + asOf(s) + ':\n' + s.barbers.map(function (b) {
-        return (b.cutting ? '✂️ ' : '🟢 ') + b.name + ' — ' + (b.cutting ? 'cutting' : 'free');
+        var fi = +b.free_in || 0;
+        var st = fi === 0 ? 'free now' : b.cutting ? 'cutting, free in ~' + fi + ' min'
+          : fi > 90 ? 'booked up today' : 'booked, free in ~' + fi + ' min';
+        return (b.cutting ? '✂️ ' : fi === 0 ? '🟢 ' : '📅 ') + b.name + ' — ' + st;
       }).join('\n');
     }
     return 'I’ve got live answers for the wait, who’s on, hours & parking, or booking — tap a chip below.';

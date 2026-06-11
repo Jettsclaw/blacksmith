@@ -64,6 +64,7 @@ async function answerFor(kind) {
   }
   if (kind === 'wait') {
     if (stale || s.wait_mins == null) return `Live feed's catching its breath — call us for the wait: ${PHONE}`;
+    if (s.wait_mins === 0) return `🟢 No wait right now — ${s.barbers_on} barbers on, walk straight in (${asOf(s)})\nOr lock a chair: ${BOOK_URL}`;
     return `⏱ ~${s.wait_mins} min wait · ${s.waiting} waiting · ${s.barbers_on} barbers on (${asOf(s)})\nJump in: ${BOOK_URL}`;
   }
   if (kind === 'book') {
@@ -71,7 +72,11 @@ async function answerFor(kind) {
   }
   if (kind === 'who') {
     if (stale || !s.barbers.length) return `Can't see the floor right now — call us: ${PHONE}`;
-    const lines = s.barbers.map(b => `${b.cutting ? '✂️' : '🟢'} ${b.name} — ${b.cutting ? 'cutting' : 'free'}`);
+    const lines = s.barbers.map(b => {
+      const fi = +b.free_in || 0;
+      const st = fi === 0 ? 'free now' : b.cutting ? `cutting, free in ~${fi} min` : fi > 90 ? 'booked up today' : `booked, free in ~${fi} min`;
+      return `${b.cutting ? '✂️' : fi === 0 ? '🟢' : '📅'} ${b.name} — ${st}`;
+    });
     return `On the floor ${asOf(s)}:\n` + lines.join('\n') + `\nBook: ${BOOK_URL}`;
   }
   return menuText();

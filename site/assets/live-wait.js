@@ -59,8 +59,10 @@
       return;
     }
 
-    el('lw-big').textContent = '~' + snap.wait_mins + ' min wait';
-    el('lw-sub').textContent = snap.waiting + ' waiting · ' +
+    el('lw-big').textContent = snap.wait_mins === 0 ? 'No wait right now'
+      : '~' + snap.wait_mins + ' min wait';
+    el('lw-sub').textContent = (snap.wait_mins === 0 ? 'walk straight in · ' :
+      snap.waiting + ' waiting · ') +
       snap.barbers_on + (snap.barbers_on === 1 ? ' barber on' : ' barbers on');
     el('lw-asof').textContent = fmtAsOf(asOf);
     el('lw-hours').textContent = 'Today: ' + fmtHours(snap.hours_today);

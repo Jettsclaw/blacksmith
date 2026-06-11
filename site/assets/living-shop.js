@@ -106,10 +106,15 @@
         var safe = function (s) {
           return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         };
-        card.innerHTML = '<strong>' + safe(h.name) + '</strong><span>' +
-          (h.cutting ? 'Cutting now' : 'Free now') +
-          (snap && snap.wait_mins != null ? ' · ~' + (+snap.wait_mins) + ' min wait' : '') +
+        var fi = +h.free_in || 0;
+        var status = fi === 0 ? 'Free now — walk in'
+          : h.cutting ? 'Cutting now · free in ~' + fi + ' min'
+          : fi > 90 ? 'Booked up today — try another barber'
+          : 'Booked — free in ~' + fi + ' min';
+        card.innerHTML = '<button class="ls-x" aria-label="Close">&times;</button>' +
+          '<strong>' + safe(h.name) + '</strong><span>' + status +
           '</span><a class="btn btn-gold" href="' + BOOK_URL + '">Book with ' + safe(h.name.split(' ')[0]) + '</a>';
+        card.querySelector('.ls-x').onclick = function (ev) { ev.stopPropagation(); card.hidden = true; };
         card.style.left = Math.min(86, Math.max(4, (h.x / W) * 100)) + '%';
         card.hidden = false;
         e.stopPropagation();
@@ -128,7 +133,8 @@
     if (!snap) return;
     if (!snap.open) { el.textContent = 'Lights off — back ' + fmtT(snap.hours_today.split('–')[0]) + '.'; return; }
     if (!fresh(snap) || snap.wait_mins == null) { el.textContent = 'Call for wait time — 0479 087 782'; return; }
-    el.textContent = '~' + snap.wait_mins + ' min wait · ' + snap.waiting + ' waiting · ' +
+    el.textContent = (snap.wait_mins === 0 ? 'No wait right now · ' :
+      '~' + snap.wait_mins + ' min wait · ' + snap.waiting + ' waiting · ') +
       snap.barbers_on + ' on — tap a barber to book';
   }
 
@@ -153,6 +159,7 @@
     var line = !snap ? '' :
       !snap.open ? 'CLOSED — BACK ' + fmtT(snap.hours_today.split('–')[0]).toUpperCase() :
       !live ? 'CALL FOR WAIT TIME' :
+      snap.wait_mins === 0 ? 'NO WAIT · WALK IN' :
       '~' + snap.wait_mins + ' MIN WAIT · ' + snap.waiting + ' WAITING';
     if (!line) return;
     ctx.save();
@@ -209,17 +216,17 @@
           drawSprite(capeCycle[i % 3], c.x, c.y - 6, SCALE.cape, false);
           var frame = key + '-' + (1 + anim);
           var bb = drawSprite(frame, p.x, p.y, SCALE.barber, true);
-          hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true });
+          hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true, free_in: b.free_in });
         } else {
           var bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber, false);
-          hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false });
+          hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false, free_in: b.free_in });
         }
       });
       // overflow barbers idle by the shelf
       stable.slice(4).forEach(function (b, i) {
         var key = spriteKey(b.name) || 'ben';
         var bb = drawSprite(key + '-0', 1060 + i * 60, 560, SCALE.barber * 0.95, false);
-        hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting });
+        hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting, free_in: b.free_in });
       });
 
       // waiting queue on the chesterfield

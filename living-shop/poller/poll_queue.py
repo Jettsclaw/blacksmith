@@ -92,6 +92,7 @@ def build_snapshot() -> dict:
     # not someone waiting on the couch now.
     waiting = 0
     cutting_ids = set()
+    busy = {}  # name/bid -> list of (start, finish) active intervals today
     for src, counts_waiting in ((queue, True), (bookings, False)):
         for r in src:
             status = r.get("status")
@@ -108,14 +109,28 @@ def build_snapshot() -> dict:
                 on_today.setdefault(key, None)
                 if name:
                     on_today[key] = name
-            st = parse_t(now, r["start_time"])
+            st, ft = parse_t(now, r["start_time"]), parse_t(now, r["finish_time"])
             if status in ("in_progress", "processing", "started"):
                 cutting_ids.add(name or bid)
-            elif (counts_waiting and status == "pending"
-                  and st <= now + timedelta(minutes=WAITING_HORIZON_MIN)):
-                # Includes late-running queues: a pending whose estimated
-                # start has slipped past is still someone waiting in the shop.
-                waiting += 1
+                busy.setdefault(name or bid, []).append((min(st, now), max(ft, now)))
+            elif status == "pending":
+                busy.setdefault(name or bid, []).append((st, ft))
+                if counts_waiting and st <= now + timedelta(minutes=WAITING_HORIZON_MIN):
+                    # Late-running queues included: a pending whose estimated
+                    # start has slipped is still someone waiting in the shop.
+                    waiting += 1
+
+    def free_in_minutes(key):
+        """Minutes until this barber can take a walk-in: the end of their
+        contiguous busy block covering now (gaps <15 min bridge). 0 = free."""
+        ivs = sorted(busy.get(key, []))
+        end = now
+        for st, ft in ivs:
+            if st <= end + timedelta(minutes=15):
+                end = max(end, ft)
+            else:
+                break
+        return max(0, int((end - now).total_seconds() // 60))
 
     # Fill names for rostered-but-quiet barbers from the shop roster, then
     # merge id-keyed (seat roster) and name-keyed (live activity) entries.
@@ -127,20 +142,33 @@ def build_snapshot() -> dict:
         if not name:
             continue
         cutting = key in cutting_ids or name in cutting_ids
-        merged[name] = merged.get(name, False) or cutting
-    barbers = [{"name": n if SHOW_BARBER_NAMES else "Barber", "cutting": c}
-               for n, c in merged.items()]
+        fi = max(free_in_minutes(key), free_in_minutes(name))
+        prev = merged.get(name, {"cutting": False, "free_in": 0})
+        merged[name] = {"cutting": prev["cutting"] or cutting,
+                        "free_in": max(prev["free_in"], fi)}
+    barbers = [{"name": n if SHOW_BARBER_NAMES else "Barber",
+                "cutting": v["cutting"], "free_in": v["free_in"]}
+               for n, v in merged.items()]
     barbers.sort(key=lambda b: (not b["cutting"], b["name"]))
+
+    # Jett's rule (2026-06-11): always advertise the SHORTEST wait — if a
+    # chair is free the walk-in wait is now, regardless of SLIKR's shop-wide
+    # estimate (which tracks the queue, not chair availability).
+    shortest = min((b["free_in"] for b in barbers), default=None)
 
     snap = {
         "as_of": now.strftime("%Y-%m-%dT%H:%M:%S%z"),
         "open": is_open,
         "hours_today": f"{start[:5]}–{close[:5]}" if start else "closed today",
-        # SLIKR's own estimate — the same number their app shows. Never invent
-        # one: if SLIKR gives nothing, publish null (widget says "call us").
-        "wait_mins": (int(shop["wait_time"])
-                      if is_open and shop.get("wait_time") is not None
-                      else None),
+        # Shortest wait across barbers (0 = a chair is free now). Falls back
+        # to SLIKR's shop-wide number if we somehow have no barber data.
+        "wait_mins": (shortest if shortest is not None
+                      else int(shop["wait_time"]) if shop.get("wait_time") is not None
+                      else None) if is_open else None,
+        # SLIKR's own shop-wide estimate, kept for comparison/debug.
+        "slikr_wait": (int(shop["wait_time"])
+                       if is_open and shop.get("wait_time") is not None
+                       else None),
         "waiting": waiting if is_open else 0,
         "barbers_on": len(barbers) if is_open else 0,
         "barbers": barbers if is_open else [],
