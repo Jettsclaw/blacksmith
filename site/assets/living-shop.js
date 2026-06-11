@@ -60,7 +60,7 @@
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
-      room: 'room-p', W: 768, H: 1376,
+      room: ROOM_V2 ? 'room-p2' : 'room-p', W: 768, H: 1376,
       CHAIR_SPAN: { x0: 130, x1: 640, y: 880, h: 190 },
       FIT: true, // scale people down as more chairs slide in
       BARBER_OFF: { x: 64, y: 6 }, CAPE_OFF: { x: 0, y: -52 },
