@@ -85,7 +85,8 @@
     }
   };
   var MOBILE_V1 = true; // Jett 2026-06-12: phone shows the full landscape scene as a card (the first mobile version)
-  var LAY = LAYOUTS[(!MOBILE_V1 && window.innerWidth <= 640) ? 'portrait' : 'landscape'];
+  var MOBILE_PAN = /[?&]lsmob/.test(location.search); // preview: the EXACT desktop scene at full height, swipe sideways to pan (?lsmob=1)
+  var LAY = LAYOUTS[(!MOBILE_V1 && !MOBILE_PAN && window.innerWidth <= 640) ? 'portrait' : 'landscape'];
   var W = LAY.W, H = LAY.H, BARBER_OFF = LAY.BARBER_OFF, CAPE_OFF = LAY.CAPE_OFF,
       COUCH = LAY.COUCH, DOOR = LAY.DOOR, SIGN = LAY.SIGN, SCALE = LAY.SCALE;
 
@@ -659,7 +660,17 @@
   }
 
   function immersiveMobile() {
-    if (MOBILE_V1 || window.innerWidth > 640) return;
+    if (window.innerWidth > 640) return;
+    if (MOBILE_PAN) { // desktop room, phone-height, finger-pan — opens on the chairs
+      host.classList.add('ls-full');
+      var st = host.querySelector('.ls-stage');
+      st.classList.add('ls-immersive');
+      requestAnimationFrame(function () {
+        st.scrollLeft = Math.max(0, (660 / W) * st.scrollWidth - st.clientWidth / 2);
+      });
+      return;
+    }
+    if (MOBILE_V1) return;
     host.classList.add('ls-full');
     host.querySelector('.ls-stage').classList.add('ls-portrait');
   }
