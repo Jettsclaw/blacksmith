@@ -222,6 +222,7 @@
     if (fs.on) return;
     fs.on = true;
     fs.wasLandscape = false;
+    fs.savedScroll = window.scrollY; // seamless return to the same spot
     card.hidden = true;
     var stage = host.querySelector('.ls-stage');
     fs.anchor = host.querySelector('.ls-info');
@@ -260,8 +261,18 @@
     fs.overlay.appendChild(fs.wrap);
     document.body.appendChild(fs.overlay);
     document.documentElement.classList.add('ls-noscroll');
+    fsSettle();
+    window.addEventListener('resize', fsSettle);
+    window.addEventListener('orientationchange', fsSettle);
+  }
+
+  // iOS reports viewport dimensions in dribs mid-rotation — lay out now AND
+  // again once it settles, so the view can never wedge half-rotated.
+  var settleT = null;
+  function fsSettle() {
+    clearTimeout(settleT);
     fsLayout();
-    window.addEventListener('resize', fsLayout);
+    settleT = setTimeout(fsLayout, 340);
   }
   // Pull the site chat INTO the rotated wrapper so booking happens without
   // flipping the phone back. Inside a transformed ancestor its fixed
@@ -286,7 +297,26 @@
     document.body.removeChild(fs.overlay);
     fs.overlay = fs.wrap = null;
     document.documentElement.classList.remove('ls-noscroll');
-    window.removeEventListener('resize', fsLayout);
+    window.removeEventListener('resize', fsSettle);
+    window.removeEventListener('orientationchange', fsSettle);
+    clearTimeout(settleT);
+    window.scrollTo(0, fs.savedScroll || 0); // continue the scroll where they left it
+  }
+
+  // Rotation lock OFF: physically turning the phone IS the expand gesture —
+  // landscape enters the locked takeover, back to portrait exits seamlessly.
+  if (!MOBILE_PAN) { // min-dimension check below keeps desktops out
+    var autoT = null;
+    var autoEnter = function () {
+      clearTimeout(autoT);
+      autoT = setTimeout(function () {
+        if (fs.on) return;
+        if (Math.min(window.innerWidth, window.innerHeight) > 640) return; // phones only
+        if (window.innerWidth > window.innerHeight) fsOpen();
+      }, 240);
+    };
+    window.addEventListener('resize', autoEnter);
+    window.addEventListener('orientationchange', autoEnter);
   }
 
   // ---------- barber hit areas + status card ----------
