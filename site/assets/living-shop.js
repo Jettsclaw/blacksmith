@@ -200,13 +200,67 @@
     walkers.push({ x: DOOR.x, t: 0 });
   }
 
+  // ---------- fullscreen takeover (phones) ----------
+  // The exact desktop scene, rotated to fill the screen — you hold the phone
+  // sideways. CSS-rotates a wrapper (works under iOS rotation lock); if the
+  // device really rotates to landscape we drop the rotation and just fill.
+  var fs = { on: false, rot: false, overlay: null, wrap: null, anchor: null };
+  function fsLayout() {
+    if (!fs.on) return;
+    var landscape = window.innerWidth > window.innerHeight;
+    fs.rot = !landscape;
+    fs.wrap.style.width = (landscape ? window.innerWidth : window.innerHeight) + 'px';
+    fs.wrap.style.height = (landscape ? window.innerHeight : window.innerWidth) + 'px';
+    fs.wrap.style.transform = 'translate(-50%,-50%)' + (landscape ? '' : ' rotate(90deg)');
+  }
+  function fsOpen() {
+    if (fs.on) return;
+    fs.on = true;
+    card.hidden = true;
+    var stage = host.querySelector('.ls-stage');
+    fs.anchor = host.querySelector('.ls-info');
+    fs.overlay = document.createElement('div'); fs.overlay.className = 'ls-fso';
+    fs.wrap = document.createElement('div'); fs.wrap.className = 'ls-fsw';
+    fs.wrap.appendChild(stage);
+    fs.wrap.appendChild(card);
+    var x = document.createElement('button');
+    x.className = 'ls-fsx'; x.setAttribute('aria-label', 'Close full screen');
+    x.innerHTML = '&times;';
+    x.addEventListener('click', fsClose);
+    fs.wrap.appendChild(x);
+    fs.overlay.appendChild(fs.wrap);
+    document.body.appendChild(fs.overlay);
+    document.documentElement.classList.add('ls-noscroll');
+    fsLayout();
+    window.addEventListener('resize', fsLayout);
+  }
+  function fsClose() {
+    if (!fs.on) return;
+    fs.on = false; fs.rot = false;
+    card.hidden = true;
+    var stage = fs.overlay.querySelector('.ls-stage');
+    fs.anchor.parentNode.insertBefore(stage, fs.anchor);
+    fs.anchor.parentNode.insertBefore(card, fs.anchor);
+    document.body.removeChild(fs.overlay);
+    fs.overlay = fs.wrap = null;
+    document.documentElement.classList.remove('ls-noscroll');
+    window.removeEventListener('resize', fsLayout);
+  }
+
   // ---------- barber hit areas + status card ----------
   var hits = [];
   var card = host.querySelector('.ls-card-pop');
   canvas.addEventListener('click', function (e) {
-    var r = canvas.getBoundingClientRect();
-    var sx = W / r.width, sy = H / r.height;
-    var x = (e.clientX - r.left) * sx, y = (e.clientY - r.top) * sy;
+    var r = canvas.getBoundingClientRect(), x, y;
+    if (fs.rot) { // invert the 90° wrapper rotation (AABB swaps css w/h)
+      var cx0 = r.left + r.width / 2, cy0 = r.top + r.height / 2;
+      var cw = r.height, ch = r.width;
+      x = ((e.clientY - cy0) + cw / 2) * (W / cw);
+      y = ((cx0 - e.clientX) + ch / 2) * (H / ch);
+    } else {
+      x = (e.clientX - r.left) * (W / r.width);
+      y = (e.clientY - r.top) * (H / r.height);
+    }
     for (var i = 0; i < hits.length; i++) {
       var h = hits[i];
       if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
@@ -270,6 +324,16 @@
   document.addEventListener('pointerdown', function (e) {
     if (!card.hidden && !card.contains(e.target)) card.hidden = true;
   }, true);
+
+  // expand button on the phone card → fullscreen takeover
+  if (window.innerWidth <= 640 && !MOBILE_PAN) {
+    var xbtn = document.createElement('button');
+    xbtn.className = 'ls-expand';
+    xbtn.setAttribute('aria-label', 'Full screen');
+    xbtn.innerHTML = '&#x2922;';
+    xbtn.addEventListener('click', function (e) { e.stopPropagation(); fsOpen(); });
+    host.querySelector('.ls-stage').appendChild(xbtn);
+  }
 
   // ---------- info line under the canvas ----------
   function renderInfo() {
