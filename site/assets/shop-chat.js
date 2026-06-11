@@ -78,7 +78,11 @@
 
   function startBooking(pref) {
     if (!snap) { setTimeout(function () { startBooking(pref); }, 800); return; }
-    if (!snap.open) { bubble(answer('book', snap), 'bot', true); return; }
+    if (!snap.open) {
+      if (snap.slots_next && snap.next_label) { startBookAhead(pref); return; }
+      bubble('We\u2019re closed and tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning or call 0479 087 782.', 'bot');
+      return;
+    }
     wiz = { step: 'barber' };
     if (pref) {
       var match = snap.barbers.filter(function (b) { return b.name.split(' ')[0].toLowerCase() === String(pref).toLowerCase(); })[0];
@@ -95,12 +99,29 @@
       return { label: b.name.split(' ')[0], barber: b.name, book: b.book || ['barber'] };
     });
     opts.push({ label: 'Anyone', barber: 'any', book: ['barber'] });
+    opts.push({ label: '🌹 Blackrose Salon', salon: true });
     chipRow(opts, function (o) {
+      if (o.salon) { bubble('Blackrose Salon', 'me'); bubble('Blackrose runs its own book — tap to book the salon.', 'bot'); var a = el('a', 'sc-book', 'Book Blackrose →'); a.href = 'https://web.slikr.com.au/blackrosesalon'; a.target = '_blank'; a.rel='noopener'; body.lastChild.appendChild(document.createElement('br')); body.lastChild.appendChild(a); return; }
       bubble(o.label, 'me');
       wiz.barber = o.barber;
       wiz.shop = (o.book[0] === 'bookings') ? 'bookings' : 'barber';
       askService();
     });
+  }
+
+  function startBookAhead(pref) {
+    var names = Object.keys(snap.slots_next || {}).filter(function (n) { return (snap.slots_next[n] || []).length; });
+    if (!names.length) { bubble('Tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning.', 'bot'); return; }
+    wiz = { step: 'barber', ahead: true, date: snap.next_date };
+    bubble('We\u2019re closed right now, but you can lock in ' + snap.next_label + '. Who with?', 'bot');
+    var opts = names.map(function (n) { return { label: n, barber: n }; });
+    chipRow(opts, function (o) {
+      bubble(o.label, 'me');
+      wiz.barber = o.barber;
+      wiz.shop = 'bookings';
+      askService();
+    });
+    if (pref && names.indexOf(String(pref)) >= 0) { /* keep simple: user taps */ }
   }
 
   function askService() {
@@ -117,6 +138,14 @@
   }
 
   function askTime() {
+    if (wiz.ahead) {
+      var slots2 = (snap.slots_next && snap.slots_next[wiz.barber]) || [];
+      bubble('What time ' + snap.next_label + '?', 'bot');
+      chipRow(slots2.map(function (t) { return { label: fmtT(t), slot: t }; }), function (o) {
+        bubble(o.label, 'me'); wiz.slot = o.slot; askDetails();
+      });
+      return;
+    }
     if (wiz.shop === 'bookings') {
       var b = snap.barbers.filter(function (x) { return x.name === wiz.barber; })[0];
       var slots = (b && b.slots) || [];
@@ -143,7 +172,7 @@
   function submitBooking(name, phone) {
     bubble('Locking it in…', 'bot');
     fetch(BOOK_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ shop: wiz.shop, service_id: wiz.service, barber: wiz.barber, slot: wiz.slot, name: name, phone: phone }) })
+      body: JSON.stringify({ shop: wiz.shop, service_id: wiz.service, barber: wiz.barber, slot: wiz.slot, name: name, phone: phone, date: wiz.date || undefined }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (!d.id) { bubble(d.error || 'That didn’t go through — try again.', 'bot'); wiz = null; return; }
@@ -154,7 +183,7 @@
             if (st.done) {
               clearInterval(poll);
               bubble(st.ok ? '✅ Booked! ' + (st.time === 'now' ? 'You’re in the queue — head in.' :
-                fmtT(st.time) + ' with ' + st.barber + '. You’ll get an SMS confirmation.') :
+                (wizDateLabel() + fmtT(st.time) + ' with ' + st.barber + '. You’ll get an SMS confirmation.')) :
                 '❌ ' + (st.msg || 'Couldn’t book that — try another time.'), 'bot');
               wiz = null;
             } else if (tries > 25) { clearInterval(poll); bubble('Taking longer than usual — you’ll get an SMS if it landed, or call 0479 087 782.', 'bot'); wiz = null; }
@@ -162,6 +191,10 @@
         }, 2500);
       })
       .catch(function () { bubble('Network hiccup — try again.', 'bot'); wiz = null; });
+  }
+
+  function wizDateLabel() {
+    return (wiz && wiz.ahead && snap.next_label) ? snap.next_label + ' ' : '';
   }
 
   function handleDetails(text) {

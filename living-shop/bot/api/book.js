@@ -54,10 +54,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Mobile should look like 04xx xxx xxx.' });
   if (slot !== 'now' && !/^\d{2}:\d{2}$/.test(slot))
     return res.status(400).json({ error: 'Pick a time from the list.' });
+  const date = String(b.date || '');
+  if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date))
+    return res.status(400).json({ error: 'Bad date.' });
 
   const id = (globalThis.crypto?.randomUUID?.() || String(Date.now())).toLowerCase();
   await put(`req/${id}.json`, JSON.stringify({
-    service_id: sid, shop, barber, slot, name, phone,
+    service_id: sid, shop, barber, slot, name, phone, date: date || undefined,
     tg_chat: typeof b.tg_chat === 'number' ? b.tg_chat : undefined,
     at: new Date().toISOString()
   }), { access: 'public', addRandomSuffix: false, contentType: 'application/json' });

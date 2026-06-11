@@ -69,8 +69,16 @@ async function clearState(chat) {
 
 async function bkStart(token, chat) {
   const s = await feed().catch(() => null);
-  if (!s || !s.open) {
-    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now — book ahead: ${BOOK_URL}` });
+  if (!s) return;
+  if (!s.open) {
+    const names = Object.keys(s.slots_next || {}).filter(n => (s.slots_next[n] || []).length);
+    if (!names.length) {
+      await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed and tomorrow's book isn't open yet — try again in the morning, or call ${PHONE}.` });
+      return;
+    }
+    await setState(chat, { step: 'barber', ahead: true, date: s.next_date });
+    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now, but you can lock in ${s.next_label}. Who with?`,
+      reply_markup: { inline_keyboard: names.map(n => [{ text: n, callback_data: 'bk1:' + n }]) } });
     return;
   }
   await setState(chat, { step: 'barber' });
@@ -87,7 +95,7 @@ async function bkStep(token, chat, data) {
     const first = data.slice(4);
     const b = s.barbers.find(x => x.name.split(' ')[0] === first);
     st.barber = first === 'any' ? 'any' : (b ? b.name : first);
-    st.shop = b && (b.book || [])[0] === 'bookings' ? 'bookings' : 'barber';
+    st.shop = st.ahead ? 'bookings' : (b && (b.book || [])[0] === 'bookings' ? 'bookings' : 'barber');
     st.step = 'service';
     await setState(chat, st);
     const menu = (s.services && s.services[st.shop]) || [];
@@ -95,6 +103,15 @@ async function bkStep(token, chat, data) {
       reply_markup: { inline_keyboard: menu.map(m => [{ text: `${m.name} · $${m.cost}`, callback_data: 'bk2:' + m.id }]) } });
   } else if (data.startsWith('bk2:')) {
     st.service = parseInt(data.slice(4), 10);
+    if (st.ahead) {
+      const slots = (s.slots_next && s.slots_next[st.barber.split(' ')[0]]) || [];
+      if (!slots.length) { await tg(token, 'sendMessage', { chat_id: chat, text: 'No times left tomorrow — try another barber.' }); return clearState(chat); }
+      st.step = 'slot';
+      await setState(chat, st);
+      await tg(token, 'sendMessage', { chat_id: chat, text: `What time ${s.next_label}?`,
+        reply_markup: { inline_keyboard: slots.map(t => [{ text: t, callback_data: 'bk3:' + t }]) } });
+      return;
+    }
     if (st.shop === 'bookings') {
       const b = s.barbers.find(x => x.name === st.barber);
       const slots = (b && b.slots) || [];
@@ -130,6 +147,7 @@ async function bkDetails(token, chat, text) {
   const id = globalThis.crypto.randomUUID().toLowerCase();
   await put(`req/${id}.json`, JSON.stringify({
     service_id: st.service, shop: st.shop, barber: st.barber, slot: st.slot,
+    date: st.date || undefined,
     name: m[1].trim(), phone, tg_chat: chat, at: new Date().toISOString()
   }), { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
   await clearState(chat);

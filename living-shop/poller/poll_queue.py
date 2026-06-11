@@ -210,20 +210,36 @@ def build_snapshot() -> dict:
 
     # Real bookable times straight from SLIKR's own availability engine
     # (it knows shifts/breaks; our gap-maths didn't). First name -> ["HH:MM"].
-    slots_map = {}
-    try:
-        times = fetch(f"/shops/{BOOKINGS_SHOP_ID}/seats/times?services%5B%5D=5542")
-        for k, v in (times.get("barbers") or {}).items():
-            if k == "all" or not isinstance(v, dict):
-                continue
-            nm = ((v.get("user") or {}).get("first_name") or "").strip().title()
-            avail = [t[:5] for t in (v.get("available_times") or [])][:4]
-            if nm:
-                slots_map[nm] = avail
-    except Exception:
-        pass  # slots are an enhancement; the scene survives without them
+    def fetch_times(path):
+        out = {}
+        try:
+            times = fetch(path)
+            for k, v in (times.get("barbers") or {}).items():
+                if k == "all" or not isinstance(v, dict):
+                    continue
+                nm = ((v.get("user") or {}).get("first_name") or "").strip().title()
+                if nm:
+                    out[nm] = [t[:5] for t in (v.get("available_times") or [])][:4]
+        except Exception:
+            pass  # slots are an enhancement; the scene survives without them
+        return out
+
+    slots_map = fetch_times(f"/shops/{BOOKINGS_SHOP_ID}/seats/times?services%5B%5D=5542")
     for b in barbers:
         b["slots"] = slots_map.get(b["name"].split(" ")[0], []) if is_open else []
+
+    # After-hours (or near close): tomorrow's real availability so the chat
+    # can book ahead instead of dead-ending on "we're closed".
+    next_date = next_label = None
+    slots_next = {}
+    closing_soon = bool(close) and is_open and (parse_t(now, close) - now) <= timedelta(minutes=90)
+    if not is_open or closing_soon:
+        nd = now + timedelta(days=1)
+        nd_str = nd.strftime("%Y-%m-%d")
+        nxt = fetch_times(f"/shops/{BOOKINGS_SHOP_ID}/seats/times/00:00/{nd_str}?services%5B%5D=5542")
+        if any(nxt.values()):
+            next_date, next_label = nd_str, nd.strftime("%A")
+            slots_next = nxt
 
     snap = {
         "as_of": now.strftime("%Y-%m-%dT%H:%M:%S%z"),
@@ -241,6 +257,9 @@ def build_snapshot() -> dict:
         "waiting": waiting if is_open else 0,
         "barbers_on": len(barbers) if is_open else 0,
         "barbers": barbers if is_open else [],
+        "next_date": next_date,
+        "next_label": next_label,
+        "slots_next": slots_next or None,
         # bookable menu (id/name/cost/mins per shop) — no PII, tiny
         "services": {
             "barber": [{"id": s["id"], "name": s["name"], "cost": s["cost"],

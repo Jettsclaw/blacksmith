@@ -133,9 +133,14 @@ def process(req):
                "enable_sms_remind": 1, "add_purchase": 1,
                "barber_id": bid or 0, "discount_id": 0, "track_code": "livingshop",
                "services": [{"id": sid, "performer_id": bid or 0, "quantity": 1, "num": 1}]}
+    date = str(req.get("date") or "")
     if slot != "now" and re.fullmatch(r"\d{2}:\d{2}", slot):
         local = datetime.now(TZ).replace(hour=int(slot[:2]), minute=int(slot[3:]),
                                          second=0, microsecond=0)
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", date):
+            d = datetime.strptime(date, "%Y-%m-%d").date()
+            if 0 <= (d - local.date()).days <= 7:
+                local = local.replace(year=d.year, month=d.month, day=d.day)
         payload["requested_time"] = local.astimezone(ZoneInfo("Etc/UTC")).strftime("%Y-%m-%d %H:%M")
 
     out = slikr(f"/shops/{shop_id}/reservations", "POST", payload)
