@@ -144,14 +144,23 @@
           : 'Booked — free in ~' + fi + ' min';
         var book = h.book && h.book.length ? h.book : ['barber'];
         var first = safe(h.name.split(' ')[0]);
-        var btns = '<a class="btn btn-gold" href="' + (BOOK_URLS[book[0]] || BOOK_URLS.barber) + '">Book ' +
-          (book[0] === 'salon' ? 'salon' : 'with ' + first) + '</a>';
+        var btns = book[0] === 'salon'
+          ? '<a class="btn btn-gold" href="' + BOOK_URLS.salon + '">Book salon</a>'
+          : '<button class="btn btn-gold ls-book" data-b="' + first + '">Book with ' + first + '</button>';
         if (book.length > 1)
-          btns += '<a class="btn btn-gold ls-alt" href="' + BOOK_URLS[book[1]] + '">' +
-            (book[1] === 'salon' ? 'Book salon' : 'Book barber') + '</a>';
+          btns += book[1] === 'salon'
+            ? '<a class="btn btn-gold ls-alt" href="' + BOOK_URLS.salon + '">Book salon</a>'
+            : '<button class="btn btn-gold ls-alt ls-book" data-b="' + first + '">Book barber</button>';
         card.innerHTML = '<button class="ls-x" aria-label="Close">&times;</button>' +
           '<strong>' + safe(h.name) + '</strong><span>' + status + '</span>' + btns;
         card.querySelector('.ls-x').onclick = function (ev) { ev.stopPropagation(); card.hidden = true; };
+        card.querySelectorAll('.ls-book').forEach(function (btn) {
+          btn.onclick = function (ev) {
+            ev.stopPropagation();
+            card.hidden = true;
+            if (window.__scBook) window.__scBook(btn.getAttribute('data-b'));
+          };
+        });
         card.style.left = Math.min(86, Math.max(4, (h.x / W) * 100)) + '%';
         card.hidden = false;
         e.stopPropagation();

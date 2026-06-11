@@ -465,9 +465,6 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
   .footer-top{grid-template-columns:1.4fr 1fr 1fr}
 }
 @media(min-width:820px){
-  .nav-desktop{display:flex}
-  .nav-actions{display:flex}
-  .hamburger{display:none}
   .story-grid{grid-template-columns:1.05fr .95fr}
   .svc-grid{grid-template-columns:repeat(3,1fr)}
   .detail-grid{grid-template-columns:1fr 1fr}
@@ -481,6 +478,16 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 }
 @media(min-width:1100px){
   .barber-grid{grid-template-columns:repeat(4,1fr)}
+}
+/* full nav only when it genuinely fits (iPads get the drawer) */
+@media(min-width:1320px){
+  .nav-desktop{display:flex}
+  .nav-actions{display:flex}
+  .hamburger{display:none}
+}
+@media(max-width:1319px){
+  .nav-desktop,.nav-actions{display:none!important}
+  .hamburger{display:flex}
 }
 @media(max-width:819px){
   .hero{align-items:center}

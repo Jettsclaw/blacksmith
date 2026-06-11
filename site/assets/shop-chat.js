@@ -76,9 +76,20 @@
     body.scrollTop = body.scrollHeight;
   }
 
-  function startBooking() {
-    if (!snap || !snap.open) { bubble(answer('book', snap), 'bot', true); return; }
+  function startBooking(pref) {
+    if (!snap) { setTimeout(function () { startBooking(pref); }, 800); return; }
+    if (!snap.open) { bubble(answer('book', snap), 'bot', true); return; }
     wiz = { step: 'barber' };
+    if (pref) {
+      var match = snap.barbers.filter(function (b) { return b.name.split(' ')[0].toLowerCase() === String(pref).toLowerCase(); })[0];
+      if (match) {
+        bubble('Book with ' + match.name.split(' ')[0], 'me');
+        wiz.barber = match.name;
+        wiz.shop = ((match.book || [])[0] === 'bookings') ? 'bookings' : 'barber';
+        askService();
+        return;
+      }
+    }
     bubble('Let’s get you booked. Who with?', 'bot');
     var opts = snap.barbers.map(function (b) {
       return { label: b.name.split(' ')[0], barber: b.name, book: b.book || ['barber'] };
@@ -281,6 +292,22 @@
   }
 
   window.__scOpen = function () { fab.onclick(); if (panel) panel.classList.add('open'); };
+  window.__scBook = function (pref) {
+    window.__scOpen();
+    setTimeout(function () { startBooking(pref); }, 350);
+  };
+
+  // Never send people to SLIKR from the site: any booking link opens the
+  // in-chat wizard instead (Blackrose salon links stay external).
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href*="slikr.com.au"]');
+    if (!a) return;
+    if (/blackrosesalon/.test(a.href)) return;
+    if (/\/res/.test(a.href) || /shop\/(421|1121)/.test(a.href)) {
+      e.preventDefault();
+      window.__scBook();
+    }
+  }, true);
 
   fab.onclick = function () {
     if (!opened) {
