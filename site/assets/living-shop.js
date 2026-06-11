@@ -56,7 +56,7 @@
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
       MASSAGE: ROOM_V2 ? { x: 74, y: 656, h: 172, sprite: true } : { x: 118, y: 534 },
       FRIDGE: null,
-      HOST: { x: 1224, y: 589, h: 206, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false }, IDLE_SPOT: { x: 1060, y: 560 },
+      HOST: { x: 1224, y: 589, h: 206, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false, qoff: HOST_JETT ? -8 : 0 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
@@ -552,7 +552,7 @@
           : drawTorso('host-1', HOST.x, HOST.y, HOST.h);
       }
       // bobbing gold "?" so people know he's tappable
-      var qx = stroll ? stroll.x : HOST.x;
+      var qx = (stroll ? stroll.x : HOST.x) + (HOST.qoff || 0);
       var qy = (stroll ? HOST.stroll.y : HOST.y) - HOST.h - 14 + Math.round(Math.sin(t / 450) * 4);
       ctx.save();
       ctx.font = '700 26px Oswald, sans-serif';
