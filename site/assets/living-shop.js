@@ -6,7 +6,7 @@
 (function () {
   var LIVING_SHOP_ON = false; // flip true on Jett's Phase 2 reveal approval
   var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
-  var BOOK_URL = 'https://web.slikr.com.au/shop/421/res';
+  var BOOK_URL = 'https://web.slikr.com.au/shop/421/res?ref=livingshop'; // ref ignored by SLIKR today; future measurement hook
   var STALE_MS = 8 * 60 * 1000;
   var A = 'assets/living-shop/';
 

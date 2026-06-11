@@ -180,3 +180,19 @@ Blackrose (422) stays excluded by Jett's call (different room + brand). Locky
 sprite added (8 barbers in scene). Verified live: 4 on, 3 cutting, 2 waiting —
 matches SLIKR across both shops. Poller reference copy versioned in
 living-shop/poller/.
+
+---
+
+# Phase 3/4 progress (2026-06-11, continued)
+- **Per-barber SLIKR deep link: DOES NOT EXIST in their web app** — verified by
+  extracting every route (`shop/:id`, `queue/:id`, …) and every query param the
+  bundle reads (`shop_id`, `r`, `qr`, `kiosk`, `error_description`); barber
+  choice happens inside the flow. Tap-card keeps the generic booking URL
+  (+`?ref=livingshop` future-measurement tag). Ask SLIKR for a deep link.
+- **Phase 4 bot BUILT + unit-tested, staged in `living-shop/bot/`** (templates
+  only, no LLM; secret-token validation 401-tested; 8/min per-chat rate limit
+  verified; live-feed replies verified: wait/who's-on/hours; stale→"call us";
+  closed→book-ahead). Manifest-compliant: universe = public feed + static copy.
+  Go-live needs Jett: BotFather token + `npx vercel login` (SETUP.md, ~5 min).
+- Measurement beacon deferred: needs Vercel dashboard (Analytics toggle or KV)
+  — batched into the same Jett ask.
