@@ -106,3 +106,28 @@ states re-verified in the browser at desktop + 390px.
 
 **GATE STATUS Phase 1: built + adversarially verified. Remaining gate = Jett
 confirms the live numbers against the room once, then `LIVE_WAIT_ON = true`.**
+
+---
+
+# Phase 1b verify — production port + deploy (2026-06-11)
+
+The card was rebuilt onto the REAL production page (`site/index.html` on main —
+the winston/site-v5 branch turned out to be a stale copy of the site) and
+merged to main, feature-flagged off. Third independent adversarial pass
+(separate agent, briefed to refute "safely deployed, invisible, nothing broke")
+ran against the LIVE deployment.
+
+## Verdict: PASS (6/6 checks, evidence-backed)
+1. No-flag page: section `hidden` + JS early-return (two independent layers),
+   title/hero/nav intact, nothing visibly changed for normal visitors.
+2. Deployed JS confirmed the hardened version (flag off, 8-min stale, dead-feed
+   decay, null-wait guard); flag verified purely client-side.
+3. CSS block present exactly once (the grep-2 is base + media query).
+4. Live feed schema exactly as spec'd, zero extra fields, zero PII, fresh.
+5. Merge pushed (HEAD == origin/main), clean tree, diff = 347 insertions /
+   0 deletions across exactly the 8 intended files — no production line
+   modified or removed.
+6. One section, one script tag, asset path resolves on the live deploy.
+
+Live behind the flag: https://blacksmith-ten.vercel.app/site/?livewait=1
+**Remaining gate: Jett confirms numbers vs the room → flip `LIVE_WAIT_ON`.**
