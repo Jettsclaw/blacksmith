@@ -715,3 +715,24 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 /* Find-your-barber lead-capture band */
 .quiz-band{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .quiz-band .h2{margin:14px 0}
+
+/* ===== Live wait card (Living Shop Phase 1) ===== */
+.live-wait{padding:0 0 8px}
+.lw-card{background:var(--panel,#141417);border:1px solid var(--line,#26262c);border-radius:16px;padding:28px 32px;margin-top:-34px;position:relative;z-index:3;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.lw-head{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.lw-eyebrow{margin:0}
+.lw-dot{width:9px;height:9px;border-radius:50%;background:#5ddb7a;box-shadow:0 0 0 0 rgba(93,219,122,.6);animation:lwpulse 2s infinite}
+.lw-closed .lw-dot{background:#777;animation:none}
+@keyframes lwpulse{0%{box-shadow:0 0 0 0 rgba(93,219,122,.55)}70%{box-shadow:0 0 0 9px rgba(93,219,122,0)}100%{box-shadow:0 0 0 0 rgba(93,219,122,0)}}
+.lw-asof{margin-left:auto;color:var(--muted,#a2a2aa);font-size:.82rem}
+.lw-main{display:flex;flex-wrap:wrap;gap:26px;align-items:center;justify-content:space-between}
+.lw-big{font-family:Oswald,sans-serif;font-weight:600;font-size:clamp(2rem,4.5vw,3.1rem);line-height:1.05;color:var(--gold)}
+.lw-sub{color:var(--muted,#a2a2aa);margin-top:6px}
+.lw-barbers{display:flex;flex-wrap:wrap;gap:10px;max-width:520px}
+.lw-chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line,#26262c);border-radius:999px;padding:7px 14px;font-size:.9rem;color:var(--paper,#f3f1ea)}
+.lw-chip em{font-style:normal;color:var(--muted,#a2a2aa);font-size:.78rem}
+.lw-chip-dot{width:7px;height:7px;border-radius:50%;background:#5ddb7a}
+.lw-chip.is-cutting .lw-chip-dot{background:var(--gold)}
+.lw-foot{display:flex;align-items:center;gap:18px;margin-top:22px;flex-wrap:wrap}
+.lw-hours{color:var(--muted,#a2a2aa);font-size:.88rem}
+@media(max-width:640px){.lw-card{padding:22px 18px;margin-top:-20px}.lw-main{gap:16px}}
