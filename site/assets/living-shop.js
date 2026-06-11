@@ -20,16 +20,31 @@
   if (!LIVING_SHOP_ON && !/[?&]livingshop/.test(location.search)) return;
   host.hidden = false;
 
-  // Scene-space anchors (room.webp is 1584x672, drawn at native coords).
-  var W = 1584, H = 672;
-  var CHAIRS = [
-    { x: 317, y: 545 }, { x: 521, y: 545 }, { x: 725, y: 545 }, { x: 936, y: 545 }
-  ];
-  var BARBER_OFF = { x: 72, y: 12 };       // barber stands right of chair
-  var COUCH = [ { x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 } ];
-  var DOOR = { x: 1500, y: 640 };
-  var SIGN = { x: 620, y: 118 };
-  var SCALE = { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 };
+  // Two rooms, one engine: landscape for desktop, a portrait recomposition
+  // for phones (fills the screen, no zoom/pan). Anchors are per-layout.
+  var LAYOUTS = {
+    landscape: {
+      room: 'room', W: 1584, H: 672,
+      CHAIRS: [{ x: 317, y: 545 }, { x: 521, y: 545 }, { x: 725, y: 545 }, { x: 936, y: 545 }],
+      BARBER_OFF: { x: 72, y: 12 },
+      COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
+      DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 },
+      HOST: { x: 1402, y: 560, h: 132 }, IDLE_SPOT: { x: 1060, y: 560 },
+      SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
+    },
+    portrait: {
+      room: 'room-p', W: 768, H: 1376,
+      CHAIRS: [{ x: 125, y: 712 }, { x: 292, y: 712 }, { x: 459, y: 712 }, { x: 618, y: 712 }],
+      BARBER_OFF: { x: 48, y: 10 },
+      COUCH: [{ x: 205, y: 1250 }, { x: 280, y: 1250 }, { x: 355, y: 1250 }],
+      DOOR: { x: 700, y: 1330 }, SIGN: { x: 326, y: 236, font: 28 },
+      HOST: { x: 553, y: 1168, h: 116 }, IDLE_SPOT: { x: 400, y: 960 },
+      SCALE: { barber: 150, cape: 118, couch: 108, walk: 135, cat: 50 }
+    }
+  };
+  var LAY = LAYOUTS[window.innerWidth <= 640 ? 'portrait' : 'landscape'];
+  var W = LAY.W, H = LAY.H, CHAIRS = LAY.CHAIRS, BARBER_OFF = LAY.BARBER_OFF,
+      COUCH = LAY.COUCH, DOOR = LAY.DOOR, SIGN = LAY.SIGN, SCALE = LAY.SCALE;
 
   var canvas = document.createElement('canvas');
   canvas.className = 'ls-canvas';
@@ -40,7 +55,7 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // ---------- assets ----------
-  var IMGS = {}, toLoad = ['room'], BARBER_KEYS = {};
+  var IMGS = {}, toLoad = [LAY.room], BARBER_KEYS = {};
   // barber sprite frames: 0 stand, 1+2 cutting, 3 idle
   var BARBER_NAMES = ['bayli','ben','cam','jarred','jayden','locky','mubarak','sami'];
   BARBER_NAMES.forEach(function (n) {
@@ -71,7 +86,7 @@
   var sweeps = {};        // name -> {until, x0} active sweep
   var nextSweepAt = 25000; // first sweep ~25s in, then every few minutes
   var bubbleUntil = 0, bubbleText = '', nextBubbleAt = 5000;
-  var HOST = { x: 1402, y: 560 };
+  var HOST = LAY.HOST;
 
 
   function fmtT(t) {
@@ -186,7 +201,7 @@
       '~' + snap.wait_mins + ' MIN WAIT · ' + snap.waiting + ' WAITING';
     if (!line) return;
     ctx.save();
-    ctx.font = '600 34px Oswald, sans-serif';
+    ctx.font = '600 ' + SIGN.font + 'px Oswald, sans-serif';
     ctx.textAlign = 'center';
     var w = ctx.measureText(line).width + 56;
     var glow = live ? 0.55 + 0.08 * Math.sin(t / 600) : 0.35;
@@ -218,7 +233,7 @@
 
   function draw(t) {
     ctx.clearRect(0, 0, W, H);
-    ctx.drawImage(IMGS.room, 0, 0, W, H);
+    ctx.drawImage(IMGS[LAY.room], 0, 0, W, H);
     hits = [];
 
     var open = snap && snap.open;
@@ -258,7 +273,7 @@
       // overflow barbers idle by the shelf
       stable.slice(4).forEach(function (b, i) {
         var key = spriteKey(b.name) || 'ben';
-        var bb = drawSprite(key + '-0', 1060 + i * 60, 560, SCALE.barber * 0.95, false);
+        var bb = drawSprite(key + '-0', LAY.IDLE_SPOT.x + i * 60, LAY.IDLE_SPOT.y, SCALE.barber * 0.95, false);
         hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
       });
 
@@ -295,7 +310,7 @@
       if (catX === null && t - lastCat > 360000 && Math.random() < 0.0006) catX = -80;
       if (catX !== null) {
         catX += 0.9;
-        drawSprite('cat', catX, 655, SCALE.cat, false);
+        drawSprite('cat', catX, H - 22, SCALE.cat, false);
         if (catX > W + 80) { catX = null; lastCat = t; }
       }
     }
@@ -303,7 +318,7 @@
     // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = drawSprite(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, 132, false);
+      var hb = drawSprite(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h, false);
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;
@@ -315,9 +330,9 @@
       }
       if (t < bubbleUntil && bubbleText) {
         ctx.save();
-        ctx.font = '500 22px Inter, sans-serif';
+        ctx.font = '500 ' + (W < 900 ? 19 : 22) + 'px Inter, sans-serif';
         var tw = ctx.measureText(bubbleText).width;
-        var bx = Math.min(HOST.x, W - tw / 2 - 40), by = HOST.y - 158;
+        var bx = Math.min(HOST.x, W - tw / 2 - 40), by = HOST.y - HOST.h - 26;
         ctx.fillStyle = '#f3f1ea';
         ctx.beginPath();
         ctx.roundRect(bx - tw / 2 - 14, by - 22, tw + 28, 38, 10);
@@ -339,7 +354,7 @@
       // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = drawSprite(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, 132, false);
+      var hb = drawSprite(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h, false);
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;
@@ -351,9 +366,9 @@
       }
       if (t < bubbleUntil && bubbleText) {
         ctx.save();
-        ctx.font = '500 22px Inter, sans-serif';
+        ctx.font = '500 ' + (W < 900 ? 19 : 22) + 'px Inter, sans-serif';
         var tw = ctx.measureText(bubbleText).width;
-        var bx = Math.min(HOST.x, W - tw / 2 - 40), by = HOST.y - 158;
+        var bx = Math.min(HOST.x, W - tw / 2 - 40), by = HOST.y - HOST.h - 26;
         ctx.fillStyle = '#f3f1ea';
         ctx.beginPath();
         ctx.roundRect(bx - tw / 2 - 14, by - 22, tw + 28, 38, 10);
@@ -387,41 +402,8 @@
 
   function immersiveMobile() {
     if (window.innerWidth > 640) return;
-    var stage = host.querySelector('.ls-stage');
-    stage.classList.add('ls-immersive');
     host.classList.add('ls-full');
-    // centre the view on the chairs once layout settles
-    requestAnimationFrame(function () {
-      stage.scrollLeft = Math.max(0, (canvas.clientWidth - stage.clientWidth) * 0.38);
-    });
-
-    // close-up <-> full-shop toggle
-    var tog = document.createElement('button');
-    tog.className = 'ls-zoom';
-    tog.textContent = 'See the full shop';
-    tog.onclick = function () {
-      var fit = stage.classList.toggle('ls-fit');
-      tog.textContent = fit ? 'Close-up' : 'See the full shop';
-      if (!fit) requestAnimationFrame(function () {
-        stage.scrollLeft = Math.max(0, (canvas.clientWidth - stage.clientWidth) * 0.38);
-      });
-    };
-    host.querySelector('.wrap').appendChild(tog);
-
-    // one-time drag hint
-    if (!sessionStorage.getItem('lsDragHint')) {
-      sessionStorage.setItem('lsDragHint', '1');
-      var hint = document.createElement('div');
-      hint.className = 'ls-hint';
-      hint.textContent = '← drag to look around →';
-      host.querySelector('.wrap').appendChild(hint);
-      setTimeout(function () { hint.classList.add('show'); }, 1200);
-      setTimeout(function () { hint.classList.remove('show'); setTimeout(function(){hint.remove();},400); }, 5200);
-      stage.addEventListener('scroll', function once() {
-        hint.classList.remove('show');
-        stage.removeEventListener('scroll', once);
-      });
-    }
+    host.querySelector('.ls-stage').classList.add('ls-portrait');
   }
 
   function start() {

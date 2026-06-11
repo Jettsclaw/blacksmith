@@ -813,3 +813,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .ls-hint.show{opacity:1}
 .ls-stage.ls-immersive.ls-fit{height:auto;overflow:hidden}
 .ls-stage.ls-immersive.ls-fit .ls-canvas{width:100%;height:auto}
+
+/* portrait scene: fills the phone, no pan */
+.ls-stage.ls-portrait{height:auto;overflow:visible;border-radius:0;border-left:none;border-right:none}
+.ls-stage.ls-portrait .ls-canvas{width:100%;height:auto;aspect-ratio:768/1376}
