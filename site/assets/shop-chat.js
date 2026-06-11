@@ -65,8 +65,8 @@
   var BOOK_API = 'https://blacksmith-wait-bot.vercel.app/api/book';
   var wiz = null; // {step, barber, shop, service, slot}
 
-  function chipRow(opts, onPick) {
-    var row = el('div', 'sc-msg bot sc-choices');
+  function chipRow(opts, onPick, grid) {
+    var row = el('div', 'sc-msg bot sc-choices' + (grid ? ' sc-grid' : ''));
     opts.forEach(function (o) {
       var c = el('button', 'sc-chip', o.label);
       c.onclick = function () { row.remove(); onPick(o); };
@@ -76,12 +76,18 @@
     body.scrollTop = body.scrollHeight;
   }
 
+  function setWizUI(on) {
+    if (chipsEl) chipsEl.style.display = on ? 'none' : '';
+    if (ctxEl) ctxEl.style.display = on ? 'flex' : 'none';
+  }
+
   function startBooking(pref) {
+    setWizUI(true);
     if (!snap) { setTimeout(function () { startBooking(pref); }, 800); return; }
     if (!snap.open) {
       if (snap.slots_next && snap.next_label) { startBookAhead(pref); return; }
       bubble('We\u2019re closed and tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning or call 0479 087 782.', 'bot');
-      return;
+      setWizUI(false); return;
     }
     wiz = { step: 'barber' };
     if (pref) {
@@ -111,7 +117,7 @@
 
   function startBookAhead(pref) {
     var names = Object.keys(snap.slots_next || {}).filter(function (n) { return (snap.slots_next[n] || []).length; });
-    if (!names.length) { bubble('Tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning.', 'bot'); return; }
+    if (!names.length) { bubble('Tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning.', 'bot'); setWizUI(false); return; }
     wiz = { step: 'barber', ahead: true, date: snap.next_date };
     bubble('We\u2019re closed right now, but you can lock in ' + snap.next_label + '. Who with?', 'bot');
     var opts = names.map(function (n) { return { label: n, barber: n }; });
@@ -126,7 +132,7 @@
 
   function askService() {
     var menu = (snap.services && snap.services[wiz.shop]) || [];
-    if (!menu.length) { bubble('Menu’s offline — tap Join the queue instead.', 'bot', true); wiz = null; return; }
+    if (!menu.length) { bubble('Menu’s offline — tap Join the queue instead.', 'bot', true); wiz = null; setWizUI(false); return; }
     bubble('What are we doing?', 'bot');
     chipRow(menu.map(function (s) {
       return { label: s.name + ' · $' + s.cost, service: s.id };
@@ -143,7 +149,7 @@
       bubble('What time ' + snap.next_label + '?', 'bot');
       chipRow(slots2.map(function (t) { return { label: fmtT(t), slot: t }; }), function (o) {
         bubble(o.label, 'me'); wiz.slot = o.slot; askDetails();
-      });
+      }, true);
       return;
     }
     if (wiz.shop === 'bookings') {
@@ -151,12 +157,12 @@
       var slots = (b && b.slots) || [];
       if (!slots.length) {
         bubble((wiz.barber.split(' ')[0]) + ' is booked out today — pick someone else or join the walk-in queue.', 'bot');
-        wiz = null; return;
+        wiz = null; setWizUI(false); return;
       }
       bubble('What time today?', 'bot');
       chipRow(slots.map(function (t) { return { label: fmtT(t), slot: t }; }), function (o) {
         bubble(o.label, 'me'); wiz.slot = o.slot; askDetails();
-      });
+      }, true);
     } else {
       wiz.slot = 'now';
       bubble('You’ll join the live queue — current wait ~' + (snap.wait_mins || 0) + ' min.', 'bot');
@@ -175,7 +181,7 @@
       body: JSON.stringify({ shop: wiz.shop, service_id: wiz.service, barber: wiz.barber, slot: wiz.slot, name: name, phone: phone, date: wiz.date || undefined }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (!d.id) { bubble(d.error || 'That didn’t go through — try again.', 'bot'); wiz = null; return; }
+        if (!d.id) { bubble(d.error || 'That didn’t go through — try again.', 'bot'); wiz = null; setWizUI(false); return; }
         var tries = 0;
         var poll = setInterval(function () {
           tries++;
@@ -185,12 +191,12 @@
               bubble(st.ok ? '✅ Booked! ' + (st.time === 'now' ? 'You’re in the queue — head in.' :
                 (wizDateLabel() + fmtT(st.time) + ' with ' + st.barber + '. You’ll get an SMS confirmation.')) :
                 '❌ ' + (st.msg || 'Couldn’t book that — try another time.'), 'bot');
-              wiz = null;
-            } else if (tries > 25) { clearInterval(poll); bubble('Taking longer than usual — you’ll get an SMS if it landed, or call 0479 087 782.', 'bot'); wiz = null; }
+              wiz = null; setWizUI(false);
+            } else if (tries > 25) { clearInterval(poll); bubble('Taking longer than usual — you’ll get an SMS if it landed, or call 0479 087 782.', 'bot'); wiz = null; setWizUI(false); }
           }).catch(function () {});
         }, 2500);
       })
-      .catch(function () { bubble('Network hiccup — try again.', 'bot'); wiz = null; });
+      .catch(function () { bubble('Network hiccup — try again.', 'bot'); wiz = null; setWizUI(false); });
   }
 
   function wizDateLabel() {
@@ -238,7 +244,7 @@
     }, 3000);
   }
 
-  var panel = null, body = null, opened = false;
+  var panel = null, body = null, opened = false, chipsEl = null, ctxEl = null;
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
@@ -290,6 +296,7 @@
     panel.appendChild(body);
 
     var chips = el('div', 'sc-chips');
+    chipsEl = chips;
     [['wait', '⏱ Wait time'], ['who', '💈 Who’s on'], ['hours', '🕐 Hours & parking'], ['book', '✂️ Book']].forEach(function (c) {
       var ch = el('button', 'sc-chip', c[1]);
       ch.onclick = function () {
@@ -299,6 +306,15 @@
       chips.appendChild(ch);
     });
     panel.appendChild(chips);
+
+    ctxEl = el('div', 'sc-chips sc-ctx');
+    var again = el('button', 'sc-chip', '↩ Start over');
+    again.onclick = function () { wiz = null; bubble('Start over', 'me'); startBooking(); };
+    var call = el('a', 'sc-chip', '📞 0479 087 782');
+    call.href = 'tel:0479087782';
+    ctxEl.appendChild(again); ctxEl.appendChild(call);
+    ctxEl.style.display = 'none';
+    panel.appendChild(ctxEl);
 
     var form = el('form', 'sc-form');
     var input = el('input', 'sc-input');

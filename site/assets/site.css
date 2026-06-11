@@ -830,7 +830,12 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 /* portrait scene: fills the phone, no pan */
 .ls-stage.ls-portrait{height:auto;overflow:visible;border-radius:0;border-left:none;border-right:none}
 .ls-stage.ls-portrait .ls-canvas{width:100%;height:auto;aspect-ratio:768/1376}
-.sc-choices{display:flex;flex-wrap:wrap;gap:6px;background:transparent;border:none;padding:4px 0}
+.sc-choices{display:flex;flex-wrap:wrap;gap:6px;background:transparent;border:none;padding:4px 0;max-width:100%}
+.sc-choices .sc-chip{font-size:.9rem;padding:10px 16px}
+.sc-choices.sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.sc-choices.sc-grid .sc-chip{text-align:center;padding:13px 6px;font-size:1rem;border-color:rgba(200,164,77,.5);color:var(--gold-2,#e3c578)}
+.sc-ctx{border-top:1px solid #26262c;padding-top:10px}
+.sc-ctx .sc-chip{text-decoration:none}
 
 /* polish: centered text blocks must centre their own box (global p max-width pins them left) */
 .kp-demand,.kp-quiz,.ls-info,.keypeople .kp-head .lead,.cta-band .eyebrow,.kp-head .eyebrow,.quiz-band .eyebrow,.gallery-head .eyebrow{margin-inline:auto;display:block;max-width:max-content}
