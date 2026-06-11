@@ -44,14 +44,15 @@
 
   // Two rooms, one engine: landscape for desktop, a portrait recomposition
   // for phones (fills the screen, no zoom/pan). Anchors are per-layout.
+  var ROOM_V2 = true; // Jett's 2026-06-11 refresh: honey bench, left plant corner, sprite massage chair (reclines). false = original room.
   var LAYOUTS = {
     landscape: {
-      room: 'room', W: 1584, H: 672,
-      CHAIR_SPAN: { x0: 300, x1: 950, y: 545, h: 150 }, // chairs are sprites, spaced by live count
+      room: ROOM_V2 ? 'room-v2' : 'room', W: 1584, H: 672,
+      CHAIR_SPAN: ROOM_V2 ? { x0: 380, x1: 990, y: 545, h: 150 } : { x0: 300, x1: 950, y: 545, h: 150 }, // chairs are sprites, spaced by live count
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      MASSAGE: { x: 118, y: 534 },
+      MASSAGE: ROOM_V2 ? { x: 285, y: 660, h: 165, sprite: true } : { x: 118, y: 534 },
       HOST: { x: 1224, y: 589, h: 206, sprite: 'host-lean', flip: false, stroll: { x0: 620, x1: 1224, y: 646 } }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
@@ -89,13 +90,14 @@
   });
   ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','host-couch','host-stand','host-lean','host-walk-1','host-walk-2','host-walk-3','host-walk-4','chair']
     .forEach(function (n) { toLoad.push(n); });
+  if (LAY.MASSAGE && LAY.MASSAGE.sprite) toLoad.push('massage-up', 'massage-lay');
 
   var loaded = 0, failed = false;
   toLoad.forEach(function (n) {
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=10';
+    im.src = A + n + '.webp?v=11';
     IMGS[n] = im;
   });
 
@@ -444,9 +446,13 @@
         ctx.restore();
         hits.push({ x: yb.x, y: yb.y - 34, w: yb.w, h: yb.h + 34, toy: 'you' });
       }
-      // 4th waiter scores the massage chair — just his head peeking over
-      // the backrest, watching the cuts (the chair faces the mirrors now)
-      if (snap.waiting > 3 && LAY.MASSAGE)
+      // 4th waiter scores the massage chair
+      if (LAY.MASSAGE && LAY.MASSAGE.sprite) {
+        // v2: the chair is its own layer — reclines with a client in it
+        var occupied = snap.waiting > 3;
+        drawSprite(occupied ? 'massage-lay' : 'massage-up',
+          LAY.MASSAGE.x + (occupied ? 26 : 0), LAY.MASSAGE.y, LAY.MASSAGE.h * (occupied ? 0.88 : 1), false);
+      } else if (snap.waiting > 3 && LAY.MASSAGE)
         drawTorso('client-couch', LAY.MASSAGE.x, LAY.MASSAGE.y, 42, 0.32);
       if (snap.waiting > 4) {
         ctx.font = '600 26px Oswald, sans-serif';
@@ -502,13 +508,18 @@
     }
 
     // tap-toys: bits of the room that talk back (lowest hit priority)
-    if (LAY.MASSAGE) hits.push({ x: 20, y: 450, w: 185, h: 200, toy: 'massage' });
+    if (LAY.MASSAGE) hits.push(LAY.MASSAGE.sprite
+      ? { x: LAY.MASSAGE.x - 95, y: LAY.MASSAGE.y - 175, w: 230, h: 185, toy: 'massage' }
+      : { x: 20, y: 450, w: 185, h: 200, toy: 'massage' });
     if (!LAY.FIT) {
       hits.push({ x: 25, y: 330, w: 205, h: 105, toy: 'bike' });
       hits.push({ x: 1060, y: 410, w: 330, h: 100, toy: 'couch' });
     } else {
       hits.push({ x: 90, y: 1180, w: 500, h: 130, toy: 'couch' });
     }
+
+    if (!open && LAY.MASSAGE && LAY.MASSAGE.sprite)
+      drawSprite('massage-up', LAY.MASSAGE.x, LAY.MASSAGE.y, LAY.MASSAGE.h, false);
 
     // the host at the till — tap him to open the shop chat
     if (snap) {
