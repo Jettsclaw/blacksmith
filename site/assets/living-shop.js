@@ -54,7 +54,7 @@
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
       MASSAGE: ROOM_V2 ? { x: 74, y: 656, h: 172, sprite: true } : { x: 118, y: 534 },
-      HOST: { x: 1224, y: 589, h: 206, sprite: 'host-lean', flip: false, stroll: { x0: 620, x1: 1224, y: 646 } }, IDLE_SPOT: { x: 1060, y: 560 },
+      HOST: { x: 1224, y: 589, h: 206, sprite: 'host-lean', flip: false }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
@@ -512,12 +512,7 @@
     if (LAY.MASSAGE) hits.push(LAY.MASSAGE.sprite
       ? { x: LAY.MASSAGE.x - 95, y: LAY.MASSAGE.y - 175, w: 230, h: 185, toy: 'massage' }
       : { x: 20, y: 450, w: 185, h: 200, toy: 'massage' });
-    if (!LAY.FIT) {
-      hits.push({ x: 25, y: 330, w: 205, h: 105, toy: 'bike' });
-      hits.push({ x: 1060, y: 410, w: 330, h: 100, toy: 'couch' });
-    } else {
-      hits.push({ x: 90, y: 1180, w: 500, h: 130, toy: 'couch' });
-    }
+    if (!LAY.FIT) hits.push({ x: 25, y: 330, w: 205, h: 105, toy: 'bike' });
 
     if (!open && LAY.MASSAGE && LAY.MASSAGE.sprite)
       drawSprite('massage-up', LAY.MASSAGE.x, LAY.MASSAGE.y, LAY.MASSAGE.h, false);
@@ -560,7 +555,7 @@
       ctx.fillStyle = '#e3c578';
       ctx.fillText('?', qx, qy);
       ctx.restore();
-      hb = { x: hb.x - 12, y: qy - 30, w: hb.w + 24, h: ((stroll ? HOST.stroll.y : HOST.y) - (qy - 30)) }; // generous hit area incl. the marker
+      hb = { x: hb.x - 30, y: qy - 34, w: hb.w + 60, h: ((stroll ? HOST.stroll.y : HOST.y) - (qy - 34)) }; // generous hit area incl. the marker
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;
