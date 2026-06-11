@@ -66,6 +66,9 @@ async function answerFor(kind) {
     if (stale || s.wait_mins == null) return `Live feed's catching its breath — call us for the wait: ${PHONE}`;
     return `⏱ ~${s.wait_mins} min wait · ${s.waiting} waiting · ${s.barbers_on} barbers on (${asOf(s)})\nJump in: ${BOOK_URL}`;
   }
+  if (kind === 'book') {
+    return `Lock your chair: ${BOOK_URL}` + (s.open ? '' : `\n(We're closed right now — book ahead for ${fmtT(s.hours_today.split('–')[0])}.)`);
+  }
   if (kind === 'who') {
     if (stale || !s.barbers.length) return `Can't see the floor right now — call us: ${PHONE}`;
     const lines = s.barbers.map(b => `${b.cutting ? '✂️' : '🟢'} ${b.name} — ${b.cutting ? 'cutting' : 'free'}`);
@@ -106,7 +109,8 @@ export default async function handler(req, res) {
       if (!limited(chatId)) {
         const t = (u.message.text || '').toLowerCase();
         const kind = t.includes('wait') ? 'wait' : (t.includes('who') || t.includes('barber')) ? 'who'
-          : (t.includes('hour') || t.includes('park') || t.includes('open')) ? 'hours' : 'menu';
+          : (t.includes('hour') || t.includes('park') || t.includes('open')) ? 'hours'
+          : (t.includes('book') || t.includes('queue') || t.includes('join')) ? 'book' : 'menu';
         const text = kind === 'menu' ? menuText() : await answerFor(kind);
         await tg(token, 'sendMessage', { chat_id: chatId, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
       }
