@@ -857,7 +857,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
   .living-shop .eyebrow{margin:0 0 10px;padding:0 max(24px,env(safe-area-inset-left))}
   .ls-stage{border-radius:0;border-left:none;border-right:none}
 }
-.ls-reveal{display:flex;align-items:center;gap:10px;margin:18px auto 0;background:none;border:1px solid var(--line,#26262c);color:var(--gold-2,#e3c578);border-radius:999px;padding:10px 22px;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:border-color .25s}
+.ls-reveal{display:flex;align-items:center;gap:10px;margin:18px auto 26px;background:none;border:1px solid var(--line,#26262c);color:var(--gold-2,#e3c578);border-radius:999px;padding:10px 22px;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:border-color .25s}
 .ls-reveal:hover{border-color:var(--gold,#c8a44d)}
 .ls-reveal .chev{transition:transform .25s;font-size:1rem}
 .ls-reveal.open .chev{transform:rotate(180deg)}
