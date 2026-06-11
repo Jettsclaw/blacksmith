@@ -840,3 +840,11 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 /* polish: centered text blocks must centre their own box (global p max-width pins them left) */
 .kp-demand,.kp-quiz,.ls-info,.keypeople .kp-head .lead,.cta-band .eyebrow,.kp-head .eyebrow,.quiz-band .eyebrow,.gallery-head .eyebrow{margin-inline:auto;display:block;max-width:max-content}
 .cta-band .eyebrow{display:block}
+
+/* ===== Experience band: image as living background, copy rides over it ===== */
+.exp-band{position:relative;min-height:78vh;display:flex;align-items:flex-end;overflow:hidden}
+.exp-band-img{position:absolute;inset:-12% 0;background-size:cover;background-position:center 35%;will-change:transform;transform:translateY(0)}
+.exp-band::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--ink) 0%,rgba(11,11,13,.25) 30%,rgba(11,11,13,.3) 70%,var(--ink) 100%)}
+.exp-band-copy{position:relative;z-index:2;padding-bottom:clamp(40px,6vw,72px)}
+.exp-band-copy .lead{max-width:44ch}
+@media(max-width:640px){.exp-band{min-height:60vh}}

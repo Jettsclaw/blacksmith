@@ -72,3 +72,19 @@
   }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
   document.querySelectorAll('.reveal,.stagger').forEach(function(el){ io.observe(el); });
 })();
+
+/* subtle parallax on the experience band (transform-based: works on iOS) */
+(function(){
+  var img=document.querySelector('.exp-band-img');
+  if(!img || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var band=img.parentElement, ticking=false;
+  function move(){
+    ticking=false;
+    var r=band.getBoundingClientRect();
+    if(r.bottom<0||r.top>innerHeight) return;
+    var p=(r.top+r.height/2-innerHeight/2)/innerHeight; // -~1..1
+    img.style.transform='translateY('+(p*-7)+'%)';
+  }
+  addEventListener('scroll',function(){ if(!ticking){ ticking=true; requestAnimationFrame(move); } },{passive:true});
+  move();
+})();
