@@ -368,11 +368,14 @@
     // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = HOST.clip
-        ? drawTorso(HOST.sprite, HOST.x, HOST.y, HOST.h, HOST.clip)
-        : HOST.sprite
-          ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
-          : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      var hb = HOST.sprite
+        ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
+        : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      // true occlusion: repaint the desk's own pixels over his lower half
+      if (LAY.HOST_COVER) {
+        var hc = LAY.HOST_COVER;
+        ctx.drawImage(IMGS[LAY.room], hc.x, hc.y, hc.w, hc.h, hc.x, hc.y, hc.w, hc.h);
+      }
       // bobbing gold "?" so people know he's tappable
       var qy = HOST.y - HOST.h - 16 + Math.round(Math.sin(t / 450) * 4);
       ctx.save();
@@ -419,11 +422,14 @@
       // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = HOST.clip
-        ? drawTorso(HOST.sprite, HOST.x, HOST.y, HOST.h, HOST.clip)
-        : HOST.sprite
-          ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
-          : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      var hb = HOST.sprite
+        ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
+        : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      // true occlusion: repaint the desk's own pixels over his lower half
+      if (LAY.HOST_COVER) {
+        var hc = LAY.HOST_COVER;
+        ctx.drawImage(IMGS[LAY.room], hc.x, hc.y, hc.w, hc.h, hc.x, hc.y, hc.w, hc.h);
+      }
       // bobbing gold "?" so people know he's tappable
       var qy = HOST.y - HOST.h - 16 + Math.round(Math.sin(t / 450) * 4);
       ctx.save();
