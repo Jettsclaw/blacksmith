@@ -785,3 +785,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .sc-pill{position:fixed;right:90px;bottom:34px;z-index:90;background:#141417;border:1px solid var(--gold,#c8a44d);color:#f3f1ea;border-radius:999px;padding:10px 16px;font-size:.85rem;cursor:pointer;opacity:0;transform:translateX(8px);transition:opacity .3s,transform .3s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.5);white-space:nowrap}
 .sc-pill.show{opacity:1;transform:none;pointer-events:auto}
 @media(max-width:640px){.sc-pill{right:82px;bottom:26px;font-size:.8rem}}
+.ls-card-pop .ls-alt{margin-left:8px}
+.ls-card-pop{flex-direction:column}
+.ls-card-pop .btn{text-align:center}
+.ls-card-pop[hidden]{display:none}

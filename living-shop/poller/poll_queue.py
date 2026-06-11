@@ -23,6 +23,9 @@ BASE = "https://api.slikr.com.au/api"
 SHOP_ID = 421          # walk-in queue shop: drives wait_mins + "waiting" + hours
 BOOKINGS_SHOP_ID = 1121  # pre-booked chairs: same room, same crew — folds into
                          # per-barber cutting/on status (NOT into the queue count)
+BLACKROSE_SHOP_ID = 422  # the salon next door: Sami works both sides. Activity
+                         # there tags her cutting_at="salon" (girl-client sprite)
+                         # and adds the book-salon option. Never affects counts.
 TZ = ZoneInfo("Australia/Brisbane")
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(HERE, "out")
@@ -36,6 +39,15 @@ SHOW_BARBER_NAMES = True
 # Treat a pending reservation as "waiting in the queue now" if it is due to
 # start within this window. Pre-booked slots hours away are not "waiting".
 WAITING_HORIZON_MIN = 30
+
+# First names who work BOTH Blacksmith and Blackrose (get the book-salon
+# option + salon-side live status). Confirmed by Jett 2026-06-11.
+DUAL_SHOP = {"Sami", "Sammy"}
+
+# Barbers whose chairs run on the Bookings shop — their book button should
+# open the bookings flow, not the walk-in queue. Derived live from where
+# their reservations appear; this is just the fallback for quiet days.
+BOOKINGS_DEFAULT = {"Locky", "Jarred"}
 
 
 def fetch(path: str) -> dict:
@@ -70,6 +82,7 @@ def build_snapshot() -> dict:
     seats = fetch(f"/shops/{SHOP_ID}/seats").get("seats", {})
     # Bookings shop (same physical room): contributes barber activity only.
     bookings = fetch(f"/shops/{BOOKINGS_SHOP_ID}/seats/queue").get("reservations", [])
+    blackrose = fetch(f"/shops/{BLACKROSE_SHOP_ID}/seats/queue").get("reservations", [])
 
     os.makedirs(OUT_DIR, exist_ok=True)
     with open(os.path.join(OUT_DIR, "timings_cache.json"), "w") as f:
@@ -92,8 +105,12 @@ def build_snapshot() -> dict:
     # not someone waiting on the couch now.
     waiting = 0
     cutting_ids = set()
+    cutting_at = {}   # name/bid -> "shop" | "salon" (where they're cutting NOW)
+    seen_shop = {}    # name/bid -> set of sources with any activity today
     busy = {}  # name/bid -> list of (start, finish) active intervals today
-    for src, counts_waiting in ((queue, True), (bookings, False)):
+    for src, counts_waiting, src_tag in ((queue, True, "shop"),
+                                         (bookings, False, "bookings"),
+                                         (blackrose, False, "salon")):
         for r in src:
             status = r.get("status")
             if status in ("completed", "cancelled", "no_show"):
@@ -102,6 +119,10 @@ def build_snapshot() -> dict:
             barber = res.get("barber") or {}
             bid = r.get("performer_barber_id") or barber.get("id")
             name = (barber.get("first_name") or "").strip().title()
+            # Blackrose staff stay out of the Blacksmith scene — the salon
+            # feed only enriches dual-shop people (Sami cuts both sides).
+            if src_tag == "salon" and name not in DUAL_SHOP:
+                continue
             if bid:
                 # Barber ids differ per shop — key the merged map by NAME when
                 # we have one (Jarred has a different id in 421 vs 1121).
@@ -109,9 +130,11 @@ def build_snapshot() -> dict:
                 on_today.setdefault(key, None)
                 if name:
                     on_today[key] = name
+            seen_shop.setdefault(name or bid, set()).add(src_tag)
             st, ft = parse_t(now, r["start_time"]), parse_t(now, r["finish_time"])
             if status in ("in_progress", "processing", "started"):
                 cutting_ids.add(name or bid)
+                cutting_at[name or bid] = "salon" if src_tag == "salon" else "shop"
                 busy.setdefault(name or bid, []).append((min(st, now), max(ft, now)))
             elif status == "pending":
                 busy.setdefault(name or bid, []).append((st, ft))
@@ -143,11 +166,24 @@ def build_snapshot() -> dict:
             continue
         cutting = key in cutting_ids or name in cutting_ids
         fi = max(free_in_minutes(key), free_in_minutes(name))
-        prev = merged.get(name, {"cutting": False, "free_in": 0})
+        at = cutting_at.get(key) or cutting_at.get(name) or "shop"
+        seen = seen_shop.get(key, set()) | seen_shop.get(name, set())
+        first = name.split(" ")[0]
+        if first in DUAL_SHOP:
+            book = ["barber", "salon"]
+        elif "bookings" in seen or first in BOOKINGS_DEFAULT:
+            book = ["bookings"]
+        else:
+            book = ["barber"]
+        prev = merged.get(name, {"cutting": False, "free_in": 0,
+                                 "cutting_at": "shop", "book": book})
         merged[name] = {"cutting": prev["cutting"] or cutting,
-                        "free_in": max(prev["free_in"], fi)}
+                        "free_in": max(prev["free_in"], fi),
+                        "cutting_at": at if cutting else prev["cutting_at"],
+                        "book": book}
     barbers = [{"name": n if SHOW_BARBER_NAMES else "Barber",
-                "cutting": v["cutting"], "free_in": v["free_in"]}
+                "cutting": v["cutting"], "free_in": v["free_in"],
+                "cutting_at": v["cutting_at"], "book": v["book"]}
                for n, v in merged.items()]
     barbers.sort(key=lambda b: (not b["cutting"], b["name"]))
 

@@ -74,7 +74,7 @@ async function answerFor(kind) {
     if (stale || !s.barbers.length) return `Can't see the floor right now — call us: ${PHONE}`;
     const lines = s.barbers.map(b => {
       const fi = +b.free_in || 0;
-      const st = fi === 0 ? 'free now' : b.cutting ? `cutting, free in ~${fi} min` : fi > 90 ? 'booked up today' : `booked, free in ~${fi} min`;
+      const st = fi === 0 ? 'free now' : b.cutting ? `cutting${b.cutting_at === 'salon' ? ' (in the salon)' : ''}, free in ~${fi} min` : fi > 90 ? 'booked up today' : `booked, free in ~${fi} min`;
       return `${b.cutting ? '✂️' : fi === 0 ? '🟢' : '📅'} ${b.name} — ${st}`;
     });
     return `On the floor ${asOf(s)}:\n` + lines.join('\n') + `\nBook: ${BOOK_URL}`;

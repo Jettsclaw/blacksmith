@@ -6,7 +6,12 @@
 (function () {
   var LIVING_SHOP_ON = true; // revealed — authorised by Jett 2026-06-11
   var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
-  var BOOK_URL = 'https://web.slikr.com.au/shop/421/res?ref=livingshop'; // ref ignored by SLIKR today; future measurement hook
+  // ref param ignored by SLIKR today; future measurement hook
+  var BOOK_URLS = {
+    barber:   'https://web.slikr.com.au/shop/421/res?ref=livingshop',
+    bookings: 'https://web.slikr.com.au/shop/1121/res?ref=livingshop',
+    salon:    'https://web.slikr.com.au/blackrosesalon?ref=livingshop'
+  };
   var STALE_MS = 8 * 60 * 1000;
   var A = 'assets/living-shop/';
 
@@ -41,7 +46,7 @@
   BARBER_NAMES.forEach(function (n) {
     for (var i = 0; i < 4; i++) toLoad.push(n + '-' + i);
   });
-  ['client-cape-1','client-cape-2','client-cape-3','client-walk','client-couch','cat']
+  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat']
     .forEach(function (n) { toLoad.push(n); });
 
   var loaded = 0, failed = false;
@@ -108,12 +113,18 @@
         };
         var fi = +h.free_in || 0;
         var status = fi === 0 ? 'Free now — walk in'
-          : h.cutting ? 'Cutting now · free in ~' + fi + ' min'
+          : h.cutting ? ('Cutting now' + (h.cutting_at === 'salon' ? ' (in the salon)' : '') + ' · free in ~' + fi + ' min')
           : fi > 90 ? 'Booked up today — try another barber'
           : 'Booked — free in ~' + fi + ' min';
+        var book = h.book && h.book.length ? h.book : ['barber'];
+        var first = safe(h.name.split(' ')[0]);
+        var btns = '<a class="btn btn-gold" href="' + (BOOK_URLS[book[0]] || BOOK_URLS.barber) + '">Book ' +
+          (book[0] === 'salon' ? 'salon' : 'with ' + first) + '</a>';
+        if (book.length > 1)
+          btns += '<a class="btn btn-gold ls-alt" href="' + BOOK_URLS[book[1]] + '">' +
+            (book[1] === 'salon' ? 'Book salon' : 'Book barber') + '</a>';
         card.innerHTML = '<button class="ls-x" aria-label="Close">&times;</button>' +
-          '<strong>' + safe(h.name) + '</strong><span>' + status +
-          '</span><a class="btn btn-gold" href="' + BOOK_URL + '">Book with ' + safe(h.name.split(' ')[0]) + '</a>';
+          '<strong>' + safe(h.name) + '</strong><span>' + status + '</span>' + btns;
         card.querySelector('.ls-x').onclick = function (ev) { ev.stopPropagation(); card.hidden = true; };
         card.style.left = Math.min(86, Math.max(4, (h.x / W) * 100)) + '%';
         card.hidden = false;
@@ -213,20 +224,22 @@
         var p = easeTo(key, c.x + BARBER_OFF.x, c.y + BARBER_OFF.y);
         var bob = Math.round(Math.sin(t / 700 + i * 1.7)); // 1px idle life
         if (b.cutting) {
-          drawSprite(capeCycle[i % 3], c.x, c.y - 6, SCALE.cape, false);
+          var capes = b.cutting_at === 'salon'
+            ? ['client-salon-1', 'client-salon-2', 'client-salon-3'] : capeCycle;
+          drawSprite(capes[i % 3], c.x, c.y - 6, SCALE.cape, false);
           var frame = key + '-' + (1 + anim);
           var bb = drawSprite(frame, p.x, p.y, SCALE.barber, true);
-          hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true, free_in: b.free_in });
+          hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         } else {
           var bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber, false);
-          hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false, free_in: b.free_in });
+          hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         }
       });
       // overflow barbers idle by the shelf
       stable.slice(4).forEach(function (b, i) {
         var key = spriteKey(b.name) || 'ben';
         var bb = drawSprite(key + '-0', 1060 + i * 60, 560, SCALE.barber * 0.95, false);
-        hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting, free_in: b.free_in });
+        hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
       });
 
       // waiting queue on the chesterfield

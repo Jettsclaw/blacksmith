@@ -53,7 +53,7 @@
       if (stale || !s.barbers.length) return 'Can’t see the floor right now — call us: ' + PHONE;
       return 'On the floor ' + asOf(s) + ':\n' + s.barbers.map(function (b) {
         var fi = +b.free_in || 0;
-        var st = fi === 0 ? 'free now' : b.cutting ? 'cutting, free in ~' + fi + ' min'
+        var st = fi === 0 ? 'free now' : b.cutting ? 'cutting' + (b.cutting_at === 'salon' ? ' (in the salon)' : '') + ', free in ~' + fi + ' min'
           : fi > 90 ? 'booked up today' : 'booked, free in ~' + fi + ' min';
         return (b.cutting ? '✂️ ' : fi === 0 ? '🟢 ' : '📅 ') + b.name + ' — ' + st;
       }).join('\n');
