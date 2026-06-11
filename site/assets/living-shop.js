@@ -34,7 +34,9 @@
         reveal.classList.toggle('open', !open);
         reveal.setAttribute('aria-expanded', String(!open));
         if (!open) setTimeout(function () { // glide just enough: arrow tucks under the nav, panel fills below
-          window.scrollTo({ top: reveal.getBoundingClientRect().top + window.scrollY - 92, behavior: 'smooth' });
+          var el = reveal, y = 0;
+          while (el) { y += el.offsetTop; el = el.offsetParent; }
+          window.scrollTo({ top: y - 92, behavior: 'smooth' });
         }, 60);
       });
     }
