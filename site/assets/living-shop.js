@@ -60,14 +60,14 @@
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: ROOM_V2 ? { // desktop room recomposed in perspective (Habbo view)
-      room: 'room-p4', W: 768, H: 1376,
+      room: 'room-p5', W: 768, H: 1376,
       CHAIR_SPAN: { x0: 185, x1: 585, y: 478, h: 104 },
       FIT: true,
       BARBER_OFF: { x: 36, y: 4 }, CAPE_OFF: { x: 0, y: -26 },
       COUCH: [{ x: 66, y: 1175 }, { x: 92, y: 1285 }, { x: 114, y: 1368 }],
       DOOR: { x: 750, y: 1185 }, SIGN: { x: 384, y: 150, font: 26 },
       HOST: { x: 470, y: 1256, h: 225, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false, qoff: HOST_JETT ? -8 : 0 },
-      MASSAGE: { x: 628, y: 1015, h: 140, sprite: true },
+      MASSAGE: null,
       IDLE_SPOT: { x: 380, y: 520 },
       CAT_Y: 1060,
       SCALE: { barber: 135, cape: 106, couch: 140, walk: 140, cat: 46 }
