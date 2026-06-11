@@ -181,7 +181,12 @@
     var anim = Math.floor(t / 480) % 2; // 2-frame cutting cadence
 
     if (open && snap.barbers) {
-      var bs = snap.barbers.slice(0, 4);
+      // Stable chair mapping: feed sorts cutting-first (it animates the card),
+      // but here a sort flip would teleport people between chairs. Name order.
+      var stable = snap.barbers.slice().sort(function (a, b) {
+        return a.name < b.name ? -1 : 1;
+      });
+      var bs = stable.slice(0, 4);
       bs.forEach(function (b, i) {
         var c = CHAIRS[i], key = spriteKey(b.name) || 'ben';
         if (b.cutting) {
@@ -195,7 +200,7 @@
         }
       });
       // overflow barbers idle by the shelf
-      snap.barbers.slice(4).forEach(function (b, i) {
+      stable.slice(4).forEach(function (b, i) {
         var key = spriteKey(b.name) || 'ben';
         var bb = drawSprite(key + '-0', 1060 + i * 60, 560, SCALE.barber * 0.95, false);
         hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting });
