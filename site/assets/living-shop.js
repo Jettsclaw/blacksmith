@@ -59,15 +59,26 @@
       HOST: { x: 1224, y: 589, h: 206, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false, qoff: HOST_JETT ? -8 : 0 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
-    portrait: {
-      room: ROOM_V2 ? 'room-p2' : 'room-p', W: 768, H: 1376,
+    portrait: ROOM_V2 ? { // desktop room recomposed in perspective (Habbo view)
+      room: 'room-p4', W: 768, H: 1376,
+      CHAIR_SPAN: { x0: 185, x1: 585, y: 478, h: 104 },
+      FIT: true,
+      BARBER_OFF: { x: 36, y: 4 }, CAPE_OFF: { x: 0, y: -26 },
+      COUCH: [{ x: 66, y: 1175 }, { x: 92, y: 1285 }, { x: 114, y: 1368 }],
+      DOOR: { x: 750, y: 1185 }, SIGN: { x: 384, y: 150, font: 26 },
+      HOST: { x: 470, y: 1256, h: 225, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false, qoff: HOST_JETT ? -8 : 0 },
+      MASSAGE: { x: 628, y: 1015, h: 140, sprite: true },
+      IDLE_SPOT: { x: 380, y: 520 },
+      CAT_Y: 1060,
+      SCALE: { barber: 135, cape: 106, couch: 140, walk: 140, cat: 46 }
+    } : {
+      room: 'room-p', W: 768, H: 1376,
       CHAIR_SPAN: { x0: 130, x1: 640, y: 880, h: 190 },
       FIT: true, // scale people down as more chairs slide in
       BARBER_OFF: { x: 64, y: 6 }, CAPE_OFF: { x: 0, y: -52 },
       COUCH: [{ x: 170, y: 1305 }, { x: 350, y: 1305 }, { x: 520, y: 1305 }],
       DOOR: { x: 740, y: 1100 }, SIGN: { x: 384, y: 238, font: 30 },
       HOST: { x: 175, y: 1345, h: 238, sprite: HOST_JETT ? 'jett-couch' : 'host-couch', qoff: HOST_JETT ? -17 : 0 },
-      MASSAGE: ROOM_V2 ? { x: 618, y: 1118, h: 185, sprite: true } : null,
       IDLE_SPOT: { x: 660, y: 1000 },
       CAT_Y: 1110,
       SCALE: { barber: 235, cape: 185, couch: 172, walk: 165, cat: 56 }
