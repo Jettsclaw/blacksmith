@@ -65,7 +65,7 @@
   BARBER_NAMES.forEach(function (n) {
     for (var i = 0; i < 4; i++) toLoad.push(n + '-' + i);
   });
-  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','host-couch','chair']
+  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','host-couch','host-stand','chair']
     .forEach(function (n) { toLoad.push(n); });
 
   var loaded = 0, failed = false;
@@ -73,7 +73,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=7';
+    im.src = A + n + '.webp?v=8';
     IMGS[n] = im;
   });
 
@@ -368,9 +368,22 @@
     // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = HOST.sprite
-        ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
-        : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      var hb = HOST.clip
+        ? drawTorso(HOST.sprite, HOST.x, HOST.y, HOST.h, HOST.clip)
+        : HOST.sprite
+          ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
+          : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      // bobbing gold "?" so people know he's tappable
+      var qy = HOST.y - HOST.h - 16 + Math.round(Math.sin(t / 450) * 4);
+      ctx.save();
+      ctx.font = '700 26px Oswald, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'rgba(200,164,77,.8)';
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = '#e3c578';
+      ctx.fillText('?', HOST.x, qy);
+      ctx.restore();
+      hb = { x: hb.x - 12, y: qy - 30, w: hb.w + 24, h: (HOST.y - (qy - 30)) }; // generous hit area incl. the marker
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;
@@ -406,9 +419,22 @@
       // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = HOST.sprite
-        ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
-        : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      var hb = HOST.clip
+        ? drawTorso(HOST.sprite, HOST.x, HOST.y, HOST.h, HOST.clip)
+        : HOST.sprite
+          ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
+          : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      // bobbing gold "?" so people know he's tappable
+      var qy = HOST.y - HOST.h - 16 + Math.round(Math.sin(t / 450) * 4);
+      ctx.save();
+      ctx.font = '700 26px Oswald, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'rgba(200,164,77,.8)';
+      ctx.shadowBlur = 10;
+      ctx.fillStyle = '#e3c578';
+      ctx.fillText('?', HOST.x, qy);
+      ctx.restore();
+      hb = { x: hb.x - 12, y: qy - 30, w: hb.w + 24, h: (HOST.y - (qy - 30)) }; // generous hit area incl. the marker
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;
