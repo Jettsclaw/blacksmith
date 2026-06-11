@@ -208,6 +208,10 @@
   function fsLayout() {
     if (!fs.on) return;
     var landscape = window.innerWidth > window.innerHeight;
+    // Rotation-lock OFF flow: once the device has really gone landscape,
+    // turning it back upright exits to the normal page (Jett 2026-06-12).
+    if (landscape) fs.wasLandscape = true;
+    else if (fs.wasLandscape) { fsClose(); return; }
     fs.rot = !landscape;
     fs.wrap.style.width = (landscape ? window.innerWidth : window.innerHeight) + 'px';
     fs.wrap.style.height = (landscape ? window.innerHeight : window.innerWidth) + 'px';
@@ -216,6 +220,7 @@
   function fsOpen() {
     if (fs.on) return;
     fs.on = true;
+    fs.wasLandscape = false;
     card.hidden = true;
     var stage = host.querySelector('.ls-stage');
     fs.anchor = host.querySelector('.ls-info');
