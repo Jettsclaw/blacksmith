@@ -29,7 +29,7 @@
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      HOST: { x: 1408, y: 516, h: 86 }, IDLE_SPOT: { x: 1060, y: 560 },
+      HOST: { x: 1336, y: 466, h: 64 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
