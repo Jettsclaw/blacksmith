@@ -221,17 +221,35 @@
     fs.anchor = host.querySelector('.ls-info');
     fs.overlay = document.createElement('div'); fs.overlay.className = 'ls-fso';
     fs.wrap = document.createElement('div'); fs.wrap.className = 'ls-fsw';
-    // landscape site chrome: logo · Book a Cut · Exit — fills the letterbox
+    // landscape site chrome — looks like the desktop site when the phone is
+    // held sideways: real header (hamburger + wordmark + exit) along the top,
+    // sticky gold Book a Cut along the bottom.
     var bar = document.createElement('div'); bar.className = 'ls-fshead';
-    bar.innerHTML = '<img src="assets/logo-white.png" alt="Blacksmith">' +
-      '<span class="ls-fsgrow"></span>' +
-      '<a class="btn btn-gold ls-fsbook" href="' + BOOK_URLS.barber + '">Book a Cut</a>' +
-      '<button class="ls-fsx" aria-label="Exit full screen">&#10005;&ensp;Exit</button>';
+    bar.innerHTML = '<button class="ls-fsburger" aria-label="Open menu"><span></span><span></span><span></span></button>' +
+      '<img class="ls-fslogo" src="assets/logo-white.png" alt="Blacksmith">' +
+      '<button class="ls-fsx" aria-label="Exit full screen">&#10005;</button>' +
+      '<nav class="ls-fsnav" hidden>' +
+        [['index.html', 'Home'], ['shop.html', 'Shop'], ['academy.html', 'Academy'],
+         ['blackrose.html', 'Blackrose'], ['barbers.html', 'Barbers'],
+         ['quiz.html', 'Find Your Barber'], ['about.html', 'About'],
+         ['visit.html', 'Visit'], ['events.html', 'Events']]
+          .map(function (l) { return '<a href="' + l[0] + '">' + l[1] + '</a>'; }).join('') +
+      '</nav>';
     bar.querySelector('.ls-fsx').addEventListener('click', fsClose);
+    bar.querySelector('.ls-fsburger').addEventListener('click', function (e) {
+      e.stopPropagation();
+      var n = bar.querySelector('.ls-fsnav');
+      n.hidden = !n.hidden;
+    });
     var body = document.createElement('div'); body.className = 'ls-fsbody';
     body.appendChild(stage);
-    fs.wrap.appendChild(bar);
+    var foot = document.createElement('a');
+    foot.className = 'btn btn-gold ls-fsfoot';
+    foot.href = BOOK_URLS.barber;
+    foot.textContent = 'Book a Cut';
     fs.wrap.appendChild(body);
+    fs.wrap.appendChild(bar);
+    fs.wrap.appendChild(foot);
     fs.wrap.appendChild(card);
     fs.overlay.appendChild(fs.wrap);
     document.body.appendChild(fs.overlay);

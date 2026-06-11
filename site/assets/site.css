@@ -905,16 +905,21 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 /* living shop — phone fullscreen takeover */
 .ls-expand{position:absolute;right:10px;bottom:10px;z-index:6;width:40px;height:40px;border-radius:10px;background:rgba(16,16,19,.78);border:1px solid rgba(200,164,77,.8);color:#e3c578;font-size:20px;line-height:1;display:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
 @media(max-width:640px){.ls-expand{display:block}}
-.ls-fso{position:fixed;inset:0;z-index:99;background:#070608}
-.ls-fsw{position:absolute;left:50%;top:50%;display:flex;flex-direction:column;align-items:stretch}
-.ls-fshead{display:flex;align-items:center;gap:12px;padding:9px max(14px,env(safe-area-inset-top)) 9px 16px;border-bottom:1px solid rgba(200,164,77,.35);background:#0b0b0d;flex:none}
-.ls-fshead img{height:20px;display:block}
-.ls-fsgrow{flex:1}
-.ls-fsbook{padding:8px 18px;font-size:.78rem}
-.ls-fsx{background:none;border:1px solid var(--line,#26262c);color:#e3c578;border-radius:999px;padding:8px 16px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ls-fsbody{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
-.ls-fsw .ls-stage{height:100%;max-width:100%;aspect-ratio:1584/672;border-radius:0;border:none;box-shadow:none}
+.ls-fso{position:fixed;inset:0;z-index:1300;background:#070608}
+.ls-fsw{position:absolute;left:50%;top:50%}
+.ls-fsbody{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.ls-fsw .ls-stage{width:100%;max-height:100%;aspect-ratio:1584/672;border-radius:0;border:none;box-shadow:none}
 .ls-fsw .ls-canvas{width:100%;height:100%}
 .ls-fsw .ls-expand{display:none}
-.ls-fsw .ls-card-pop{position:absolute;left:50%!important;transform:translateX(-50%);bottom:14px;top:auto;width:min(340px,80%);z-index:8}
+.ls-fshead{position:absolute;top:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:linear-gradient(180deg,rgba(11,11,13,.94) 0%,rgba(11,11,13,.55) 64%,transparent 100%);z-index:4}
+.ls-fslogo{height:24px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block}
+.ls-fsburger{width:44px;height:44px;background:none;border:none;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:5px;padding:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ls-fsburger span{display:block;width:24px;height:2px;background:#f3f1ea}
+.ls-fsx{background:none;border:none;color:#f3f1ea;width:44px;height:44px;font-size:22px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ls-fsnav{position:absolute;top:56px;left:10px;display:flex;flex-direction:column;background:#0b0b0d;border:1px solid rgba(200,164,77,.45);border-radius:12px;padding:8px 0;min-width:210px;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+.ls-fsnav a{color:#f3f1ea;text-decoration:none;padding:10px 20px;font-family:Oswald,sans-serif;letter-spacing:.05em;text-transform:uppercase;font-size:.82rem}
+.ls-fsnav a:hover,.ls-fsnav a:active{color:#e3c578}
+.ls-fsnav[hidden]{display:none}
+.ls-fsfoot{position:absolute;left:0;right:0;bottom:0;z-index:4;border-radius:0;text-align:center;padding:14px;font-size:.86rem}
+.ls-fsw .ls-card-pop{position:absolute;left:50%!important;transform:translateX(-50%);bottom:62px;top:auto;width:min(340px,80%);z-index:8}
 .ls-noscroll,.ls-noscroll body{overflow:hidden;touch-action:none}
