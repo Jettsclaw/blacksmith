@@ -263,6 +263,7 @@
           fetch(BOOK_API + '?id=' + d.id).then(function (r) { return r.json(); }).then(function (st) {
             if (st.done) {
               clearInterval(poll);
+              if (st.ok && window.__lsYou) window.__lsYou(name); // your sprite walks into the living shop
               bubble(st.ok ? '✅ Booked! ' + (st.time === 'now' ? 'You’re in the queue — head in.' :
                 (wizDateLabel() + fmtT(st.time) + ' with ' + st.barber + '. You’ll get an SMS confirmation.')) :
                 '❌ ' + (st.msg || 'Couldn’t book that — try another time.'), 'bot');

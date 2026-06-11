@@ -93,6 +93,40 @@
   var bubbleUntil = 0, bubbleText = '', nextBubbleAt = 5000;
   var HOST = LAY.HOST;
 
+  // Habbo lesson: rooms feel alive when the people in them mutter.
+  var chat = null, nextChatAt = 18000;  // {until, who|couch, text}
+  var people = {}, couchPos = [];       // positions resolved each frame
+  var catSay = 0;
+  var CUT_LINES = ['Keeping it sharp ✂', 'Loving this fade', 'Clean as always', 'Almost done here'];
+  var FREE_LINES = ['Walk right in', 'Chair’s ready', 'No wait — come down'];
+  var WAIT_LINES = ['Worth the wait', 'Best cut on the coast', 'Massage chair’s mine next', 'Love this place'];
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+
+  // "That's me!" — your own sprite in the room once you book through the chat
+  var you = null;
+  try { you = JSON.parse(sessionStorage.getItem('ls-you') || 'null'); } catch (e) {}
+  if (you && Date.now() - you.at > 2.5 * 3600 * 1000) { you = null; sessionStorage.removeItem('ls-you'); }
+  window.__lsYou = function (name) {
+    you = { name: String(name || '').split(' ')[0].slice(0, 12), at: Date.now() };
+    try { sessionStorage.setItem('ls-you', JSON.stringify(you)); } catch (e) {}
+    walkers.push({ x: DOOR.x, t: 0, you: true });
+  };
+
+  // moodlight: the room's tint follows the real shop clock
+  var mood = { at: 0, tint: null };
+  function moodTint() {
+    if (Date.now() - mood.at > 60000) {
+      mood.at = Date.now();
+      var hr = 12;
+      try { hr = +new Intl.DateTimeFormat('en-AU', { timeZone: 'Australia/Brisbane', hour: 'numeric', hour12: false }).format(new Date()); } catch (e) {}
+      mood.tint = hr < 10 ? 'rgba(170,200,255,0.05)'
+        : hr >= 17 ? 'rgba(255,140,60,0.10)'
+        : hr >= 15 ? 'rgba(255,190,90,0.06)'
+        : null;
+    }
+    return mood.tint;
+  }
+
 
   function fmtT(t) {
     if (!t) return 'soon';
@@ -135,6 +169,19 @@
       if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
         if (h.host) {
           if (window.__scOpen) window.__scOpen();
+          return;
+        }
+        if (h.toy) {
+          var t0 = performance.now();
+          if (h.toy === 'cat') catSay = t0 + 3200;
+          else if (h.toy === 'you') {
+            chat = { until: t0 + 5200, ax: h.x + h.w / 2, ay: h.y, text: 'That’s you — booked in ✂' };
+          } else {
+            bubbleText = h.toy === 'massage' ? 'Massage chair’s all yours while you wait.'
+              : h.toy === 'bike' ? 'The lowrider? Shop legend — ask about it.'
+              : 'Best seat in the house — cold drink while you wait.';
+            bubbleUntil = t0 + 5200;
+          }
           return;
         }
         var safe = function (s) {
@@ -220,6 +267,25 @@
     return { x: x, y: y, w: w, h: targetH };
   }
 
+  // one bubble style for everyone — host, barbers, clients, the cat
+  function drawBubble(text, cx, topY, gold, small) {
+    ctx.save();
+    ctx.font = '500 ' + (small ? 17 : (W < 900 ? 19 : 22)) + 'px Inter, sans-serif';
+    var tw = ctx.measureText(text).width;
+    var bx = Math.max(tw / 2 + 20, Math.min(cx, W - tw / 2 - 20));
+    var by = Math.max(60, topY - 26);
+    ctx.fillStyle = gold ? '#e3c578' : '#f3f1ea';
+    ctx.beginPath();
+    ctx.roundRect(bx - tw / 2 - 14, by - 22, tw + 28, small ? 32 : 38, 10);
+    ctx.fill();
+    ctx.moveTo(cx - 6, by + (small ? 9 : 15)); ctx.lineTo(cx + 10, by + (small ? 9 : 15)); ctx.lineTo(cx - 1, by + (small ? 23 : 29));
+    ctx.fill();
+    ctx.fillStyle = '#141417';
+    ctx.textAlign = 'center';
+    ctx.fillText(text, bx, by + (small ? 3 : 5));
+    ctx.restore();
+  }
+
   function drawSign(t) {
     var live = snap && snap.open && fresh(snap) && snap.wait_mins != null;
     var line = !snap ? '' :
@@ -301,6 +367,7 @@
           drawSprite(capes[i % 3], c.x + CAPE_OFF.x * fit, c.y + CAPE_OFF.y * fit, SCALE.cape * fit, false);
           var frame = key + '-' + (1 + anim);
           var bb = drawSprite(frame, p.x, p.y, SCALE.barber * fit, true);
+          people[b.name] = { cx: bb.x + bb.w / 2, top: bb.y };
           hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         } else {
           var sw = sweeps[b.name];
@@ -308,12 +375,12 @@
           if (sw && t < sw.until) {
             var drift = Math.sin(t / 1800 + sw.seed) * 26;
             var sx2 = p.x + 40 + drift;
-            bb2 = drawSprite(key + '-0', sx2, p.y + 8, SCALE.barber, false);
-            drawSprite('broom', sx2 - SCALE.barber * fit * 0.34 + drift * 0.25, p.y + 10, SCALE.barber * fit * 0.82, false);
+            bb2 = drawSprite('sweep-' + (1 + Math.floor(t / 420) % 2), sx2, p.y + 8, SCALE.barber * fit * 0.92, drift < 0);
           } else {
             if (sw) delete sweeps[b.name];
             bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber * fit, false);
           }
+          people[b.name] = { cx: bb2.x + bb2.w / 2, top: bb2.y };
           hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         }
       });
@@ -334,11 +401,27 @@
         }
       }
 
-      // waiting queue on the chesterfield
-      var waitN = Math.min(snap.waiting, 3);
-      for (var i2 = 0; i2 < waitN; i2++)
+      // waiting queue on the chesterfield (last seat is yours if you booked)
+      var youHere = you && you.arrived;
+      var waitN = Math.min(snap.waiting, youHere ? COUCH.length - 1 : 3);
+      couchPos = [];
+      for (var i2 = 0; i2 < waitN; i2++) {
         drawSprite('client-couch', COUCH[i2].x,
           COUCH[i2].y + Math.round(Math.sin(t / 900 + i2 * 2.3)), SCALE.couch, i2 === 1);
+        couchPos[i2] = { cx: COUCH[i2].x, top: COUCH[i2].y - SCALE.couch };
+      }
+      if (youHere) {
+        var ys = COUCH[COUCH.length - 1];
+        var yb = drawSprite('client-couch', ys.x, ys.y + Math.round(Math.sin(t / 900 + 5)), SCALE.couch, true);
+        ctx.save(); // floating gold YOU tag — Habbo's "that's my guy" hook
+        ctx.font = '700 20px Oswald, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.shadowColor = 'rgba(200,164,77,.9)'; ctx.shadowBlur = 8;
+        ctx.fillStyle = '#e3c578';
+        ctx.fillText('YOU', ys.x, yb.y - 10 + Math.round(Math.sin(t / 500) * 3));
+        ctx.restore();
+        hits.push({ x: yb.x, y: yb.y - 34, w: yb.w, h: yb.h + 34, toy: 'you' });
+      }
       // 4th waiter scores the massage chair — just his head peeking over
       // the backrest, watching the cuts (the chair faces the mirrors now)
       if (snap.waiting > 3 && LAY.MASSAGE)
@@ -352,18 +435,57 @@
       // walk-in animation: door -> couch
       walkers = walkers.filter(function (wk) {
         wk.t += 1 / 160;
-        wk.x = DOOR.x + (COUCH[Math.min(snap.waiting, 3) - 1 < 0 ? 0 : Math.min(snap.waiting, 3) - 1].x - DOOR.x) * Math.min(wk.t, 1);
+        var dest = wk.you ? COUCH[COUCH.length - 1]
+          : COUCH[Math.min(snap.waiting, 3) - 1 < 0 ? 0 : Math.min(snap.waiting, 3) - 1];
+        wk.x = DOOR.x + (dest.x - DOOR.x) * Math.min(wk.t, 1);
         drawSprite('client-walk', wk.x, DOOR.y, SCALE.walk, true);
+        if (wk.t >= 1 && wk.you && you) {
+          you.arrived = true;
+          try { sessionStorage.setItem('ls-you', JSON.stringify(you)); } catch (e) {}
+        }
         return wk.t < 1;
       });
+      // booked-before-this-pageload: already seated, no entrance
+      if (you && !you.arrived && !walkers.some(function (w) { return w.you; })) you.arrived = true;
+
+      // room banter — one mutter at a time, grounded in what's really happening
+      if (!reduced && t > nextChatAt && t > bubbleUntil) {
+        nextChatAt = t + 30000 + Math.random() * 40000;
+        var lines = [];
+        bs.forEach(function (b) {
+          if (b.cutting && b.cutting_at !== 'salon') lines.push({ who: b.name, text: pick(CUT_LINES) });
+          else if (!b.cutting) lines.push({ who: b.name, text: snap.waiting > 0 ? 'Next!' : pick(FREE_LINES) });
+        });
+        for (var li = 0; li < waitN; li++) lines.push({ couch: li, text: pick(WAIT_LINES) });
+        if (lines.length) {
+          var L = pick(lines);
+          chat = { until: t + 5200, who: L.who, couch: L.couch, text: L.text };
+        }
+      }
+      if (chat && t < chat.until) {
+        var anchor = chat.ax != null ? { cx: chat.ax, top: chat.ay }
+          : chat.who != null ? people[chat.who] : couchPos[chat.couch];
+        if (anchor) drawBubble(chat.text, anchor.cx, anchor.top, false, true);
+      }
 
       // shop cat: rare amble (roughly every 6-12 min of open watching)
       if (catX === null && t - lastCat > 360000 && Math.random() < 0.0006) catX = -80;
       if (catX !== null) {
         catX += 0.9;
         drawSprite('cat', catX, LAY.CAT_Y, SCALE.cat, false);
+        hits.push({ x: catX - 45, y: LAY.CAT_Y - 70, w: 90, h: 75, toy: 'cat' });
+        if (t < catSay) drawBubble('miaow~', catX, LAY.CAT_Y - 64, false, true);
         if (catX > W + 80) { catX = null; lastCat = t; }
       }
+    }
+
+    // tap-toys: bits of the room that talk back (lowest hit priority)
+    if (LAY.MASSAGE) hits.push({ x: 20, y: 450, w: 185, h: 200, toy: 'massage' });
+    if (!LAY.FIT) {
+      hits.push({ x: 25, y: 330, w: 205, h: 105, toy: 'bike' });
+      hits.push({ x: 1060, y: 410, w: 330, h: 100, toy: 'couch' });
+    } else {
+      hits.push({ x: 90, y: 1180, w: 500, h: 130, toy: 'couch' });
     }
 
     // the host at the till — tap him to open the shop chat
@@ -414,23 +536,13 @@
           : snap.wait_mins != null ? '~' + snap.wait_mins + ' min wait \u2014 need a hand?'
           : 'Need a hand?';
       }
-      if (t < bubbleUntil && bubbleText) {
-        ctx.save();
-        ctx.font = '500 ' + (W < 900 ? 19 : 22) + 'px Inter, sans-serif';
-        var tw = ctx.measureText(bubbleText).width;
-        var bx = Math.min(HOST.x, W - tw / 2 - 40), by = HOST.y - HOST.h - 26;
-        ctx.fillStyle = '#f3f1ea';
-        ctx.beginPath();
-        ctx.roundRect(bx - tw / 2 - 14, by - 22, tw + 28, 38, 10);
-        ctx.fill();
-        ctx.moveTo(bx + 2, by + 16); ctx.lineTo(bx + 16, by + 16); ctx.lineTo(bx + 4, by + 30);
-        ctx.fill();
-        ctx.fillStyle = '#141417';
-        ctx.textAlign = 'center';
-        ctx.fillText(bubbleText, bx, by + 5);
-        ctx.restore();
-      }
+      if (t < bubbleUntil && bubbleText)
+        drawBubble(bubbleText, stroll ? stroll.x : HOST.x, (stroll ? HOST.stroll.y : HOST.y) - HOST.h, false, false);
     }
+
+    // moodlight — golden arvo, warm evening; closed state has its own dimmer
+    var tint = snap && snap.open && moodTint();
+    if (tint) { ctx.fillStyle = tint; ctx.fillRect(0, 0, W, H); }
 
     drawSign(t);
 
