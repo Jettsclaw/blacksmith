@@ -29,7 +29,7 @@
       BARBER_OFF: { x: 72, y: 12 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 },
-      HOST: { x: 1402, y: 560, h: 132 }, IDLE_SPOT: { x: 1060, y: 560 },
+      HOST: { x: 1408, y: 516, h: 86 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
@@ -38,7 +38,7 @@
       BARBER_OFF: { x: 48, y: 10 },
       COUCH: [{ x: 205, y: 1250 }, { x: 280, y: 1250 }, { x: 355, y: 1250 }],
       DOOR: { x: 700, y: 1330 }, SIGN: { x: 326, y: 236, font: 28 },
-      HOST: { x: 553, y: 1168, h: 116 }, IDLE_SPOT: { x: 400, y: 960 },
+      HOST: { x: 553, y: 1132, h: 78 }, IDLE_SPOT: { x: 400, y: 960 },
       SCALE: { barber: 150, cape: 118, couch: 108, walk: 135, cat: 50 }
     }
   };
@@ -192,6 +192,19 @@
     return { x: x, y: y, w: w, h: h };
   }
 
+  // top portion of a sprite only — lets the desk occlude the host's legs
+  function drawTorso(key, cx, baseY, targetH) {
+    var im = IMGS[key];
+    if (!im || !im.naturalWidth) return { x: 0, y: 0, w: 0, h: 0 };
+    var frac = 0.58;
+    var sh = im.naturalHeight * frac;
+    var s = targetH / sh;
+    var w = im.naturalWidth * s;
+    var x = cx - w / 2, y = baseY - targetH;
+    ctx.drawImage(im, 0, 0, im.naturalWidth, sh, px(x), px(y), px(w), px(targetH));
+    return { x: x, y: y, w: w, h: targetH };
+  }
+
   function drawSign(t) {
     var live = snap && snap.open && fresh(snap) && snap.wait_mins != null;
     var line = !snap ? '' :
@@ -262,7 +275,9 @@
           var bb2;
           if (sw && t < sw.until) {
             var drift = Math.sin(t / 1800 + sw.seed) * 26;
-            bb2 = drawSprite('sweep-' + (1 + anim), p.x + 40 + drift, p.y + 8, SCALE.barber, false);
+            var sx2 = p.x + 40 + drift;
+            bb2 = drawSprite(key + '-0', sx2, p.y + 8, SCALE.barber, false);
+            drawSprite('broom', sx2 - SCALE.barber * 0.34 + drift * 0.25, p.y + 10, SCALE.barber * 0.82, false);
           } else {
             if (sw) delete sweeps[b.name];
             bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber, false);
@@ -318,7 +333,7 @@
     // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = drawSprite(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h, false);
+      var hb = drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;
@@ -354,7 +369,7 @@
       // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = drawSprite(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h, false);
+      var hb = drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;

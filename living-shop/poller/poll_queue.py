@@ -132,24 +132,29 @@ def build_snapshot() -> dict:
                     on_today[key] = name
             seen_shop.setdefault(name or bid, set()).add(src_tag)
             st, ft = parse_t(now, r["start_time"]), parse_t(now, r["finish_time"])
-            if status in ("in_progress", "processing", "started"):
+            started = status in ("in_progress", "processing", "started")
+            # Barbers often don't tap "start" in SLIKR — a pending job whose
+            # start time has passed is, in reality, someone in the chair.
+            implied = status == "pending" and st <= now < ft and bid
+            if started or implied:
                 cutting_ids.add(name or bid)
                 cutting_at[name or bid] = "salon" if src_tag == "salon" else "shop"
                 busy.setdefault(name or bid, []).append((min(st, now), max(ft, now)))
             elif status == "pending":
                 busy.setdefault(name or bid, []).append((st, ft))
                 if counts_waiting and st <= now + timedelta(minutes=WAITING_HORIZON_MIN):
-                    # Late-running queues included: a pending whose estimated
-                    # start has slipped is still someone waiting in the shop.
                     waiting += 1
 
+    WALK_IN_FIT = 25  # a free gap this long fits a standard walk-in cut
+
     def free_in_minutes(key):
-        """Minutes until this barber can take a walk-in: the end of their
-        contiguous busy block covering now (gaps <15 min bridge). 0 = free."""
+        """Minutes until a walk-in FITS with this barber: chain busy blocks
+        until a gap >= WALK_IN_FIT appears. A barber idle with 30 free
+        minutes before their next booking is free NOW."""
         ivs = sorted(busy.get(key, []))
         end = now
         for st, ft in ivs:
-            if st <= end + timedelta(minutes=15):
+            if st <= end + timedelta(minutes=WALK_IN_FIT):
                 end = max(end, ft)
             else:
                 break
