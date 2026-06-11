@@ -35,13 +35,15 @@
     },
     portrait: {
       room: 'room-p', W: 768, H: 1376,
-      CHAIRS: [{ x: 100, y: 745 }, { x: 284, y: 745 }, { x: 474, y: 745 }, { x: 659, y: 745 }], // painted into the art
-      BARBER_OFF: { x: 58, y: 6 }, CAPE_OFF: { x: 0, y: -48 },
-      COUCH: [{ x: 120, y: 1045 }, { x: 195, y: 1045 }, { x: 268, y: 1045 }],
-      DOOR: { x: 690, y: 1090 }, SIGN: { x: 384, y: 128, font: 30 },
-      HOST: { x: 512, y: 982, h: 84 }, IDLE_SPOT: { x: 560, y: 890 },
-      CAT_Y: 935, MASSAGE: { x: 372, y: 1028 },
-      SCALE: { barber: 150, cape: 118, couch: 108, walk: 135, cat: 50 }
+      CHAIR_SPAN: { x0: 130, x1: 640, y: 880, h: 190 },
+      FIT: true, // scale people down as more chairs slide in
+      BARBER_OFF: { x: 64, y: 6 }, CAPE_OFF: { x: 0, y: -52 },
+      COUCH: [{ x: 170, y: 1305 }, { x: 350, y: 1305 }, { x: 520, y: 1305 }],
+      DOOR: { x: 740, y: 1100 }, SIGN: { x: 384, y: 238, font: 30 },
+      HOST: { x: 655, y: 1308, h: 150, sprite: 'host-couch' },
+      IDLE_SPOT: { x: 660, y: 1000 },
+      CAT_Y: 1110,
+      SCALE: { barber: 235, cape: 185, couch: 150, walk: 165, cat: 56 }
     }
   };
   var LAY = LAYOUTS[window.innerWidth <= 640 ? 'portrait' : 'landscape'];
@@ -63,7 +65,7 @@
   BARBER_NAMES.forEach(function (n) {
     for (var i = 0; i < 4; i++) toLoad.push(n + '-' + i);
   });
-  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','chair']
+  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','host-couch','chair']
     .forEach(function (n) { toLoad.push(n); });
 
   var loaded = 0, failed = false;
@@ -272,13 +274,15 @@
       // Jett's rotation: chairs belong to whoever is CUTTING. 4 chairs by
       // default; a 5th/6th slides in only when that many cuts run at once.
       var cuttingN = stable.filter(function (b) { return b.cutting; }).length;
-      var chairN = Math.max(4, Math.min(6, cuttingN));
+      var chairN = Math.max(LAY.FIT ? 3 : 4, Math.min(6, cuttingN));
+      if (LAY.FIT) chairN = Math.max(chairN, Math.min(4, stable.length));
+      var fit = LAY.FIT ? Math.min(1, 3.6 / chairN) : 1;
       var CHAIRS = [];
       if (LAY.CHAIR_SPAN) {
         var sp = LAY.CHAIR_SPAN;
         for (var ci = 0; ci < chairN; ci++)
           CHAIRS.push({ x: sp.x0 + (sp.x1 - sp.x0) * (chairN === 1 ? 0.5 : ci / (chairN - 1)), y: sp.y });
-        CHAIRS.forEach(function (c) { drawSprite('chair', c.x, c.y, sp.h, false); });
+        CHAIRS.forEach(function (c) { drawSprite('chair', c.x, c.y, sp.h * fit, false); });
       } else {
         CHAIRS = LAY.CHAIRS.slice(0, chairN);
       }
@@ -288,14 +292,14 @@
       var bs = seated.slice(0, CHAIRS.length);
       bs.forEach(function (b, i) {
         var c = CHAIRS[i], key = spriteKey(b.name) || 'ben';
-        var p = easeTo(key, c.x + BARBER_OFF.x, c.y + BARBER_OFF.y);
+        var p = easeTo(key, c.x + BARBER_OFF.x * fit, c.y + BARBER_OFF.y);
         var bob = Math.round(Math.sin(t / 700 + i * 1.7)); // 1px idle life
         if (b.cutting) {
           var capes = b.cutting_at === 'salon'
             ? ['client-salon-1', 'client-salon-2', 'client-salon-3'] : capeCycle;
-          drawSprite(capes[i % 3], c.x + CAPE_OFF.x, c.y + CAPE_OFF.y, SCALE.cape, false);
+          drawSprite(capes[i % 3], c.x + CAPE_OFF.x * fit, c.y + CAPE_OFF.y * fit, SCALE.cape * fit, false);
           var frame = key + '-' + (1 + anim);
-          var bb = drawSprite(frame, p.x, p.y, SCALE.barber, true);
+          var bb = drawSprite(frame, p.x, p.y, SCALE.barber * fit, true);
           hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         } else {
           var sw = sweeps[b.name];
@@ -304,10 +308,10 @@
             var drift = Math.sin(t / 1800 + sw.seed) * 26;
             var sx2 = p.x + 40 + drift;
             bb2 = drawSprite(key + '-0', sx2, p.y + 8, SCALE.barber, false);
-            drawSprite('broom', sx2 - SCALE.barber * 0.34 + drift * 0.25, p.y + 10, SCALE.barber * 0.82, false);
+            drawSprite('broom', sx2 - SCALE.barber * fit * 0.34 + drift * 0.25, p.y + 10, SCALE.barber * fit * 0.82, false);
           } else {
             if (sw) delete sweeps[b.name];
-            bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber, false);
+            bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber * fit, false);
           }
           hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         }
@@ -363,7 +367,9 @@
     // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      var hb = HOST.sprite
+        ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
+        : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;
@@ -399,7 +405,9 @@
       // the host at the till — tap him to open the shop chat
     if (snap) {
       var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
-      var hb = drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
+      var hb = HOST.sprite
+        ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, false)
+        : drawTorso(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, HOST.h);
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
         nextBubbleAt = t + 40000 + Math.random() * 50000;
