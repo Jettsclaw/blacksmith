@@ -849,3 +849,17 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 @media(min-width:820px){.exp-band-img{background-position:center 74%}}
 .exp-band-copy .lead{max-width:44ch}
 @media(max-width:640px){.exp-band{min-height:60vh}}
+
+/* ---------- Living Shop cinema mode (Jett 2026-06-11: full frame, no distractions) ---------- */
+@media(min-width:641px){
+  .living-shop{min-height:100svh;display:flex;align-items:center;padding:84px 0 24px;background:#070608}
+  .living-shop .wrap{max-width:none;padding:0;width:100%}
+  .living-shop .eyebrow{margin:0 0 10px;padding:0 max(24px,env(safe-area-inset-left))}
+  .ls-stage{border-radius:0;border-left:none;border-right:none}
+}
+.ls-reveal{display:flex;align-items:center;gap:10px;margin:18px auto 0;background:none;border:1px solid var(--line,#26262c);color:var(--gold-2,#e3c578);border-radius:999px;padding:10px 22px;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:border-color .25s}
+.ls-reveal:hover{border-color:var(--gold,#c8a44d)}
+.ls-reveal .chev{transition:transform .25s;font-size:1rem}
+.ls-reveal.open .chev{transform:rotate(180deg)}
+.ls-reveal[hidden]{display:none}
+.lw-collapsed{display:none!important}

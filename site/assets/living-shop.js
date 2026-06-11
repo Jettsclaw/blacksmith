@@ -20,6 +20,24 @@
   if (!LIVING_SHOP_ON && !/[?&]livingshop/.test(location.search)) return;
   host.hidden = false;
 
+  // cinema mode: the scene owns the viewport; the wait/booking panel folds
+  // away behind an arrow (phones keep the stacked flow)
+  var reveal = host.querySelector('.ls-reveal');
+  if (reveal && window.innerWidth > 640) {
+    var lw = document.getElementById('live-wait');
+    if (lw) {
+      reveal.hidden = false;
+      lw.classList.add('lw-collapsed');
+      reveal.addEventListener('click', function () {
+        var open = !lw.classList.contains('lw-collapsed');
+        lw.classList.toggle('lw-collapsed', open);
+        reveal.classList.toggle('open', !open);
+        reveal.setAttribute('aria-expanded', String(!open));
+        if (!open) setTimeout(function () { lw.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
+      });
+    }
+  }
+
   // Two rooms, one engine: landscape for desktop, a portrait recomposition
   // for phones (fills the screen, no zoom/pan). Anchors are per-layout.
   var LAYOUTS = {
