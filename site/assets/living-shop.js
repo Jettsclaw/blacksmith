@@ -45,7 +45,7 @@
 
   // Two rooms, one engine: landscape for desktop, a portrait recomposition
   // for phones (fills the screen, no zoom/pan). Anchors are per-layout.
-  var ROOM_V2 = false; // Jett's 2026-06-11 refresh: honey bench, left plant corner, sprite massage chair (reclines). false = original room.
+  var ROOM_V2 = true; // Jett's 2026-06-11 refresh: honey bench, left plant corner, sprite massage chair (reclines). false = original room.
   var LAYOUTS = {
     landscape: {
       room: ROOM_V2 ? 'room-v2' : 'room', W: 1584, H: 672,
@@ -98,7 +98,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=15';
+    im.src = A + n + '.webp?v=16';
     IMGS[n] = im;
   });
 
