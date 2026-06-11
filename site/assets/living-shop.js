@@ -509,7 +509,7 @@
           var left = HOST.stroll.x1 - stroll.x;
           if (left < 120) wy = HOST.y + (HOST.stroll.y - HOST.y) * (left / 120) + Math.round(Math.sin(t / 160 * Math.PI) * 1.5);
         }
-        hb = drawSprite(wf, stroll.x, wy, HOST.h * 0.97, stroll.dir === 1);
+        hb = drawSprite(wf, stroll.x, wy, HOST.h * 0.97, stroll.dir === -1);
       } else {
         hb = HOST.sprite
           ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, !!HOST.flip)
