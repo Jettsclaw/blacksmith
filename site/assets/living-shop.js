@@ -29,7 +29,7 @@
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      MASSAGE: { x: 90, y: 628 },
+      MASSAGE: { x: 118, y: 534 },
       HOST: { x: 1336, y: 466, h: 64 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
@@ -73,7 +73,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=6';
+    im.src = A + n + '.webp?v=7';
     IMGS[n] = im;
   });
 
@@ -207,10 +207,10 @@
   }
 
   // top portion of a sprite only — lets the desk occlude the host's legs
-  function drawTorso(key, cx, baseY, targetH) {
+  function drawTorso(key, cx, baseY, targetH, frac) {
     var im = IMGS[key];
     if (!im || !im.naturalWidth) return { x: 0, y: 0, w: 0, h: 0 };
-    var frac = 0.58;
+    frac = frac || 0.58;
     var sh = im.naturalHeight * frac;
     var s = targetH / sh;
     var w = im.naturalWidth * s;
@@ -338,9 +338,10 @@
       for (var i2 = 0; i2 < waitN; i2++)
         drawSprite('client-couch', COUCH[i2].x,
           COUCH[i2].y + Math.round(Math.sin(t / 900 + i2 * 2.3)), SCALE.couch, i2 === 1);
-      // 4th waiter scores the massage chair (it's real — D.Core by the couch)
+      // 4th waiter scores the massage chair — just his head peeking over
+      // the backrest, watching the cuts (the chair faces the mirrors now)
       if (snap.waiting > 3 && LAY.MASSAGE)
-        drawSprite('client-couch', LAY.MASSAGE.x, LAY.MASSAGE.y, SCALE.couch * 0.8, true);
+        drawTorso('client-couch', LAY.MASSAGE.x, LAY.MASSAGE.y, 42, 0.32);
       if (snap.waiting > 4) {
         ctx.font = '600 26px Oswald, sans-serif';
         ctx.fillStyle = '#e3c578';
