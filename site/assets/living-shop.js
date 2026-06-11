@@ -98,7 +98,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=12';
+    im.src = A + n + '.webp?v=13';
     IMGS[n] = im;
   });
 
