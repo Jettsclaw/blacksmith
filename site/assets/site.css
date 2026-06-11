@@ -912,7 +912,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .ls-fsw .ls-canvas{width:100%;height:100%}
 .ls-fsw .ls-expand{display:none}
 .ls-fshead{position:absolute;top:0;left:0;right:0;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(11,11,13,.96);border-bottom:1px solid rgba(200,164,77,.35);z-index:4}
-.ls-fslogo{height:32px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block}
+.ls-fslogo{height:48px;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:block}
 .ls-fsburger{width:44px;height:44px;background:none;border:none;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:5px;padding:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .ls-fsburger span{display:block;width:28px;height:2.5px;background:#f3f1ea}
 .ls-fsx{background:none;border:none;color:#f3f1ea;width:48px;height:48px;font-size:27px;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
