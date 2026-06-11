@@ -49,11 +49,12 @@
   var LAYOUTS = {
     landscape: {
       room: ROOM_V2 ? 'room-v2' : 'room', W: 1584, H: 672,
-      CHAIR_SPAN: ROOM_V2 ? { x0: 380, x1: 990, y: 545, h: 150 } : { x0: 300, x1: 950, y: 545, h: 150 }, // chairs are sprites, spaced by live count
+      CHAIR_SPAN: ROOM_V2 ? { x0: 380, x1: 950, y: 545, h: 150 } : { x0: 300, x1: 950, y: 545, h: 150 }, // chairs are sprites, spaced by live count
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
       MASSAGE: ROOM_V2 ? { x: 74, y: 656, h: 172, sprite: true } : { x: 118, y: 534 },
+      FRIDGE: ROOM_V2 ? { x: 1038, y: 598, h: 150 } : null,
       HOST: { x: 1224, y: 589, h: 206, sprite: 'host-lean', flip: false }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
@@ -92,6 +93,7 @@
   ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','host-couch','host-stand','host-lean','host-walk-1','host-walk-2','host-walk-3','host-walk-4','chair']
     .forEach(function (n) { toLoad.push(n); });
   if (LAY.MASSAGE && LAY.MASSAGE.sprite) toLoad.push('massage-up', 'massage-lay');
+  if (LAY.FRIDGE) toLoad.push('fridge');
 
   var loaded = 0, failed = false;
   toLoad.forEach(function (n) {
@@ -204,6 +206,7 @@
           } else {
             bubbleText = h.toy === 'massage' ? 'Massage chair’s all yours while you wait.'
               : h.toy === 'bike' ? 'The lowrider? Shop legend — ask about it.'
+              : h.toy === 'fridge' ? 'Cold FlipSide on us — help yourself.'
               : 'Best seat in the house — cold drink while you wait.';
             bubbleUntil = t0 + 5200;
           }
@@ -354,6 +357,7 @@
     ctx.clearRect(0, 0, W, H);
     ctx.drawImage(IMGS[LAY.room], 0, 0, W, H);
     hits = [];
+    if (LAY.FRIDGE) drawSprite('fridge', LAY.FRIDGE.x, LAY.FRIDGE.y, LAY.FRIDGE.h, false);
 
     var open = snap && snap.open;
     var anim = Math.floor(t / 480) % 2; // 2-frame cutting cadence
@@ -513,6 +517,7 @@
       ? { x: LAY.MASSAGE.x - 95, y: LAY.MASSAGE.y - 175, w: 230, h: 185, toy: 'massage' }
       : { x: 20, y: 450, w: 185, h: 200, toy: 'massage' });
     if (!LAY.FIT) hits.push({ x: 25, y: 330, w: 205, h: 105, toy: 'bike' });
+    if (LAY.FRIDGE) hits.push({ x: LAY.FRIDGE.x - 45, y: LAY.FRIDGE.y - LAY.FRIDGE.h, w: 90, h: LAY.FRIDGE.h, toy: 'fridge' });
 
     if (!open && LAY.MASSAGE && LAY.MASSAGE.sprite)
       drawSprite('massage-up', LAY.MASSAGE.x, LAY.MASSAGE.y, LAY.MASSAGE.h, false);
