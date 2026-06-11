@@ -33,7 +33,9 @@
         lw.classList.toggle('lw-collapsed', open);
         reveal.classList.toggle('open', !open);
         reveal.setAttribute('aria-expanded', String(!open));
-        if (!open) setTimeout(function () { lw.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 60);
+        if (!open) setTimeout(function () { // glide just enough: arrow tucks under the nav, panel fills below
+          window.scrollTo({ top: reveal.getBoundingClientRect().top + window.scrollY - 92, behavior: 'smooth' });
+        }, 60);
       });
     }
   }
