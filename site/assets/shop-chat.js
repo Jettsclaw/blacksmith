@@ -188,7 +188,7 @@
 
   function startBookAhead(pref) {
     var names = Object.keys(snap.slots_next || {}).filter(function (n) { return (snap.slots_next[n] || []).length; });
-    if (!names.length) { bubble('Tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning.', 'bot'); setWizUI(false); return; }
+    if (!names.length) { bubble(snap.next_label === 'today' ? 'No times left today \u2014 call 0479 087 782.' : 'Tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning.', 'bot'); setWizUI(false); return; }
     wiz = { step: 'barber', ahead: true, date: snap.next_date };
     if (pref && names.map(function (n) { return n.toLowerCase(); }).indexOf(String(pref).toLowerCase()) < 0) {
       bubble(String(pref).charAt(0).toUpperCase() + String(pref).slice(1) + ' runs the live queue rather than timed slots — when we open I can put you straight in the queue from here (no standing around in the shop). Right now you can lock in ' + snap.next_label + ' with one of these:', 'bot');

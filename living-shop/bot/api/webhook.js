@@ -105,7 +105,7 @@ async function bkStep(token, chat, data) {
     st.service = parseInt(data.slice(4), 10);
     if (st.ahead) {
       const slots = (s.slots_next && s.slots_next[st.barber.split(' ')[0]]) || [];
-      if (!slots.length) { await tg(token, 'sendMessage', { chat_id: chat, text: 'No times left tomorrow — try another barber.' }); return clearState(chat); }
+      if (!slots.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `No times left ${s.next_label} — try another barber.` }); return clearState(chat); }
       st.step = 'slot';
       await setState(chat, st);
       await tg(token, 'sendMessage', { chat_id: chat, text: `What time ${s.next_label}?`,
