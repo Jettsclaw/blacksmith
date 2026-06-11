@@ -26,24 +26,25 @@
     landscape: {
       room: 'room', W: 1584, H: 672,
       CHAIRS: [{ x: 317, y: 545 }, { x: 521, y: 545 }, { x: 725, y: 545 }, { x: 936, y: 545 }],
-      BARBER_OFF: { x: 72, y: 12 },
+      BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
-      DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 },
+      DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
       HOST: { x: 1408, y: 516, h: 86 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
       room: 'room-p', W: 768, H: 1376,
-      CHAIRS: [{ x: 125, y: 712 }, { x: 292, y: 712 }, { x: 459, y: 712 }, { x: 618, y: 712 }],
-      BARBER_OFF: { x: 48, y: 10 },
-      COUCH: [{ x: 205, y: 1250 }, { x: 280, y: 1250 }, { x: 355, y: 1250 }],
-      DOOR: { x: 700, y: 1330 }, SIGN: { x: 326, y: 236, font: 28 },
-      HOST: { x: 553, y: 1132, h: 78 }, IDLE_SPOT: { x: 400, y: 960 },
+      CHAIRS: [{ x: 100, y: 745 }, { x: 284, y: 745 }, { x: 474, y: 745 }, { x: 659, y: 745 }],
+      BARBER_OFF: { x: 58, y: 6 }, CAPE_OFF: { x: 0, y: -48 },
+      COUCH: [{ x: 120, y: 1045 }, { x: 195, y: 1045 }, { x: 268, y: 1045 }],
+      DOOR: { x: 690, y: 1090 }, SIGN: { x: 384, y: 128, font: 30 },
+      HOST: { x: 512, y: 982, h: 84 }, IDLE_SPOT: { x: 560, y: 890 },
+      CAT_Y: 935,
       SCALE: { barber: 150, cape: 118, couch: 108, walk: 135, cat: 50 }
     }
   };
   var LAY = LAYOUTS[window.innerWidth <= 640 ? 'portrait' : 'landscape'];
-  var W = LAY.W, H = LAY.H, CHAIRS = LAY.CHAIRS, BARBER_OFF = LAY.BARBER_OFF,
+  var W = LAY.W, H = LAY.H, CHAIRS = LAY.CHAIRS, BARBER_OFF = LAY.BARBER_OFF, CAPE_OFF = LAY.CAPE_OFF,
       COUCH = LAY.COUCH, DOOR = LAY.DOOR, SIGN = LAY.SIGN, SCALE = LAY.SCALE;
 
   var canvas = document.createElement('canvas');
@@ -266,7 +267,7 @@
         if (b.cutting) {
           var capes = b.cutting_at === 'salon'
             ? ['client-salon-1', 'client-salon-2', 'client-salon-3'] : capeCycle;
-          drawSprite(capes[i % 3], c.x, c.y - 6, SCALE.cape, false);
+          drawSprite(capes[i % 3], c.x + CAPE_OFF.x, c.y + CAPE_OFF.y, SCALE.cape, false);
           var frame = key + '-' + (1 + anim);
           var bb = drawSprite(frame, p.x, p.y, SCALE.barber, true);
           hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
@@ -325,7 +326,7 @@
       if (catX === null && t - lastCat > 360000 && Math.random() < 0.0006) catX = -80;
       if (catX !== null) {
         catX += 0.9;
-        drawSprite('cat', catX, H - 22, SCALE.cat, false);
+        drawSprite('cat', catX, LAY.CAT_Y, SCALE.cat, false);
         if (catX > W + 80) { catX = null; lastCat = t; }
       }
     }
