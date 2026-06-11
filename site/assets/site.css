@@ -888,3 +888,17 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 }
 .product-grid.merch .product-card[data-merch] .merch-photo{transition:opacity .3s var(--ease),transform .6s var(--ease)}
 .product-grid.merch .product-card[data-merch]:hover .merch-photo.is-active{transform:scale(1.04)}
+
+/* merch wall: edge-to-edge, photo-first (CK reference) */
+@media(min-width:700px){
+  .merch-immersive .wrap{max-width:none;padding-inline:clamp(8px,1vw,16px)}
+  .merch-immersive .shop-cat-head{padding-inline:clamp(16px,3vw,40px)}
+  .product-grid.merch{gap:3px}
+  .product-grid.merch .product-card{border:none;border-radius:0;background:#0e0e11}
+  .product-grid.merch .product-card:hover{transform:none}
+  .product-grid.merch .product-card[data-merch] .product-thumb{border-bottom:none}
+  .product-grid.merch .product-body{padding:14px 16px;gap:5px}
+  .product-grid.merch .product-desc{display:none}
+  .product-card--slim .product-thumb{border-right:none}
+  .merch-side{gap:3px}
+}
