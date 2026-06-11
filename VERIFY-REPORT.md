@@ -131,3 +131,40 @@ ran against the LIVE deployment.
 
 Live behind the flag: https://blacksmith-ten.vercel.app/site/?livewait=1
 **Remaining gate: Jett confirms numbers vs the room → flip `LIVE_WAIT_ON`.**
+
+---
+
+# Phase 2 verify — the Living Shop scene (2026-06-11)
+
+Fourth independent adversarial pass (separate agent; ran the scene in a real
+headless browser, attacked the code, audited the deploy).
+
+## Verdict: PASS-WITH-NOTES → blocker fixed same session
+1. **BLOCKER — XSS via barber name in the tap-card** (`card.innerHTML` used raw
+   feed names; verifier PROVED execution with an injected `<img onerror>` name).
+   **FIXED:** names HTML-escaped + wait number coerced numeric; re-tested with
+   the exact payload — renders as inert text, no execution.
+2. Refuted (correct as built): DPR canvas/hit-area math at all DPRs; walk-in
+   couch index edge at waiting 0→1.
+3. Polish applied from findings: **~2s ease** for chair re-assignments (no
+   teleporting sprites, per the build prompt) + subtle 1px idle bob for free
+   barbers and bench clients (never looks frozen).
+4. Accepted/minor: 60s feed poll continues when tab hidden (spec only requires
+   render pause); pinch/drag peek not in V1; roster joins still re-seat
+   remaining barbers (eased now, not teleported).
+5. PASS: asset budget 495KB total (<2MB), assets only load behind the flag,
+   reduced-motion = static poster frame, render loop pauses offscreen/hidden,
+   production flags correct (card public, scene hidden without ?livingshop),
+   git clean and pushed.
+
+## Browser-verified behaviours (local + live deploy)
+Live data renders the real shop (verified during the Thursday rush: ~93 min
+wait, Bayli cutting a caped client, queue on the chesterfield); closed state
+dims the room with a "CLOSED — BACK 9AM" sign; stale feed decays the sign to
+"CALL FOR WAIT TIME"; tap-barber opens his live status card with a Book CTA
+(Phase 3's core interaction, already in); sign glows with live numbers in
+Oswald gold; mobile 390px shows the full scaled scene.
+
+**GATE STATUS Phase 2: built + adversarially verified, live behind
+`?livingshop` on production. Remaining gate = Jett's reveal approval →
+flip `LIVING_SHOP_ON`.**

@@ -103,10 +103,13 @@
     for (var i = 0; i < hits.length; i++) {
       var h = hits[i];
       if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
-        card.innerHTML = '<strong>' + h.name + '</strong><span>' +
+        var safe = function (s) {
+          return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        };
+        card.innerHTML = '<strong>' + safe(h.name) + '</strong><span>' +
           (h.cutting ? 'Cutting now' : 'Free now') +
-          (snap && snap.wait_mins != null ? ' · ~' + snap.wait_mins + ' min wait' : '') +
-          '</span><a class="btn btn-gold" href="' + BOOK_URL + '">Book with ' + h.name.split(' ')[0] + '</a>';
+          (snap && snap.wait_mins != null ? ' · ~' + (+snap.wait_mins) + ' min wait' : '') +
+          '</span><a class="btn btn-gold" href="' + BOOK_URL + '">Book with ' + safe(h.name.split(' ')[0]) + '</a>';
         card.style.left = Math.min(86, Math.max(4, (h.x / W) * 100)) + '%';
         card.hidden = false;
         e.stopPropagation();
@@ -172,6 +175,17 @@
 
   var capeCycle = ['client-cape-1', 'client-cape-2', 'client-cape-3'];
 
+  // Eased positions: people glide (~2s) to a new chair instead of teleporting.
+  var eased = {};
+  function easeTo(key, tx, ty) {
+    var p = eased[key] || (eased[key] = { x: tx, y: ty });
+    p.x += (tx - p.x) * 0.035;
+    p.y += (ty - p.y) * 0.035;
+    if (Math.abs(tx - p.x) < 1) p.x = tx;
+    if (Math.abs(ty - p.y) < 1) p.y = ty;
+    return p;
+  }
+
   function draw(t) {
     ctx.clearRect(0, 0, W, H);
     ctx.drawImage(IMGS.room, 0, 0, W, H);
@@ -189,13 +203,15 @@
       var bs = stable.slice(0, 4);
       bs.forEach(function (b, i) {
         var c = CHAIRS[i], key = spriteKey(b.name) || 'ben';
+        var p = easeTo(key, c.x + BARBER_OFF.x, c.y + BARBER_OFF.y);
+        var bob = Math.round(Math.sin(t / 700 + i * 1.7)); // 1px idle life
         if (b.cutting) {
           drawSprite(capeCycle[i % 3], c.x, c.y - 6, SCALE.cape, false);
           var frame = key + '-' + (1 + anim);
-          var bb = drawSprite(frame, c.x + BARBER_OFF.x, c.y + BARBER_OFF.y, SCALE.barber, true);
+          var bb = drawSprite(frame, p.x, p.y, SCALE.barber, true);
           hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true });
         } else {
-          var bb2 = drawSprite(key + '-3', c.x + BARBER_OFF.x, c.y + BARBER_OFF.y, SCALE.barber, false);
+          var bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber, false);
           hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false });
         }
       });
@@ -209,7 +225,8 @@
       // waiting queue on the chesterfield
       var waitN = Math.min(snap.waiting, 3);
       for (var i2 = 0; i2 < waitN; i2++)
-        drawSprite('client-couch', COUCH[i2].x, COUCH[i2].y, SCALE.couch, i2 === 1);
+        drawSprite('client-couch', COUCH[i2].x,
+          COUCH[i2].y + Math.round(Math.sin(t / 900 + i2 * 2.3)), SCALE.couch, i2 === 1);
       if (snap.waiting > 3) {
         ctx.font = '600 26px Oswald, sans-serif';
         ctx.fillStyle = '#e3c578';
