@@ -40,7 +40,7 @@
       BARBER_OFF: { x: 64, y: 6 }, CAPE_OFF: { x: 0, y: -52 },
       COUCH: [{ x: 170, y: 1305 }, { x: 350, y: 1305 }, { x: 520, y: 1305 }],
       DOOR: { x: 740, y: 1100 }, SIGN: { x: 384, y: 238, font: 30 },
-      HOST: { x: 655, y: 1308, h: 150, sprite: 'host-couch' },
+      HOST: { x: 168, y: 1332, h: 192, sprite: 'host-couch' },
       IDLE_SPOT: { x: 660, y: 1000 },
       CAT_Y: 1110,
       SCALE: { barber: 235, cape: 185, couch: 150, walk: 165, cat: 56 }
