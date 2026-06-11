@@ -59,18 +59,18 @@
       HOST: { x: 1224, y: 589, h: 206, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false, qoff: HOST_JETT ? -8 : 0 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
-    portrait: ROOM_V2 ? { // desktop room recomposed in perspective (Habbo view)
-      room: 'room-p5', W: 768, H: 1376,
-      CHAIR_SPAN: { x0: 185, x1: 585, y: 478, h: 104 },
-      FIT: true,
-      BARBER_OFF: { x: 36, y: 4 }, CAPE_OFF: { x: 0, y: -26 },
-      COUCH: [{ x: 66, y: 1175 }, { x: 92, y: 1285 }, { x: 114, y: 1368 }],
-      DOOR: { x: 750, y: 1185 }, SIGN: { x: 384, y: 150, font: 26 },
-      HOST: { x: 470, y: 1256, h: 225, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false, qoff: HOST_JETT ? -8 : 0 },
-      MASSAGE: null,
-      IDLE_SPOT: { x: 380, y: 520 },
-      CAT_Y: 1060,
-      SCALE: { barber: 135, cape: 106, couch: 140, walk: 140, cat: 46 }
+    portrait: ROOM_V2 ? { // the REAL shop corridor: chairs recede down the mirror run
+      room: 'room-p7', W: 768, H: 1376,
+      CHAIR_SPAN: { x0: 430, y: 1230, x1: 256, y1: 790, h: 205, s1: 0.52 },
+      FIT: true, CAP: 3,
+      BARBER_OFF: { x: 60, y: 6 }, CAPE_OFF: { x: 0, y: -46 },
+      COUCH: [{ x: 540, y: 856, s: 0.56 }, { x: 596, y: 880, s: 0.6 }, { x: 652, y: 906, s: 0.64 }],
+      MASSAGE: { x: 660, y: 1185, h: 198, sprite: true }, WPILL: { x: 640, y: 742 },
+      DOOR: { x: 384, y: 700 }, SIGN: { x: 384, y: 130, font: 26 },
+      HOST: { x: 552, y: 1300, h: 250, sprite: HOST_JETT ? 'jett-lean' : 'host-lean', flip: false, qoff: HOST_JETT ? -8 : 0 },
+      IDLE_SPOT: { x: 460, y: 880 },
+      CAT_Y: 1330,
+      SCALE: { barber: 225, cape: 178, couch: 195, walk: 95, cat: 52 }
     } : {
       room: 'room-p', W: 768, H: 1376,
       CHAIR_SPAN: { x0: 130, x1: 640, y: 880, h: 190 },
@@ -385,31 +385,42 @@
       // default; a 5th/6th slides in only when that many cuts run at once.
       var cuttingN = stable.filter(function (b) { return b.cutting; }).length;
       var chairN = Math.max(LAY.FIT ? 3 : 4, Math.min(6, cuttingN));
-      if (LAY.FIT) chairN = Math.max(chairN, Math.min(4, stable.length));
-      var fit = LAY.FIT ? Math.min(1, 3.6 / chairN) : 1;
+      var cap = LAY.CAP || 4;
+      if (LAY.FIT) chairN = Math.min(cap, Math.max(chairN, Math.min(cap, stable.length)));
+      var depth = LAY.CHAIR_SPAN && LAY.CHAIR_SPAN.y1 != null;
+      var fit = (LAY.FIT && !depth) ? Math.min(1, 3.6 / chairN) : 1;
       var CHAIRS = [];
       if (LAY.CHAIR_SPAN) {
         var sp = LAY.CHAIR_SPAN;
-        for (var ci = 0; ci < chairN; ci++)
-          CHAIRS.push({ x: sp.x0 + (sp.x1 - sp.x0) * (chairN === 1 ? 0.5 : ci / (chairN - 1)), y: sp.y });
-        CHAIRS.forEach(function (c) { drawSprite('chair', c.x, c.y, sp.h * fit, false); });
+        for (var ci = 0; ci < chairN; ci++) {
+          var t = chairN === 1 ? 0.5 : ci / (chairN - 1);
+          CHAIRS.push({ x: sp.x0 + (sp.x1 - sp.x0) * t,
+                        y: depth ? sp.y + (sp.y1 - sp.y) * t : sp.y,
+                        s: depth ? 1 + ((sp.s1 || 1) - 1) * t : 1 });
+        }
+        // far chairs first so the near ones overlap them correctly
+        CHAIRS.slice().reverse().forEach(function (c) { drawSprite('chair', c.x, c.y, sp.h * fit * c.s, false); });
       } else {
         CHAIRS = LAY.CHAIRS.slice(0, chairN);
+        CHAIRS.forEach(function (c) { c.s = 1; });
       }
       // cutting barbers claim chairs first, then free barbers fill the rest
       var seated = stable.filter(function (b) { return b.cutting; })
         .concat(stable.filter(function (b) { return !b.cutting; }));
       var bs = seated.slice(0, CHAIRS.length);
-      bs.forEach(function (b, i) {
+      var order = bs.map(function (_, i) { return i; }).reverse();
+      order.forEach(function (i) {
+        var b = bs[i];
         var c = CHAIRS[i], key = spriteKey(b.name) || 'ben';
-        var p = easeTo(key, c.x + BARBER_OFF.x * fit, c.y + BARBER_OFF.y);
+        var ds = c.s || 1;
+        var p = easeTo(key, c.x + BARBER_OFF.x * fit * ds, c.y + BARBER_OFF.y * ds);
         var bob = Math.round(Math.sin(t / 700 + i * 1.7)); // 1px idle life
         if (b.cutting) {
           var capes = b.cutting_at === 'salon'
             ? ['client-salon-1', 'client-salon-2', 'client-salon-3'] : capeCycle;
-          drawSprite(capes[i % 3], c.x + CAPE_OFF.x * fit, c.y + CAPE_OFF.y * fit, SCALE.cape * fit, false);
+          drawSprite(capes[i % 3], c.x + CAPE_OFF.x * fit * ds, c.y + CAPE_OFF.y * fit * ds, SCALE.cape * fit * ds, false);
           var frame = key + '-' + (1 + anim);
-          var bb = drawSprite(frame, p.x, p.y, SCALE.barber * fit, true);
+          var bb = drawSprite(frame, p.x, p.y, SCALE.barber * fit * ds, true);
           people[b.name] = { cx: bb.x + bb.w / 2, top: bb.y };
           hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         } else {
@@ -418,17 +429,34 @@
           if (sw && t < sw.until) {
             var drift = Math.sin(t / 1800 + sw.seed) * 26;
             var sx2 = p.x + 40 + drift;
-            bb2 = drawSprite('sweep-' + (1 + Math.floor(t / 420) % 2), sx2, p.y + 8, SCALE.barber * fit * 0.92, drift < 0);
+            bb2 = drawSprite('sweep-' + (1 + Math.floor(t / 420) % 2), sx2, p.y + 8, SCALE.barber * fit * 0.92 * ds, drift < 0);
           } else {
             if (sw) delete sweeps[b.name];
-            bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber * fit, false);
+            bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber * fit * ds, false);
           }
           people[b.name] = { cx: bb2.x + bb2.w / 2, top: bb2.y };
           hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         }
       });
-      // overflow barbers idle by the shelf
-      stable.slice(4).forEach(function (b, i) {
+      void 0;
+      // phone: extra cutting barbers beyond the 4 chairs -> gold pill
+      var extraCut = LAY.FIT ? Math.max(0, cuttingN - (LAY.CAP || 4)) : 0;
+      if (extraCut > 0) {
+        ctx.save();
+        ctx.font = '700 24px Oswald, sans-serif';
+        var pt = '+' + extraCut + ' CUTTING';
+        var pw = ctx.measureText(pt).width + 36;
+        var px2 = LAY.CHAIR_SPAN.y1 != null ? 200 : W / 2, py2 = LAY.CHAIR_SPAN.y1 != null ? LAY.CHAIR_SPAN.y1 - 115 : LAY.CHAIR_SPAN.y + 62;
+        ctx.fillStyle = 'rgba(16,16,19,.88)';
+        ctx.beginPath(); ctx.roundRect(px2 - pw / 2, py2 - 22, pw, 40, 20); ctx.fill();
+        ctx.strokeStyle = 'rgba(200,164,77,.8)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.roundRect(px2 - pw / 2, py2 - 22, pw, 40, 20); ctx.stroke();
+        ctx.fillStyle = '#e3c578'; ctx.textAlign = 'center';
+        ctx.fillText(pt, px2, py2 + 6);
+        ctx.restore();
+      }
+      // overflow barbers idle by the shelf (desktop only)
+      (LAY.FIT ? [] : stable.slice(4)).forEach(function (b, i) {
         var key = spriteKey(b.name) || 'ben';
         var bb = drawSprite(key + '-0', LAY.IDLE_SPOT.x + i * 60, LAY.IDLE_SPOT.y, SCALE.barber * 0.95, false);
         hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
@@ -450,12 +478,12 @@
       couchPos = [];
       for (var i2 = 0; i2 < waitN; i2++) {
         drawSprite('client-couch', COUCH[i2].x,
-          COUCH[i2].y + Math.round(Math.sin(t / 900 + i2 * 2.3)), SCALE.couch, i2 === 1);
+          COUCH[i2].y + Math.round(Math.sin(t / 900 + i2 * 2.3)), SCALE.couch * (COUCH[i2].s || 1), i2 === 1);
         couchPos[i2] = { cx: COUCH[i2].x, top: COUCH[i2].y - SCALE.couch };
       }
       if (youHere) {
         var ys = COUCH[COUCH.length - 1];
-        var yb = drawSprite('client-couch', ys.x, ys.y + Math.round(Math.sin(t / 900 + 5)), SCALE.couch, true);
+        var yb = drawSprite('client-couch', ys.x, ys.y + Math.round(Math.sin(t / 900 + 5)), SCALE.couch * (ys.s || 1), true);
         ctx.save(); // floating gold YOU tag — Habbo's "that's my guy" hook
         ctx.font = '700 20px Oswald, sans-serif';
         ctx.textAlign = 'center';
@@ -473,7 +501,21 @@
           LAY.MASSAGE.x + (occupied ? (LAY.FIT ? 8 : 26) : 0) * (LAY.MASSAGE.flip ? -1 : 1), LAY.MASSAGE.y, LAY.MASSAGE.h * (occupied ? 0.88 : 1), !!LAY.MASSAGE.flip);
       } else if (snap.waiting > 3 && LAY.MASSAGE)
         drawTorso('client-couch', LAY.MASSAGE.x, LAY.MASSAGE.y, 42, 0.32);
-      if (snap.waiting > 4) {
+      var mOcc = LAY.MASSAGE && LAY.MASSAGE.sprite && snap.waiting > 3;
+      var overflowW = snap.waiting - waitN - (mOcc ? 1 : 0) - (youHere ? 1 : 0);
+      if (LAY.WPILL && overflowW > 0) {
+        ctx.save();
+        ctx.font = '700 22px Oswald, sans-serif';
+        var wt = '+' + overflowW + ' WAITING';
+        var ww = ctx.measureText(wt).width + 32;
+        ctx.fillStyle = 'rgba(16,16,19,.88)';
+        ctx.beginPath(); ctx.roundRect(LAY.WPILL.x - ww / 2, LAY.WPILL.y, ww, 36, 18); ctx.fill();
+        ctx.strokeStyle = 'rgba(200,164,77,.8)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.roundRect(LAY.WPILL.x - ww / 2, LAY.WPILL.y, ww, 36, 18); ctx.stroke();
+        ctx.fillStyle = '#e3c578'; ctx.textAlign = 'center';
+        ctx.fillText(wt, LAY.WPILL.x, LAY.WPILL.y + 25);
+        ctx.restore();
+      } else if (!LAY.WPILL && snap.waiting > 4) {
         ctx.font = '600 26px Oswald, sans-serif';
         ctx.fillStyle = '#e3c578';
         ctx.fillText('+' + (snap.waiting - 4), COUCH[2].x + 70, COUCH[2].y - 90);
