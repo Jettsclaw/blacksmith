@@ -863,3 +863,28 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .ls-reveal.open .chev{transform:rotate(180deg)}
 .ls-reveal[hidden]{display:none}
 .lw-collapsed{display:none!important}
+
+/* ---------- Merch immersive (Culture Kings pass, 2026-06-12) ---------- */
+.merch-immersive{overflow:hidden}
+.merch-marquee{border-block:1px solid var(--line);padding:14px 0;margin-bottom:clamp(30px,5vw,56px);overflow:hidden;white-space:nowrap}
+.merch-marquee-track{display:inline-block;animation:merchTicker 26s linear infinite}
+.merch-marquee-track span{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  font-size:clamp(1.6rem,3.4vw,2.6rem);color:transparent;-webkit-text-stroke:1px rgba(200,164,77,.55);padding-right:18px}
+@keyframes merchTicker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.merch-marquee-track{animation:none}}
+.merch-h2{font-size:clamp(2.6rem,6vw,4.4rem);letter-spacing:.01em}
+.product-grid.merch{grid-template-columns:1fr;gap:18px}
+@media(min-width:700px){
+  .product-grid.merch{grid-template-columns:1fr 1fr}
+  .product-grid.merch .product-card[data-merch] .product-thumb{aspect-ratio:4/5}
+  .product-card--slim{flex-direction:row;align-items:stretch}
+  .product-card--slim .product-thumb{aspect-ratio:auto;width:38%;border-bottom:none;border-right:1px solid var(--line)}
+  .product-card--slim .product-body{width:62%}
+}
+@media(min-width:1050px){
+  .product-grid.merch{grid-template-columns:5fr 5fr 4fr}
+  .merch-side{display:flex;flex-direction:column;gap:18px}
+  .merch-side .product-card{flex:1}
+}
+.product-grid.merch .product-card[data-merch] .merch-photo{transition:opacity .3s var(--ease),transform .6s var(--ease)}
+.product-grid.merch .product-card[data-merch]:hover .merch-photo.is-active{transform:scale(1.04)}
