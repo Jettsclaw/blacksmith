@@ -224,11 +224,47 @@ export default async function handler(req, res) {
         const raw = u.message.text || '';
         if (await bkDetails(token, chatId, raw)) return res.status(200).send('ok');
         const t = raw.toLowerCase();
-        const kind = t.includes('wait') ? 'wait' : (t.includes('who') || t.includes('barber')) ? 'who'
-          : (t.includes('hour') || t.includes('park') || t.includes('open')) ? 'hours'
-          : (t.includes('book') || t.includes('queue') || t.includes('join')) ? 'book' : 'menu';
+        const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
+        const nm = NAMES.find(n => t.includes(n));
+        let kind = 'menu';
+        if (/cancel|reschedule|change my/.test(t)) kind = 'cancel';
+        else if (/book|appoint|reserve|lock in|get in/.test(t)) kind = 'book';
+        else if (/price|cost|how much|\$|charge|service|menu|fade|beard|shave/.test(t)) kind = 'prices';
+        else if (/cancel|reschedule|change my/.test(t)) kind = 'cancel';
+        else if (/pay|card|cash|eftpos/.test(t)) kind = 'pay';
+        else if (/app\b|app store/.test(t)) kind = 'app';
+        else if (/salon|colour|color|women|ladies|blackrose/.test(t)) kind = 'salon';
+        else if (/job|apprentice|hiring/.test(t)) kind = 'jobs';
+        else if (/gift|voucher/.test(t)) kind = 'gift';
+        else if (/human|real person|someone|call/.test(t)) kind = 'human';
+        else if (/^(hi|hey|hello|yo|g'?day|sup)\b/.test(t)) kind = 'hi';
+        else if (/thank|cheers|legend/.test(t)) kind = 'thanks';
+        else if (/sunday|monday|tuesday|wednesday|thursday|friday|saturday|weekend|tomorrow|hour|open|close|park|address|where/.test(t)) kind = 'hours';
+        else if (/wait|long|busy|queue/.test(t)) kind = 'wait';
+        else if (/who|on today|working/.test(t) || nm) kind = 'who';
         if (kind === 'book') { await bkStart(token, chatId); return res.status(200).send('ok'); }
-        const text = kind === 'menu' ? menuText() : await answerFor(kind);
+        let text;
+        const s2 = await feed().catch(() => null);
+        if (kind === 'prices') {
+          const menu = (s2 && s2.services && s2.services.barber) || [];
+          text = menu.length ? 'The menu:\n' + menu.map(m => `${m.name} — $${m.cost}`).join('\n') + '\nTap Book me in and I\u2019ll lock one in.' : `Call us for the menu: ${PHONE}`;
+        }
+        else if (kind === 'cancel') text = `To change or cancel a booking, call us on ${PHONE} and we'll sort it.`;
+        else if (kind === 'pay') text = 'You pay at the shop after your cut — card or cash both sweet.';
+        else if (kind === 'app') text = 'The Blacksmith app: https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905';
+        else if (kind === 'salon') text = 'Blackrose Salon Co. is our salon side: https://web.slikr.com.au/blackrosesalon';
+        else if (kind === 'jobs') text = `Keen to join the trade? Call ${PHONE} or drop in — we also run the Blacksmith Academy.`;
+        else if (kind === 'gift') text = `Ask at the counter or call ${PHONE}.`;
+        else if (kind === 'human') text = `Call the shop: ${PHONE}.`;
+        else if (kind === 'hi') text = 'G\u2019day! Live wait, who\u2019s on, prices, or a booking — what do you need?';
+        else if (kind === 'thanks') text = 'Easy as. Anything else?';
+        else if (kind === 'who' && nm && s2) {
+          const b = s2.barbers.find(x => x.name.toLowerCase().startsWith(nm));
+          text = b ? `${b.name.split(' ')[0]} is on — ${b.cutting ? 'cutting now' : 'free'}${(+b.free_in||0) > 0 ? `, free in ~${b.free_in} min` : ' now'}. Tap Book me in!`
+                   : `${nm[0].toUpperCase()+nm.slice(1)} isn't on today — tap Who's on to see the floor.`;
+        }
+        else if (kind === 'menu') text = menuText();
+        else text = await answerFor(kind);
         await tg(token, 'sendMessage', { chat_id: chatId, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
       }
     }

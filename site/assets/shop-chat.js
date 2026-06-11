@@ -28,17 +28,66 @@
     var h = +m[1], ap = h >= 12 ? 'pm' : 'am';
     return 'as of ' + (h % 12 || 12) + ':' + m[2] + ap;
   }
+  var NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
+  function barberIn(t) {
+    for (var i = 0; i < NAMES.length; i++) if (t.indexOf(NAMES[i]) >= 0) return NAMES[i];
+    return null;
+  }
   function route(text) {
     var t = text.toLowerCase();
-    if (/wait|long|queue length|busy|how long/.test(t)) return 'wait';
-    if (/who|barber|on today|working|locky|bayli|jarred|jayden|ben|cam|mubarak|sami/.test(t)) return 'who';
-    if (/hour|open|close|park|address|where|located/.test(t)) return 'hours';
-    if (/book|join|cut|appoint|reserve/.test(t)) return 'book';
+    if (/cancel|reschedule|change my/.test(t)) return 'cancel';
+    if (/book|appoint|reserve|lock in|get in/.test(t)) return 'book';
+    if (/price|cost|how much|\$|charge/.test(t)) return 'prices';
+    if (/service|menu|fade|beard|shave|what do you (do|offer)|kids|child/.test(t)) return 'services';
+    if (/cancel|reschedule|change my/.test(t)) return 'cancel';
+    if (/pay|card|cash|eftpos|afterpay/.test(t)) return 'pay';
+    if (/walk.?in|queue work|how does/.test(t)) return 'how';
+    if (/app\b|app store|iphone app/.test(t)) return 'app';
+    if (/salon|colour|color|women|ladies|blackrose/.test(t)) return 'salon';
+    if (/job|apprentice|hiring|work (here|with)/.test(t)) return 'jobs';
+    if (/gift|voucher/.test(t)) return 'gift';
+    if (/human|real person|someone|call/.test(t)) return 'human';
+    if (/^(hi|hey|hello|yo|g'?day|sup)\b/.test(t)) return 'hi';
+    if (/thank|cheers|legend|perfect/.test(t)) return 'thanks';
+    if (/sunday|monday|tuesday|wednesday|thursday|friday|saturday|weekend|tomorrow|hour|open|close/.test(t)) return 'hours';
+    if (/park|address|where|located|directions/.test(t)) return 'hours';
+    if (/wait|long|busy|queue/.test(t)) return 'wait';
+    if (/who|barber|on today|working/.test(t) || barberIn(t)) return 'who';
     return 'menu';
+  }
+  function dayHours(t) {
+    if (!snap || !snap.week) return null;
+    var days = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
+    var ask = null;
+    for (var i = 0; i < days.length; i++) if (t.indexOf(days[i]) >= 0) ask = days[i];
+    if (t.indexOf('weekend') >= 0) ask = 'saturday';
+    if (t.indexOf('tomorrow') >= 0) ask = days[(new Date().getDay() + 1) % 7];
+    if (!ask) return null;
+    var key = ask.slice(0, 3); key = key.charAt(0).toUpperCase() + key.slice(1);
+    for (var j = 0; j < snap.week.length; j++) {
+      if (snap.week[j].day.split(',').indexOf(key) >= 0)
+        return ask.charAt(0).toUpperCase() + ask.slice(1) + ': ' + fmtT(snap.week[j].start) + ' – ' + fmtT(snap.week[j].close) + '.';
+    }
+    return ask.charAt(0).toUpperCase() + ask.slice(1) + ': closed.';
   }
   function answer(kind, s) {
     if (!s) return 'Can’t reach the shop feed right now — call us on ' + PHONE + '.';
     var stale = !fresh(s);
+    if (kind === 'prices' || kind === 'services') {
+      var menu = (s.services && s.services.barber) || [];
+      if (!menu.length) return 'Call us for the menu: ' + PHONE;
+      return 'The menu:\n' + menu.map(function (m) { return m.name + ' — $' + m.cost; }).join('\n') + '\nTap Book and I’ll lock one in.';
+    }
+    if (kind === 'cancel') return 'To change or cancel a booking, give us a quick call on ' + PHONE + ' and we’ll sort it.';
+    if (kind === 'pay') return 'You pay at the shop after your cut — card or cash both sweet.';
+    if (kind === 'how') return 'Two ways in: join the live queue (walk-in, I’ll show you the wait) or book a time with Jarred or Locky. Tap Book and I’ll walk you through it.';
+    if (kind === 'app') return 'The Blacksmith app has booking + queue too: https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905';
+    if (kind === 'salon') return 'Blackrose Salon Co. is our salon side — colour, styling, the lot. Book it here: https://web.slikr.com.au/blackrosesalon';
+    if (kind === 'jobs') return 'Keen to join the trade? Call the shop on ' + PHONE + ' or drop in and have a yarn — we also run the Blacksmith Academy.';
+    if (kind === 'gift') return 'Ask at the counter or call ' + PHONE + ' — they’ll sort you out.';
+    if (kind === 'human') return 'Easy — call the shop: ' + PHONE + '. Open ' + fmtHours(s.hours_today) + ' today.';
+    if (kind === 'hi') return 'G’day! I can tell you the live wait, who’s on, prices, or book you in — what do you need?';
+    if (kind === 'thanks') return 'Easy as. Anything else — wait, prices, booking?';
     if (kind === 'hours')
       return '📍 ' + ADDRESS + '\n🕐 Today: ' + fmtHours(s.hours_today) + '\n🅿️ Free parking out front.\n📞 ' + PHONE;
     if (!s.open)
@@ -58,7 +107,7 @@
         return (b.cutting ? '✂️ ' : fi === 0 ? '🟢 ' : '📅 ') + b.name + ' — ' + st;
       }).join('\n');
     }
-    return 'I’ve got live answers for the wait, who’s on, hours & parking, or booking — tap a chip below.';
+    return 'I can help with the live wait, who’s on, prices, hours & parking, or booking you in — tap a chip below or just ask.';
   }
 
   // ---------- booking wizard ----------
@@ -119,7 +168,11 @@
     var names = Object.keys(snap.slots_next || {}).filter(function (n) { return (snap.slots_next[n] || []).length; });
     if (!names.length) { bubble('Tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning.', 'bot'); setWizUI(false); return; }
     wiz = { step: 'barber', ahead: true, date: snap.next_date };
-    bubble('We\u2019re closed right now, but you can lock in ' + snap.next_label + '. Who with?', 'bot');
+    if (pref && names.map(function (n) { return n.toLowerCase(); }).indexOf(String(pref).toLowerCase()) < 0) {
+      bubble(String(pref).charAt(0).toUpperCase() + String(pref).slice(1) + ' is walk-in only — come in when we open, or lock in ' + snap.next_label + ' with one of these:', 'bot');
+    } else {
+      bubble('We\u2019re closed right now, but you can lock in ' + snap.next_label + '. Who with?', 'bot');
+    }
     var opts = names.map(function (n) { return { label: n, barber: n }; });
     chipRow(opts, function (o) {
       bubble(o.label, 'me');
@@ -330,8 +383,23 @@
       input.value = '';
       bubble(t, 'me');
       if (wiz && wiz.step === 'details') { handleDetails(t); return; }
-      var kind = route(t);
-      if (kind === 'book') { startBooking(); return; }
+      var lower = t.toLowerCase();
+      var kind = route(lower);
+      if (kind === 'book') { startBooking(barberIn(lower)); return; }
+      if (kind === 'hours') {
+        var dh = dayHours(lower);
+        if (dh) { setTimeout(function () { bubble(dh, 'bot'); }, 250); return; }
+      }
+      if (kind === 'who' && barberIn(lower)) {
+        var nm = barberIn(lower);
+        setTimeout(function () {
+          var b = snap && snap.barbers.filter(function (x) { return x.name.toLowerCase().indexOf(nm) === 0; })[0];
+          if (!b) { bubble(nm.charAt(0).toUpperCase() + nm.slice(1) + ' isn’t on today. Want to see who is? Tap Who’s on.', 'bot'); return; }
+          var fi = +b.free_in || 0;
+          bubble(b.name.split(' ')[0] + ' is on — ' + (b.cutting ? 'cutting now' + (b.cutting_at === 'salon' ? ' (in the salon)' : '') : 'free') + (fi > 0 ? ', free in ~' + fi + ' min' : ' now') + '. Want me to book you in with ' + (b.name.split(' ')[0]) + '?', 'bot');
+        }, 250);
+        return;
+      }
       setTimeout(function () {
         bubble(answer(kind, snap), 'bot', kind === 'wait' || (snap && !snap.open));
       }, 300);
