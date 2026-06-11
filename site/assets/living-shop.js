@@ -226,7 +226,7 @@
     // sticky gold Book a Cut along the bottom.
     var bar = document.createElement('div'); bar.className = 'ls-fshead';
     bar.innerHTML = '<button class="ls-fsburger" aria-label="Open menu"><span></span><span></span><span></span></button>' +
-      '<img class="ls-fslogo" src="assets/logo-white.png" alt="Blacksmith">' +
+      '<a class="ls-fslogo" href="index.html" aria-label="Blacksmith Barbers home"><img src="assets/logo-white.png" alt="Blacksmith"></a>' +
       '<button class="ls-fsx" aria-label="Exit full screen">&#10005;</button>' +
       '<nav class="ls-fsnav" hidden>' +
         [['index.html', 'Home'], ['shop.html', 'Shop'], ['academy.html', 'Academy'],
