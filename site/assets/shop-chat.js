@@ -176,6 +176,8 @@
     document.body.appendChild(panel);
   }
 
+  window.__scOpen = function () { fab.onclick(); if (panel) panel.classList.add('open'); };
+
   fab.onclick = function () {
     if (!opened) {
       opened = true;

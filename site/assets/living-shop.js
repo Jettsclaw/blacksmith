@@ -46,7 +46,7 @@
   BARBER_NAMES.forEach(function (n) {
     for (var i = 0; i < 4; i++) toLoad.push(n + '-' + i);
   });
-  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat']
+  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2']
     .forEach(function (n) { toLoad.push(n); });
 
   var loaded = 0, failed = false;
@@ -68,6 +68,10 @@
 
   // ---------- live state ----------
   var snap = null, lastWaiting = 0, walkers = [], catX = null, lastCat = 0;
+  var sweeps = {};        // name -> {until, x0} active sweep
+  var nextSweepAt = 25000; // first sweep ~25s in, then every few minutes
+  var bubbleUntil = 0, bubbleText = '', nextBubbleAt = 5000;
+  var HOST = { x: 1402, y: 560 };
 
 
   function fmtT(t) {
@@ -108,6 +112,10 @@
     for (var i = 0; i < hits.length; i++) {
       var h = hits[i];
       if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
+        if (h.host) {
+          if (window.__scOpen) window.__scOpen();
+          return;
+        }
         var safe = function (s) {
           return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         };
@@ -235,7 +243,15 @@
           var bb = drawSprite(frame, p.x, p.y, SCALE.barber, true);
           hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: true, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         } else {
-          var bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber, false);
+          var sw = sweeps[b.name];
+          var bb2;
+          if (sw && t < sw.until) {
+            var drift = Math.sin(t / 1800 + sw.seed) * 26;
+            bb2 = drawSprite('sweep-' + (1 + anim), p.x + 40 + drift, p.y + 8, SCALE.barber, false);
+          } else {
+            if (sw) delete sweeps[b.name];
+            bb2 = drawSprite(key + '-3', p.x, p.y + bob, SCALE.barber, false);
+          }
           hits.push({ x: bb2.x, y: bb2.y, w: bb2.w, h: bb2.h, name: b.name, cutting: false, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
         }
       });
@@ -245,6 +261,16 @@
         var bb = drawSprite(key + '-0', 1060 + i * 60, 560, SCALE.barber * 0.95, false);
         hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
       });
+
+      // intermittent idle work: a free barber sweeps near his chair
+      if (t > nextSweepAt && !reduced) {
+        nextSweepAt = t + 150000 + Math.random() * 150000; // every 2.5-5 min
+        var free = bs.filter(function (b) { return !b.cutting; });
+        if (free.length) {
+          var pick = free[Math.floor(Math.random() * free.length)];
+          sweeps[pick.name] = { until: t + 16000, seed: Math.random() * 6 };
+        }
+      }
 
       // waiting queue on the chesterfield
       var waitN = Math.min(snap.waiting, 3);
@@ -274,12 +300,74 @@
       }
     }
 
+    // the host at the till — tap him to open the shop chat
+    if (snap) {
+      var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
+      var hb = drawSprite(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, 132, false);
+      hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
+      if (!reduced && t > nextBubbleAt) {
+        nextBubbleAt = t + 40000 + Math.random() * 50000;
+        bubbleUntil = t + 6500;
+        bubbleText = !snap.open ? 'We\u2019re closed \u2014 book ahead?'
+          : snap.wait_mins === 0 ? 'No wait right now \u2014 jump in!'
+          : snap.wait_mins != null ? '~' + snap.wait_mins + ' min wait \u2014 need a hand?'
+          : 'Need a hand?';
+      }
+      if (t < bubbleUntil && bubbleText) {
+        ctx.save();
+        ctx.font = '500 22px Inter, sans-serif';
+        var tw = ctx.measureText(bubbleText).width;
+        var bx = Math.min(HOST.x, W - tw / 2 - 40), by = HOST.y - 158;
+        ctx.fillStyle = '#f3f1ea';
+        ctx.beginPath();
+        ctx.roundRect(bx - tw / 2 - 14, by - 22, tw + 28, 38, 10);
+        ctx.fill();
+        ctx.moveTo(bx + 2, by + 16); ctx.lineTo(bx + 16, by + 16); ctx.lineTo(bx + 4, by + 30);
+        ctx.fill();
+        ctx.fillStyle = '#141417';
+        ctx.textAlign = 'center';
+        ctx.fillText(bubbleText, bx, by + 5);
+        ctx.restore();
+      }
+    }
+
     drawSign(t);
 
     if (snap && !snap.open) {
       ctx.fillStyle = 'rgba(5,5,8,0.62)';
       ctx.fillRect(0, 0, W, H);
-      drawSign(t); // sign stays readable above the dimmer
+      // the host at the till — tap him to open the shop chat
+    if (snap) {
+      var wave = Math.floor(t / 700) % 6 === 0; // occasional wave
+      var hb = drawSprite(wave ? 'host-2' : 'host-1', HOST.x, HOST.y, 132, false);
+      hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
+      if (!reduced && t > nextBubbleAt) {
+        nextBubbleAt = t + 40000 + Math.random() * 50000;
+        bubbleUntil = t + 6500;
+        bubbleText = !snap.open ? 'We\u2019re closed \u2014 book ahead?'
+          : snap.wait_mins === 0 ? 'No wait right now \u2014 jump in!'
+          : snap.wait_mins != null ? '~' + snap.wait_mins + ' min wait \u2014 need a hand?'
+          : 'Need a hand?';
+      }
+      if (t < bubbleUntil && bubbleText) {
+        ctx.save();
+        ctx.font = '500 22px Inter, sans-serif';
+        var tw = ctx.measureText(bubbleText).width;
+        var bx = Math.min(HOST.x, W - tw / 2 - 40), by = HOST.y - 158;
+        ctx.fillStyle = '#f3f1ea';
+        ctx.beginPath();
+        ctx.roundRect(bx - tw / 2 - 14, by - 22, tw + 28, 38, 10);
+        ctx.fill();
+        ctx.moveTo(bx + 2, by + 16); ctx.lineTo(bx + 16, by + 16); ctx.lineTo(bx + 4, by + 30);
+        ctx.fill();
+        ctx.fillStyle = '#141417';
+        ctx.textAlign = 'center';
+        ctx.fillText(bubbleText, bx, by + 5);
+        ctx.restore();
+      }
+    }
+
+    drawSign(t); // sign stays readable above the dimmer
     }
   }
 
@@ -297,8 +385,20 @@
     else if (rafId) cancelAnimationFrame(rafId);
   }
 
+  function immersiveMobile() {
+    if (window.innerWidth > 640) return;
+    var stage = host.querySelector('.ls-stage');
+    stage.classList.add('ls-immersive');
+    host.classList.add('ls-full');
+    // centre the view on the chairs once layout settles
+    requestAnimationFrame(function () {
+      stage.scrollLeft = Math.max(0, (canvas.clientWidth - stage.clientWidth) * 0.38);
+    });
+  }
+
   function start() {
     if (failed) { host.hidden = true; return; }
+    immersiveMobile();
     canvas.width = W * dpr / 2; // scene is pixel art upscaled in CSS; half-res buffer keeps it crisp + cheap
     canvas.height = H * dpr / 2;
     ctx = canvas.getContext('2d');

@@ -789,3 +789,14 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .ls-card-pop{flex-direction:column}
 .ls-card-pop .btn{text-align:center}
 .ls-card-pop[hidden]{display:none}
+
+/* ===== Living Shop mobile immersion ===== */
+@media(max-width:640px){
+  .living-shop.ls-full{padding:0}
+  .living-shop.ls-full .wrap{max-width:none;padding:0}
+  .living-shop.ls-full .eyebrow{padding:0 16px}
+  .ls-stage.ls-immersive{height:88svh;border-radius:0;border-left:none;border-right:none;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+  .ls-stage.ls-immersive .ls-canvas{height:100%;width:auto;max-width:none}
+  .living-shop.ls-full .ls-card-pop{position:fixed;left:50%!important;transform:translateX(-50%);bottom:14px;top:auto;width:min(340px,calc(100vw - 28px));z-index:95}
+  .living-shop.ls-full .ls-info{padding:10px 16px 0}
+}
