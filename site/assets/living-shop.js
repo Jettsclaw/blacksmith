@@ -564,8 +564,14 @@
         ctx.fillText(pt, px2, py2 + 6);
         ctx.restore();
       }
-      // overflow barbers idle by the shelf (desktop only)
-      (LAY.FIT ? [] : stable.slice(4)).forEach(function (b, i) {
+      // overflow = whoever didn't get a chair (was stable.slice(4) — that
+      // re-drew a chaired barber as a double, Jett's "2 Samis" glitch).
+      // First spare barber lounges in the massage chair if it's free.
+      var overflow = LAY.FIT ? [] : seated.slice(CHAIRS.length);
+      var lounger = null;
+      if (overflow.length && snap.waiting <= 3 && LAY.MASSAGE && LAY.MASSAGE.sprite)
+        lounger = overflow.shift();
+      overflow.forEach(function (b, i) {
         var key = spriteKey(b.name) || 'ben';
         var bb = drawSprite(key + '-0', LAY.IDLE_SPOT.x + i * 60, LAY.IDLE_SPOT.y, SCALE.barber * 0.95, false);
         hits.push({ x: bb.x, y: bb.y, w: bb.w, h: bb.h, name: b.name, cutting: b.cutting, free_in: b.free_in, cutting_at: b.cutting_at, book: b.book });
@@ -605,9 +611,14 @@
       // 4th waiter scores the massage chair
       if (LAY.MASSAGE && LAY.MASSAGE.sprite) {
         // v2: the chair is its own layer — reclines with a client in it
-        var occupied = snap.waiting > 3;
+        // (or a spare barber having a breather; tap them to book)
+        var occupied = snap.waiting > 3 || !!lounger;
         drawSprite(occupied ? 'massage-lay' : 'massage-up',
           LAY.MASSAGE.x + (occupied ? (LAY.FIT ? 8 : 26) : 0) * (LAY.MASSAGE.flip ? -1 : 1), LAY.MASSAGE.y, LAY.MASSAGE.h * (occupied ? 0.88 : 1), !!LAY.MASSAGE.flip);
+        if (lounger)
+          hits.push({ x: LAY.MASSAGE.x - 95, y: LAY.MASSAGE.y - 175, w: 230, h: 185,
+                      name: lounger.name, cutting: false, free_in: lounger.free_in,
+                      cutting_at: lounger.cutting_at, book: lounger.book });
       } else if (snap.waiting > 3 && LAY.MASSAGE)
         drawTorso('client-couch', LAY.MASSAGE.x, LAY.MASSAGE.y, 42, 0.32);
       var mOcc = LAY.MASSAGE && LAY.MASSAGE.sprite && snap.waiting > 3;
