@@ -221,13 +221,18 @@
     fs.anchor = host.querySelector('.ls-info');
     fs.overlay = document.createElement('div'); fs.overlay.className = 'ls-fso';
     fs.wrap = document.createElement('div'); fs.wrap.className = 'ls-fsw';
-    fs.wrap.appendChild(stage);
+    // landscape site chrome: logo · Book a Cut · Exit — fills the letterbox
+    var bar = document.createElement('div'); bar.className = 'ls-fshead';
+    bar.innerHTML = '<img src="assets/logo-white.png" alt="Blacksmith">' +
+      '<span class="ls-fsgrow"></span>' +
+      '<a class="btn btn-gold ls-fsbook" href="' + BOOK_URLS.barber + '">Book a Cut</a>' +
+      '<button class="ls-fsx" aria-label="Exit full screen">&#10005;&ensp;Exit</button>';
+    bar.querySelector('.ls-fsx').addEventListener('click', fsClose);
+    var body = document.createElement('div'); body.className = 'ls-fsbody';
+    body.appendChild(stage);
+    fs.wrap.appendChild(bar);
+    fs.wrap.appendChild(body);
     fs.wrap.appendChild(card);
-    var x = document.createElement('button');
-    x.className = 'ls-fsx'; x.setAttribute('aria-label', 'Close full screen');
-    x.innerHTML = '&times;';
-    x.addEventListener('click', fsClose);
-    fs.wrap.appendChild(x);
     fs.overlay.appendChild(fs.wrap);
     document.body.appendChild(fs.overlay);
     document.documentElement.classList.add('ls-noscroll');
@@ -265,6 +270,7 @@
       var h = hits[i];
       if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
         if (h.host) {
+          if (fs.on) fsClose(); // chat panel lives in the portrait page
           if (window.__scOpen) window.__scOpen();
           return;
         }
@@ -306,6 +312,7 @@
           btn.onclick = function (ev) {
             ev.stopPropagation();
             card.hidden = true;
+            if (fs.on) fsClose(); // chat panel lives in the portrait page
             if (window.__scBook) window.__scBook(btn.getAttribute('data-b'));
           };
         });
