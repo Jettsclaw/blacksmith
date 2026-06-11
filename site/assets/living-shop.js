@@ -25,17 +25,17 @@
   var LAYOUTS = {
     landscape: {
       room: 'room', W: 1584, H: 672,
-      CHAIRS: [{ x: 317, y: 545 }, { x: 521, y: 545 }, { x: 725, y: 545 }, { x: 936, y: 545 }],
+      CHAIR_SPAN: { x0: 300, x1: 950, y: 545, h: 150 }, // chairs are sprites, spaced by live count
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 1118, y: 505 }, { x: 1208, y: 505 }, { x: 1295, y: 505 }],
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      MASSAGE: { x: 131, y: 610 },
+      MASSAGE: { x: 118, y: 632 },
       HOST: { x: 1336, y: 466, h: 64 }, IDLE_SPOT: { x: 1060, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
     },
     portrait: {
       room: 'room-p', W: 768, H: 1376,
-      CHAIRS: [{ x: 100, y: 745 }, { x: 284, y: 745 }, { x: 474, y: 745 }, { x: 659, y: 745 }],
+      CHAIRS: [{ x: 100, y: 745 }, { x: 284, y: 745 }, { x: 474, y: 745 }, { x: 659, y: 745 }], // painted into the art
       BARBER_OFF: { x: 58, y: 6 }, CAPE_OFF: { x: 0, y: -48 },
       COUCH: [{ x: 120, y: 1045 }, { x: 195, y: 1045 }, { x: 268, y: 1045 }],
       DOOR: { x: 690, y: 1090 }, SIGN: { x: 384, y: 128, font: 30 },
@@ -45,7 +45,7 @@
     }
   };
   var LAY = LAYOUTS[window.innerWidth <= 640 ? 'portrait' : 'landscape'];
-  var W = LAY.W, H = LAY.H, CHAIRS = LAY.CHAIRS, BARBER_OFF = LAY.BARBER_OFF, CAPE_OFF = LAY.CAPE_OFF,
+  var W = LAY.W, H = LAY.H, BARBER_OFF = LAY.BARBER_OFF, CAPE_OFF = LAY.CAPE_OFF,
       COUCH = LAY.COUCH, DOOR = LAY.DOOR, SIGN = LAY.SIGN, SCALE = LAY.SCALE;
 
   var canvas = document.createElement('canvas');
@@ -63,7 +63,7 @@
   BARBER_NAMES.forEach(function (n) {
     for (var i = 0; i < 4; i++) toLoad.push(n + '-' + i);
   });
-  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2']
+  ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','chair']
     .forEach(function (n) { toLoad.push(n); });
 
   var loaded = 0, failed = false;
@@ -256,12 +256,27 @@
     var anim = Math.floor(t / 480) % 2; // 2-frame cutting cadence
 
     if (open && snap.barbers) {
-      // Stable chair mapping: feed sorts cutting-first (it animates the card),
-      // but here a sort flip would teleport people between chairs. Name order.
+      // Stable order so people don't teleport between chairs on sort flips.
       var stable = snap.barbers.slice().sort(function (a, b) {
         return a.name < b.name ? -1 : 1;
       });
-      var bs = stable.slice(0, 4);
+      // Jett's rotation: chairs belong to whoever is CUTTING. 4 chairs by
+      // default; a 5th/6th slides in only when that many cuts run at once.
+      var cuttingN = stable.filter(function (b) { return b.cutting; }).length;
+      var chairN = Math.max(4, Math.min(6, cuttingN));
+      var CHAIRS = [];
+      if (LAY.CHAIR_SPAN) {
+        var sp = LAY.CHAIR_SPAN;
+        for (var ci = 0; ci < chairN; ci++)
+          CHAIRS.push({ x: sp.x0 + (sp.x1 - sp.x0) * (chairN === 1 ? 0.5 : ci / (chairN - 1)), y: sp.y });
+        CHAIRS.forEach(function (c) { drawSprite('chair', c.x, c.y, sp.h, false); });
+      } else {
+        CHAIRS = LAY.CHAIRS.slice(0, chairN);
+      }
+      // cutting barbers claim chairs first, then free barbers fill the rest
+      var seated = stable.filter(function (b) { return b.cutting; })
+        .concat(stable.filter(function (b) { return !b.cutting; }));
+      var bs = seated.slice(0, CHAIRS.length);
       bs.forEach(function (b, i) {
         var c = CHAIRS[i], key = spriteKey(b.name) || 'ben';
         var p = easeTo(key, c.x + BARBER_OFF.x, c.y + BARBER_OFF.y);
