@@ -800,3 +800,10 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
   .living-shop.ls-full .ls-card-pop{position:fixed;left:50%!important;transform:translateX(-50%);bottom:14px;top:auto;width:min(340px,calc(100vw - 28px));z-index:95}
   .living-shop.ls-full .ls-info{padding:10px 16px 0}
 }
+
+/* keep the chat bubble + nudge above the sticky book-bar on mobile */
+@media(max-width:900px){
+  .sc-fab{bottom:86px}
+  .sc-pill{bottom:98px}
+  .sc-panel{bottom:156px;max-height:min(520px,62vh)}
+}
