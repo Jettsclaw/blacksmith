@@ -279,6 +279,7 @@
     fs.overlay.appendChild(fs.wrap);
     document.body.appendChild(fs.overlay);
     document.documentElement.classList.add('ls-noscroll');
+    fs.chatTimer = setInterval(syncChatChrome, 500); // belt-and-braces: adopt/show chat chrome whatever path opened it
     fsSettle();
     window.addEventListener('resize', fsSettle);
     window.addEventListener('orientationchange', fsSettle);
@@ -295,6 +296,27 @@
   // Pull the site chat INTO the rotated wrapper so booking happens without
   // flipping the phone back. Inside a transformed ancestor its fixed
   // positioning anchors to the wrapper, i.e. landscape coords.
+
+  // visibility for the dim/back pair — explicit classes via observer
+  // (:has() isn't on every iPhone, and chat can open via any path)
+  var chatObs = new MutationObserver(syncChatChrome);
+  function syncChatChrome() {
+    var p = document.querySelector('.sc-panel');
+    if (!p) return;
+    var open = p.classList.contains('open');
+    if (open && fs.on) fsAdoptChat();
+    var dim2 = fs.wrap && fs.wrap.querySelector('.ls-fsdim');
+    var back = fs.wrap && fs.wrap.querySelector('.ls-fsback');
+    var show = !!(open && fs.on && fs.wrap && fs.wrap.contains(p));
+    if (dim2) dim2.classList.toggle('show', show);
+    if (back) back.classList.toggle('show', show);
+  }
+  (function watchChat() {
+    var p = document.querySelector('.sc-panel');
+    if (p) chatObs.observe(p, { attributes: true, attributeFilter: ['class'] });
+    else setTimeout(watchChat, 800); // shop-chat builds its panel lazily
+  })();
+
   function fsAdoptChat() {
     if (!fs.on) return;
     var p = document.querySelector('.sc-panel');
@@ -314,6 +336,7 @@
       back.addEventListener('click', closeChat);
       fs.wrap.appendChild(dim2);
       fs.wrap.appendChild(back);
+      chatObs.observe(p, { attributes: true, attributeFilter: ['class'] });
     }
   }
   function fsClose() {
@@ -326,6 +349,7 @@
     fs.anchor.parentNode.insertBefore(stage, fs.anchor);
     fs.anchor.parentNode.insertBefore(card, fs.anchor);
     document.body.removeChild(fs.overlay);
+    clearInterval(fs.chatTimer);
     fs.overlay = fs.wrap = null;
     document.documentElement.classList.remove('ls-noscroll');
     window.removeEventListener('resize', fsSettle);
