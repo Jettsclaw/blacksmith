@@ -51,13 +51,13 @@
   var LAYOUTS = {
     landscape: ROOM_V3 ? {
       room: 'room-v3', W: 1584, H: 672,
-      CHAIR_SPAN: { x0: 380, x1: 950, y: 545, h: 150 },
+      CHAIR_SPAN: { x0: 415, x1: 950, y: 545, h: 150 }, // starts clear of the couch
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 140, y: 568 }, { x: 190, y: 560 }, { x: 238, y: 552 }], // purpose-built seated sprites, bums on the cushion line
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      MASSAGE: { x: 64, y: 668, h: 196, sprite: true }, // back in the corner, properly sized
+      MASSAGE: { x: 70, y: 672, h: 218, sprite: true }, // back in the corner, properly sized
       FRIDGE: null,
-      HOST: { x: 1382, y: 398, h: 58, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // hovers just above the till
+      HOST: { x: 1382, y: 402, h: 70, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // hovers just above the till
       LEAN: { x: 1224, y: 589 }, // 2nd free barber leans at the desk (Jett's old spot)
       SHOP_SIGN: { x: 1172, y: 196, font: 26 },
       SHOPZONES: [{ x: 1048, y: 225, w: 122, h: 350, tag: 'products' },
@@ -576,7 +576,7 @@
         // hugs the bench, Sami clears the couch, 6 still fit (same spacing).
         // (Jett 2026-06-12, v2: "always cleaner".) REVERT = shx5 to 0.
         var shx5 = 55;
-        var shx = !LAY.FIT ? shx5 : 0;
+        var shx = (!LAY.FIT && !ROOM_V3) ? shx5 : 0; // v3 room spaces chairs itself
         for (var ci = 0; ci < chairN; ci++) {
           var t = chairN === 1 ? 0.5 : ci / (chairN - 1);
           CHAIRS.push({ x: sp.x0 - shx + (sp.x1 - sp.x0) * t,
