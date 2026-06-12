@@ -938,3 +938,7 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
   .sc-form{padding-bottom:max(10px,env(safe-area-inset-bottom))}
   html.sc-lock,html.sc-lock body{overflow:hidden;touch-action:none}
 }
+@media (max-width:640px){
+  .sc-panel{z-index:1500} /* above the fixed topbar — the close button was buried under it */
+  .sc-x{width:44px;height:44px;font-size:1.5rem;display:flex;align-items:center;justify-content:center}
+}
