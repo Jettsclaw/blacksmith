@@ -50,19 +50,19 @@
   var HOST_JETT = true; // Jett as the concierge (test) — false restores the original host // Jett's 2026-06-11 refresh: honey bench, left plant corner, sprite massage chair (reclines). false = original room.
   var LAYOUTS = {
     landscape: ROOM_V3 ? {
-      room: 'room-v3', W: 1584, H: 672,
-      CHAIR_SPAN: { x0: 415, x1: 950, y: 545, h: 150 }, // starts clear of the couch
+      room: 'room-v4', W: 1784, H: 672, // EXTENDED +200px (slat-wall insert) so 6 chairs never meet the couch
+      CHAIR_SPAN: { x0: 615, x1: 1150, y: 545, h: 150 },
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 140, y: 568 }, { x: 190, y: 560 }, { x: 238, y: 552 }], // purpose-built seated sprites, bums on the cushion line
-      DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
+      DOOR: { x: 1700, y: 640 }, SIGN: { x: 820, y: 118, font: 34 }, CAT_Y: 650,
       MASSAGE: { x: 70, y: 672, h: 218, sprite: true }, // back in the corner, properly sized
       FRIDGE: null,
-      HOST: { x: 1382, y: 402, h: 70, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // hovers just above the till
-      LEAN: { x: 1224, y: 589 }, // 2nd free barber leans at the desk (Jett's old spot)
-      SHOP_SIGN: { x: 1172, y: 196, font: 26 },
-      SHOPZONES: [{ x: 1048, y: 225, w: 122, h: 350, tag: 'products' },
-                  { x: 1170, y: 225, w: 122, h: 350, tag: 'merch' }],
-      IDLE_SPOT: { x: 1060, y: 560 },
+      HOST: { x: 1582, y: 402, h: 70, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // hovers just above the till
+      LEAN: { x: 1424, y: 589 }, // 2nd free barber leans at the desk (Jett's old spot)
+      SHOP_SIGN: { x: 1372, y: 196, font: 26 },
+      SHOPZONES: [{ x: 1248, y: 225, w: 122, h: 350, tag: 'products' },
+                  { x: 1370, y: 225, w: 122, h: 350, tag: 'merch' }],
+      IDLE_SPOT: { x: 1260, y: 560 },
       SCALE: { barber: 210, cape: 165, couch: 150, walk: 185, cat: 64 }
     } : {
       room: ROOM_V2 ? 'room-v2' : 'room', W: 1584, H: 672,
