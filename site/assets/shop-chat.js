@@ -541,6 +541,7 @@
   }
 
   window.__scOpen = function () { fab.onclick(); if (panel) panel.classList.add('open'); syncSheet(); };
+  window.__scClose = function () { if (panel) panel.classList.remove('open'); syncSheet(); };
   window.__scBook = function (pref) {
     window.__scOpen();
     setTimeout(function () { startBooking(pref); }, 350);

@@ -308,6 +308,7 @@
     var dim2 = fs.wrap && fs.wrap.querySelector('.ls-fsdim');
     var back = fs.wrap && fs.wrap.querySelector('.ls-fsback');
     var show = !!(open && fs.on && fs.wrap && fs.wrap.contains(p));
+    if (show) document.documentElement.classList.remove('sc-lock'); // sheet-lock never applies inside the takeover
     if (dim2) dim2.classList.toggle('show', show);
     if (back) back.classList.toggle('show', show);
   }
@@ -326,7 +327,11 @@
     }
     if (p && !fs.wrap.querySelector('.ls-fsdim')) {
       // blur the shop + give a big obvious way back (Jett 2026-06-12)
-      var closeChat = function () { p.classList.remove('open'); };
+      var closeChat = function () {
+        if (window.__scClose) window.__scClose();
+        else p.classList.remove('open');
+        document.documentElement.classList.remove('sc-lock'); // never leave the page frozen
+      };
       var dim2 = document.createElement('div');
       dim2.className = 'ls-fsdim';
       dim2.addEventListener('click', closeChat);
