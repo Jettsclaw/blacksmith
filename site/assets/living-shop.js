@@ -352,19 +352,27 @@
           return;
         }
         if (h.yes) {
+          var toShop = hostAsk && hostAsk.shop;
           hostAsk = null; bubbleUntil = 0;
+          if (toShop) { window.location.href = 'shop.html?src=livingshop-' + toShop; return; }
           if (fs.on) fsClose(); // chat is a portrait activity — back to the page first
           if (window.__scBook) window.__scBook();
           return;
         }
         if (h.no) {
+          var wasShop = hostAsk && hostAsk.shop;
           hostAsk = null;
-          bubbleText = 'No worries — sing out if you need me ✂';
+          bubbleText = wasShop ? 'No worries — it\u2019s all here when you want it ✂'
+                               : 'No worries — sing out if you need me ✂';
           bubbleUntil = performance.now() + 4000;
           return;
         }
-        if (h.shop) { // shop cabinet → the real merch/products page
-          window.location.href = 'shop.html?src=livingshop-' + h.shop;
+        if (h.shop) { // shop cabinet → Jett asks first, no yanking people out of the room
+          hostAsk = { until: performance.now() + 9000, shop: h.shop };
+          bubbleText = h.shop === 'merch'
+            ? 'Keen on some Blacksmith merch? I\u2019ll take you to the shop.'
+            : 'Want to browse our products? I\u2019ll take you to the shop.';
+          bubbleUntil = performance.now() + 9000;
           return;
         }
         if (h.toy) {
