@@ -279,7 +279,6 @@
     fs.overlay.appendChild(fs.wrap);
     document.body.appendChild(fs.overlay);
     document.documentElement.classList.add('ls-noscroll');
-    fs.chatTimer = setInterval(syncChatChrome, 500); // belt-and-braces: adopt/show chat chrome whatever path opened it
     fsSettle();
     window.addEventListener('resize', fsSettle);
     window.addEventListener('orientationchange', fsSettle);
@@ -297,64 +296,14 @@
   // flipping the phone back. Inside a transformed ancestor its fixed
   // positioning anchors to the wrapper, i.e. landscape coords.
 
-  // visibility for the dim/back pair — explicit classes via observer
-  // (:has() isn't on every iPhone, and chat can open via any path)
-  var chatObs = new MutationObserver(syncChatChrome);
-  function syncChatChrome() {
-    var p = document.querySelector('.sc-panel');
-    if (!p) return;
-    var open = p.classList.contains('open');
-    if (open && fs.on) fsAdoptChat();
-    var dim2 = fs.wrap && fs.wrap.querySelector('.ls-fsdim');
-    var back = fs.wrap && fs.wrap.querySelector('.ls-fsback');
-    var show = !!(open && fs.on && fs.wrap && fs.wrap.contains(p));
-    if (show) document.documentElement.classList.remove('sc-lock'); // sheet-lock never applies inside the takeover
-    if (dim2) dim2.classList.toggle('show', show);
-    if (back) back.classList.toggle('show', show);
-  }
-  (function watchChat() {
-    var p = document.querySelector('.sc-panel');
-    if (p) chatObs.observe(p, { attributes: true, attributeFilter: ['class'] });
-    else setTimeout(watchChat, 800); // shop-chat builds its panel lazily
-  })();
-
-  function fsAdoptChat() {
-    if (!fs.on) return;
-    var p = document.querySelector('.sc-panel');
-    if (p && !fs.wrap.contains(p)) {
-      fs.chatHome = p.parentNode; fs.chatNext = p.nextSibling;
-      fs.wrap.appendChild(p);
-    }
-    if (p && !fs.wrap.querySelector('.ls-fsdim')) {
-      // blur the shop + give a big obvious way back (Jett 2026-06-12)
-      var closeChat = function () {
-        if (window.__scClose) window.__scClose();
-        else p.classList.remove('open');
-        document.documentElement.classList.remove('sc-lock'); // never leave the page frozen
-      };
-      var dim2 = document.createElement('div');
-      dim2.className = 'ls-fsdim';
-      dim2.addEventListener('click', closeChat);
-      var back = document.createElement('button');
-      back.className = 'ls-fsback';
-      back.innerHTML = '&larr;&ensp;Back to the shop';
-      back.addEventListener('click', closeChat);
-      fs.wrap.appendChild(dim2);
-      fs.wrap.appendChild(back);
-      chatObs.observe(p, { attributes: true, attributeFilter: ['class'] });
-    }
-  }
   function fsClose() {
     if (!fs.on) return;
     fs.on = false; fs.rot = false;
     card.hidden = true;
-    var p = fs.overlay.querySelector('.sc-panel');
-    if (p && fs.chatHome) fs.chatHome.insertBefore(p, fs.chatNext);
     var stage = fs.overlay.querySelector('.ls-stage');
     fs.anchor.parentNode.insertBefore(stage, fs.anchor);
     fs.anchor.parentNode.insertBefore(card, fs.anchor);
     document.body.removeChild(fs.overlay);
-    clearInterval(fs.chatTimer);
     fs.overlay = fs.wrap = null;
     document.documentElement.classList.remove('ls-noscroll');
     window.removeEventListener('resize', fsSettle);
@@ -404,8 +353,8 @@
         }
         if (h.yes) {
           hostAsk = null; bubbleUntil = 0;
+          if (fs.on) fsClose(); // chat is a portrait activity — back to the page first
           if (window.__scBook) window.__scBook();
-          fsAdoptChat(); // chat joins the landscape view — no flipping back
           return;
         }
         if (h.no) {
@@ -456,8 +405,8 @@
           btn.onclick = function (ev) {
             ev.stopPropagation();
             card.hidden = true;
+            if (fs.on) fsClose(); // chat is a portrait activity — back to the page first
             if (window.__scBook) window.__scBook(btn.getAttribute('data-b'));
-            fsAdoptChat(); // chat joins the landscape view — no flipping back
           };
         });
         card.style.left = Math.min(86, Math.max(4, (h.x / W) * 100)) + '%';
