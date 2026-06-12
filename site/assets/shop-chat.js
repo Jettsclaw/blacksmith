@@ -353,6 +353,22 @@
 
   var panel = null, body = null, opened = false, chipsEl = null, ctxEl = null;
 
+  // clear chat: manual button + 3-min inactivity auto-clear (Jett 2026-06-12)
+  var idleT = null;
+  function pokeIdle() {
+    clearTimeout(idleT);
+    idleT = setTimeout(function () {
+      if (body && body.childNodes.length) clearChat();
+    }, 180000);
+  }
+  function clearChat() {
+    if (!body) return;
+    body.innerHTML = '';
+    wiz = null;
+    setWizUI(false);
+    bubble('G\u2019day! I can tell you the live wait, who\u2019s on, prices, or book you in \u2014 what do you need?', 'bot');
+  }
+
   function el(tag, cls, text) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -374,6 +390,7 @@
     }
     body.appendChild(b);
     body.scrollTop = body.scrollHeight;
+    pokeIdle();
   }
 
   function ask(kind, label) {
@@ -393,6 +410,11 @@
     var tg = el('a', 'sc-tg', 'Telegram →');
     tg.href = TG_URL; tg.target = '_blank'; tg.rel = 'noopener';
     head.appendChild(tg);
+    var clr = el('button', 'sc-x sc-clear', '⟳');
+    clr.setAttribute('aria-label', 'Clear chat');
+    clr.title = 'Clear chat';
+    clr.onclick = function () { clearChat(); };
+    head.appendChild(clr);
     var x = el('button', 'sc-x', '×');
     x.setAttribute('aria-label', 'Close chat');
     x.onclick = function () { panel.classList.remove('open'); };
