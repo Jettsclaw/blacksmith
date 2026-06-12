@@ -644,7 +644,13 @@
         // v2: the chair is its own layer — reclines with a client in it
         // (or a spare barber having a breather; tap them to book)
         var occupied = snap.waiting > 3 || !!lounger;
-        var mb = drawSprite(occupied ? 'massage-lay' : 'massage-up',
+        var mkey = occupied ? 'massage-lay' : 'massage-up';
+        if (lounger) { // each barber has his OWN reclined art, lazy-loaded on first need
+          var lk = 'lay-' + (spriteKey(lounger.name) || 'ben');
+          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=20'; IMGS[lk] = lim; }
+          if (IMGS[lk].naturalWidth) mkey = lk; // generic until his art arrives
+        }
+        var mb = drawSprite(mkey,
           LAY.MASSAGE.x + (occupied ? (LAY.FIT ? 8 : 26) : 0) * (LAY.MASSAGE.flip ? -1 : 1), LAY.MASSAGE.y, LAY.MASSAGE.h * (occupied ? 0.88 : 1), !!LAY.MASSAGE.flip);
         if (lounger) {
           hits.push({ x: LAY.MASSAGE.x - 95, y: LAY.MASSAGE.y - 175, w: 230, h: 185,
