@@ -53,11 +53,11 @@
       room: 'room-v3', W: 1584, H: 672,
       CHAIR_SPAN: { x0: 380, x1: 950, y: 545, h: 150 },
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
-      COUCH: [{ x: 98, y: 588 }, { x: 146, y: 592 }, { x: 194, y: 596 }], // bums on cushions, legs over the front edge
+      COUCH: [{ x: 110, y: 575 }, { x: 165, y: 563, s: 0.97 }, { x: 220, y: 550, s: 0.94 }], // bums land on the cushion line, legs over the front face
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      MASSAGE: { x: 950, y: 650, h: 172, sprite: true }, // old spot is under the couch now
+      MASSAGE: { x: 64, y: 664, h: 168, sprite: true }, // back in the corner (plant's old spot)
       FRIDGE: null,
-      HOST: { x: 1330, y: 368, h: 48, sprite: 'jett-head', float: true, flip: false, qoff: 0 },
+      HOST: { x: 1382, y: 398, h: 48, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // hovers just above the till
       LEAN: { x: 1224, y: 589 }, // 2nd free barber leans at the desk (Jett's old spot)
       SHOP_SIGN: { x: 1172, y: 196, font: 26 },
       SHOPZONES: [{ x: 1048, y: 225, w: 122, h: 350, tag: 'products' },
