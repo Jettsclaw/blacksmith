@@ -942,3 +942,14 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
   .sc-panel{z-index:1500} /* above the fixed topbar — the close button was buried under it */
   .sc-x{width:44px;height:44px;font-size:1.5rem;display:flex;align-items:center;justify-content:center}
 }
+/* bottom-sheet chat on phones */
+.sc-dim{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1499;opacity:0;pointer-events:none;transition:opacity .28s}
+.sc-dim.show{opacity:1;pointer-events:auto}
+@media (max-width:640px){
+  .sc-panel{height:88dvh;border-radius:18px 18px 0 0;transform:translateY(102%);transition:transform .34s cubic-bezier(.32,.72,.3,1),opacity .2s;opacity:1;pointer-events:auto}
+  .sc-panel.open{transform:none}
+  .sc-head{position:relative}
+  .sc-head::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:40px;height:4px;border-radius:99px;background:#3a3a42}
+}
+@media (min-width:641px){.sc-dim{display:none}}
+.ls-fsw .sc-panel{height:auto!important;transform:none!important;border-radius:16px!important}

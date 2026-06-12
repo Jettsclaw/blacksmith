@@ -484,19 +484,54 @@
     };
     panel.appendChild(form);
     document.body.appendChild(panel);
+    wireSwipe();
   }
 
-  // phone: full-sheet behaviour — lock page scroll while open, ride the keyboard
+  // phone: bottom-sheet behaviour — dimmed backdrop, slide-up, swipe-down to dismiss
+  var dim = null;
   function syncSheet() {
     var open = panel && panel.classList.contains('open');
     var phone = window.innerWidth <= 640;
     document.documentElement.classList.toggle('sc-lock', !!(open && phone && !panel.closest('.ls-fsw')));
+    if (!dim && panel) {
+      dim = document.createElement('div');
+      dim.className = 'sc-dim';
+      dim.addEventListener('click', function () { panel.classList.remove('open'); syncSheet(); });
+      document.body.appendChild(dim);
+    }
+    if (dim) dim.classList.toggle('show', !!(open && phone && !panel.closest('.ls-fsw')));
     fitSheet();
+  }
+  function wireSwipe() { // drag the sheet down to dismiss (header, or body when scrolled to top)
+    var startY = null, dy = 0, fromHead = false;
+    panel.addEventListener('touchstart', function (e) {
+      if (window.innerWidth > 640 || panel.closest('.ls-fsw')) return;
+      fromHead = !!e.target.closest('.sc-head');
+      var inBody = !!e.target.closest('.sc-body');
+      if (!fromHead && !(inBody && body.scrollTop <= 0)) { startY = null; return; }
+      startY = e.touches[0].clientY; dy = 0;
+    }, { passive: true });
+    panel.addEventListener('touchmove', function (e) {
+      if (startY == null) return;
+      dy = e.touches[0].clientY - startY;
+      if (dy > 0 && (fromHead || body.scrollTop <= 0)) {
+        panel.style.transition = 'none';
+        panel.style.transform = 'translateY(' + dy + 'px)';
+      }
+    }, { passive: true });
+    panel.addEventListener('touchend', function () {
+      if (startY == null) return;
+      panel.style.transition = '';
+      panel.style.transform = '';
+      if (dy > 90) { panel.classList.remove('open'); syncSheet(); }
+      startY = null; dy = 0;
+    });
   }
   function fitSheet() {
     if (!panel) return;
     if (!window.visualViewport || window.innerWidth > 640 || panel.closest('.ls-fsw')) { panel.style.height = ''; return; }
-    if (panel.classList.contains('open')) {
+    var kb = window.innerHeight - window.visualViewport.height > 60; // keyboard actually up
+    if (panel.classList.contains('open') && kb) {
       panel.style.height = window.visualViewport.height + 'px';
       if (body) body.scrollTop = body.scrollHeight;
     } else panel.style.height = '';
