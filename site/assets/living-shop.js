@@ -133,7 +133,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=21';
+    im.src = A + n + '.webp?v=22';
     IMGS[n] = im;
   });
 
@@ -699,7 +699,7 @@
         var mkey = occupied ? 'massage-lay' : 'massage-up';
         if (lounger) { // each barber has his OWN reclined art, lazy-loaded on first need
           var lk = 'lay-' + (spriteKey(lounger.name) || 'ben');
-          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=21'; IMGS[lk] = lim; }
+          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=22'; IMGS[lk] = lim; }
           if (IMGS[lk].naturalWidth) mkey = lk; // generic until his art arrives
         }
         var mb = drawSprite(mkey,
