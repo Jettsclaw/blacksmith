@@ -151,6 +151,7 @@
   var stroll = null, nextStrollAt = 25000; // host takes a wander now and then
   var nextSweepAt = 25000; // first sweep ~25s in, then every few minutes
   var bubbleUntil = 0, bubbleText = '', nextBubbleAt = 5000;
+  var hostAsk = null; // tap the head -> 'book in?' with Yes/No chips
   var HOST = LAY.HOST;
 
   // Habbo lesson: rooms feel alive when the people in them mutter.
@@ -354,8 +355,21 @@
       var h = hits[i];
       if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
         if (h.host) {
-          if (window.__scOpen) window.__scOpen();
+          hostAsk = { until: performance.now() + 9000 };
+          bubbleText = 'Would you like to book in?';
+          bubbleUntil = performance.now() + 9000;
+          return;
+        }
+        if (h.yes) {
+          hostAsk = null; bubbleUntil = 0;
+          if (window.__scBook) window.__scBook();
           fsAdoptChat(); // chat joins the landscape view — no flipping back
+          return;
+        }
+        if (h.no) {
+          hostAsk = null;
+          bubbleText = 'No worries — sing out if you need me ✂';
+          bubbleUntil = performance.now() + 4000;
           return;
         }
         if (h.shop) { // shop cabinet → the real merch/products page
@@ -846,6 +860,26 @@
       }
       if (t < bubbleUntil && bubbleText)
         drawBubble(bubbleText, stroll ? stroll.x : HOST.x, (stroll ? HOST.stroll.y : HOST.y) - HOST.h, false, false);
+      if (hostAsk && t >= hostAsk.until) hostAsk = null;
+      if (hostAsk) {
+        [['Yes', -52, true], ['No', 52, false]].forEach(function (cfg) {
+          var bx2 = HOST.x + cfg[1], by2 = HOST.y + 38, bw2 = 86, bh2 = 40;
+          ctx.save();
+          ctx.beginPath();
+          ctx.roundRect(bx2 - bw2 / 2, by2 - bh2 / 2, bw2, bh2, 20);
+          if (cfg[2]) { ctx.fillStyle = '#e3c578'; ctx.fill(); }
+          else {
+            ctx.fillStyle = 'rgba(16,16,19,.9)'; ctx.fill();
+            ctx.strokeStyle = 'rgba(200,164,77,.85)'; ctx.lineWidth = 2; ctx.stroke();
+          }
+          ctx.font = '700 22px Oswald, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = cfg[2] ? '#141417' : '#e3c578';
+          ctx.fillText(cfg[0], bx2, by2 + 8);
+          ctx.restore();
+          hits.unshift({ x: bx2 - bw2 / 2 - 8, y: by2 - bh2 / 2 - 8, w: bw2 + 16, h: bh2 + 16, yes: cfg[2], no: !cfg[2] });
+        });
+      }
     }
 
     // moodlight — golden arvo, warm evening; closed state has its own dimmer
