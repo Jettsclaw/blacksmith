@@ -46,9 +46,25 @@
   // Two rooms, one engine: landscape for desktop, a portrait recomposition
   // for phones (fills the screen, no zoom/pan). Anchors are per-layout.
   var ROOM_V2 = true;
+  var ROOM_V3 = true; // Jett's 2026-06-12 remodel: couch to the left corner, floor-to-top split SHOP cabinet (products|merch, tappable), Jett = floating head at the till, 2nd free barber leans at the desk. REVERT = false (checkpoint-jett-20260612 layout).
   var HOST_JETT = true; // Jett as the concierge (test) — false restores the original host // Jett's 2026-06-11 refresh: honey bench, left plant corner, sprite massage chair (reclines). false = original room.
   var LAYOUTS = {
-    landscape: {
+    landscape: ROOM_V3 ? {
+      room: 'room-v3', W: 1584, H: 672,
+      CHAIR_SPAN: { x0: 380, x1: 950, y: 545, h: 150 },
+      BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
+      COUCH: [{ x: 98, y: 588 }, { x: 146, y: 592 }, { x: 194, y: 596 }], // bums on cushions, legs over the front edge
+      DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
+      MASSAGE: { x: 950, y: 650, h: 172, sprite: true }, // old spot is under the couch now
+      FRIDGE: null,
+      HOST: { x: 1330, y: 368, h: 48, sprite: 'jett-head', float: true, flip: false, qoff: 0 },
+      LEAN: { x: 1224, y: 589 }, // 2nd free barber leans at the desk (Jett's old spot)
+      SHOP_SIGN: { x: 1172, y: 196, font: 26 },
+      SHOPZONES: [{ x: 1048, y: 225, w: 122, h: 350, tag: 'products' },
+                  { x: 1170, y: 225, w: 122, h: 350, tag: 'merch' }],
+      IDLE_SPOT: { x: 1060, y: 560 },
+      SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
+    } : {
       room: ROOM_V2 ? 'room-v2' : 'room', W: 1584, H: 672,
       CHAIR_SPAN: ROOM_V2 ? { x0: 380, x1: 950, y: 545, h: 150 } : { x0: 300, x1: 950, y: 545, h: 150 }, // chairs are sprites, spaced by live count
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
@@ -341,6 +357,10 @@
           fsAdoptChat(); // chat joins the landscape view — no flipping back
           return;
         }
+        if (h.shop) { // shop cabinet → the real merch/products page
+          window.location.href = 'shop.html?src=livingshop-' + h.shop;
+          return;
+        }
         if (h.toy) {
           var t0 = performance.now();
           if (h.toy === 'cat') catSay = t0 + 3200;
@@ -512,6 +532,25 @@
     ctx.drawImage(IMGS[LAY.room], 0, 0, W, H);
     hits = [];
     if (LAY.FRIDGE) drawSprite('fridge', LAY.FRIDGE.x, LAY.FRIDGE.y, LAY.FRIDGE.h, false);
+    if (LAY.SHOP_SIGN) { // glowing SHOP sign over the cabinet (tap = shop page)
+      var S2 = LAY.SHOP_SIGN;
+      ctx.save();
+      ctx.font = '600 ' + S2.font + 'px Oswald, sans-serif';
+      ctx.textAlign = 'center';
+      var sw2 = ctx.measureText('SHOP').width + 36;
+      var glow2 = 0.5 + 0.08 * Math.sin(t / 700);
+      ctx.globalAlpha = 0.92;
+      ctx.fillStyle = '#15130c';
+      ctx.fillRect(S2.x - sw2 / 2, S2.y - 24, sw2, 40);
+      ctx.strokeStyle = 'rgba(200,164,77,' + glow2 + ')';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(S2.x - sw2 / 2, S2.y - 24, sw2, 40);
+      ctx.shadowColor = 'rgba(200,164,77,' + glow2 + ')';
+      ctx.shadowBlur = 14;
+      ctx.fillStyle = '#e3c578';
+      ctx.fillText('SHOP', S2.x, S2.y + 4);
+      ctx.restore();
+    }
 
     var open = snap && snap.open;
     var anim = Math.floor(t / 480) % 2; // 2-frame cutting cadence
@@ -604,9 +643,16 @@
       // re-drew a chaired barber as a double, Jett's "2 Samis" glitch).
       // First spare barber lounges in the massage chair if it's free.
       var overflow = LAY.FIT ? [] : seated.slice(CHAIRS.length);
-      var lounger = null;
+      var lounger = null, leaner = null;
       if (overflow.length && snap.waiting <= 3 && LAY.MASSAGE && LAY.MASSAGE.sprite)
         lounger = overflow.shift();
+      if (overflow.length && LAY.LEAN) leaner = overflow.shift(); // 2nd spare leans at the desk
+      if (leaner) {
+        var lkey = spriteKey(leaner.name) || 'ben';
+        var lb = drawSprite(lkey + '-3', LAY.LEAN.x, LAY.LEAN.y + Math.round(Math.sin(t / 800)), SCALE.barber * 0.98, false);
+        people[leaner.name] = { cx: lb.x + lb.w / 2, top: lb.y };
+        hits.push({ x: lb.x, y: lb.y, w: lb.w, h: lb.h, name: leaner.name, cutting: false, free_in: leaner.free_in, cutting_at: leaner.cutting_at, book: leaner.book });
+      }
       overflow.forEach(function (b, i) {
         var key = spriteKey(b.name) || 'ben';
         var bb = drawSprite(key + '-0', LAY.IDLE_SPOT.x + i * 60, LAY.IDLE_SPOT.y, SCALE.barber * 0.95, false);
@@ -711,6 +757,7 @@
         });
         // the massage-chair lounger pitches himself (twice the odds — he's the free one)
         if (lounger) { var ll = { who: lounger.name, text: pick(LOUNGE_LINES) }; lines.push(ll, ll); }
+        if (leaner) lines.push({ who: leaner.name, text: pick(FREE_LINES) });
         for (var li = 0; li < waitN; li++) lines.push({ couch: li, text: pick(WAIT_LINES) });
         if (lines.length) {
           var L = pick(lines);
@@ -740,6 +787,9 @@
       : { x: 20, y: 450, w: 185, h: 200, toy: 'massage' });
     if (!LAY.FIT) hits.push({ x: 25, y: 330, w: 205, h: 105, toy: 'bike' });
     if (LAY.FRIDGE) hits.push({ x: LAY.FRIDGE.x - 45, y: LAY.FRIDGE.y - LAY.FRIDGE.h, w: 90, h: LAY.FRIDGE.h, toy: 'fridge' });
+    if (LAY.SHOPZONES) LAY.SHOPZONES.forEach(function (z) {
+      hits.push({ x: z.x, y: z.y - 70, w: z.w, h: z.h + 70, shop: z.tag }); // incl. the sign above
+    });
 
     if (!open && LAY.MASSAGE && LAY.MASSAGE.sprite)
       drawSprite('massage-up', LAY.MASSAGE.x, LAY.MASSAGE.y, LAY.MASSAGE.h, !!LAY.MASSAGE.flip);
@@ -767,8 +817,9 @@
         }
         hb = drawSprite(wf, stroll.x, wy, HOST.h * 0.97, stroll.dir === -1);
       } else {
+        var hostY = HOST.y + (HOST.float ? Math.round(Math.sin(t / 450) * 4) : 0); // floating head bobs
         hb = HOST.sprite
-          ? drawSprite(HOST.sprite, HOST.x, HOST.y, HOST.h, !!HOST.flip)
+          ? drawSprite(HOST.sprite, HOST.x, hostY, HOST.h, !!HOST.flip)
           : drawTorso('host-1', HOST.x, HOST.y, HOST.h);
       }
       // bobbing gold "?" so people know he's tappable
