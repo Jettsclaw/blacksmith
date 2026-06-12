@@ -302,6 +302,19 @@
       fs.chatHome = p.parentNode; fs.chatNext = p.nextSibling;
       fs.wrap.appendChild(p);
     }
+    if (p && !fs.wrap.querySelector('.ls-fsdim')) {
+      // blur the shop + give a big obvious way back (Jett 2026-06-12)
+      var closeChat = function () { p.classList.remove('open'); };
+      var dim2 = document.createElement('div');
+      dim2.className = 'ls-fsdim';
+      dim2.addEventListener('click', closeChat);
+      var back = document.createElement('button');
+      back.className = 'ls-fsback';
+      back.innerHTML = '&larr;&ensp;Back to the shop';
+      back.addEventListener('click', closeChat);
+      fs.wrap.appendChild(dim2);
+      fs.wrap.appendChild(back);
+    }
   }
   function fsClose() {
     if (!fs.on) return;

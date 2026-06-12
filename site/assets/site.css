@@ -953,3 +953,9 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 }
 @media (min-width:641px){.sc-dim{display:none}}
 .ls-fsw .sc-panel{height:auto!important;transform:none!important;border-radius:16px!important}
+/* landscape takeover: chat open = shop blurred + clear way back */
+.ls-fsdim{position:absolute;inset:0;background:rgba(5,5,8,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:8}
+.ls-fsw:has(.sc-panel.open) .ls-fsdim{opacity:1;pointer-events:auto}
+.ls-fsback{position:absolute;top:14px;left:16px;z-index:10;display:none;align-items:center;background:#e3c578;color:#141417;border:none;border-radius:999px;padding:11px 20px;font-family:Oswald,sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.ls-fsw:has(.sc-panel.open) .ls-fsback{display:flex}
+.ls-fsw .sc-panel{z-index:9}
