@@ -53,17 +53,17 @@
       room: 'room-v3', W: 1584, H: 672,
       CHAIR_SPAN: { x0: 380, x1: 950, y: 545, h: 150 },
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
-      COUCH: [{ x: 110, y: 575 }, { x: 165, y: 563, s: 0.97 }, { x: 220, y: 550, s: 0.94 }], // bums land on the cushion line, legs over the front face
+      COUCH: [{ x: 140, y: 568 }, { x: 190, y: 560 }, { x: 238, y: 552 }], // purpose-built seated sprites, bums on the cushion line
       DOOR: { x: 1500, y: 640 }, SIGN: { x: 620, y: 118, font: 34 }, CAT_Y: 650,
-      MASSAGE: { x: 64, y: 664, h: 168, sprite: true }, // back in the corner (plant's old spot)
+      MASSAGE: { x: 64, y: 668, h: 196, sprite: true }, // back in the corner, properly sized
       FRIDGE: null,
-      HOST: { x: 1382, y: 398, h: 48, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // hovers just above the till
+      HOST: { x: 1382, y: 398, h: 58, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // hovers just above the till
       LEAN: { x: 1224, y: 589 }, // 2nd free barber leans at the desk (Jett's old spot)
       SHOP_SIGN: { x: 1172, y: 196, font: 26 },
       SHOPZONES: [{ x: 1048, y: 225, w: 122, h: 350, tag: 'products' },
                   { x: 1170, y: 225, w: 122, h: 350, tag: 'merch' }],
       IDLE_SPOT: { x: 1060, y: 560 },
-      SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
+      SCALE: { barber: 210, cape: 165, couch: 150, walk: 185, cat: 64 }
     } : {
       room: ROOM_V2 ? 'room-v2' : 'room', W: 1584, H: 672,
       CHAIR_SPAN: ROOM_V2 ? { x0: 380, x1: 950, y: 545, h: 150 } : { x0: 300, x1: 950, y: 545, h: 150 }, // chairs are sprites, spaced by live count
@@ -124,6 +124,7 @@
   ['client-cape-1','client-cape-2','client-cape-3','client-salon-1','client-salon-2','client-salon-3','client-walk','client-couch','cat','sweep-1','sweep-2','host-1','host-2','host-couch','host-stand','host-lean','host-walk-1','host-walk-2','host-walk-3','host-walk-4','chair']
     .forEach(function (n) { toLoad.push(n); });
   if (LAY.MASSAGE && LAY.MASSAGE.sprite) toLoad.push('massage-up', 'massage-lay');
+  if (ROOM_V3) toLoad.push('sit-1', 'sit-2', 'sit-3');
   if (LAY.FRIDGE) toLoad.push('fridge');
   if (HOST_JETT) toLoad.push(LAY.HOST.sprite);
 
@@ -132,7 +133,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=20';
+    im.src = A + n + '.webp?v=21';
     IMGS[n] = im;
   });
 
@@ -674,13 +675,13 @@
       var waitN = Math.min(snap.waiting, youHere ? COUCH.length - 1 : 3);
       couchPos = [];
       for (var i2 = 0; i2 < waitN; i2++) {
-        drawSprite('client-couch', COUCH[i2].x,
-          COUCH[i2].y + Math.round(Math.sin(t / 900 + i2 * 2.3)), SCALE.couch * (COUCH[i2].s || 1), i2 === 1);
+        drawSprite(ROOM_V3 ? 'sit-' + (i2 + 1) : 'client-couch', COUCH[i2].x,
+          COUCH[i2].y + Math.round(Math.sin(t / 900 + i2 * 2.3)), SCALE.couch * (COUCH[i2].s || 1), !ROOM_V3 && i2 === 1);
         couchPos[i2] = { cx: COUCH[i2].x, top: COUCH[i2].y - SCALE.couch };
       }
       if (youHere) {
         var ys = COUCH[COUCH.length - 1];
-        var yb = drawSprite('client-couch', ys.x, ys.y + Math.round(Math.sin(t / 900 + 5)), SCALE.couch * (ys.s || 1), true);
+        var yb = drawSprite(ROOM_V3 ? 'sit-3' : 'client-couch', ys.x, ys.y + Math.round(Math.sin(t / 900 + 5)), SCALE.couch * (ys.s || 1), !ROOM_V3);
         ctx.save(); // floating gold YOU tag — Habbo's "that's my guy" hook
         ctx.font = '700 20px Oswald, sans-serif';
         ctx.textAlign = 'center';
@@ -698,7 +699,7 @@
         var mkey = occupied ? 'massage-lay' : 'massage-up';
         if (lounger) { // each barber has his OWN reclined art, lazy-loaded on first need
           var lk = 'lay-' + (spriteKey(lounger.name) || 'ben');
-          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=20'; IMGS[lk] = lim; }
+          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=21'; IMGS[lk] = lim; }
           if (IMGS[lk].naturalWidth) mkey = lk; // generic until his art arrives
         }
         var mb = drawSprite(mkey,
