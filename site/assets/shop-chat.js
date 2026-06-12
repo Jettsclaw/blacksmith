@@ -417,7 +417,7 @@
     head.appendChild(clr);
     var x = el('button', 'sc-x', '×');
     x.setAttribute('aria-label', 'Close chat');
-    x.onclick = function () { panel.classList.remove('open'); };
+    x.onclick = function () { panel.classList.remove('open'); syncSheet(); };
     head.appendChild(x);
     panel.appendChild(head);
 
@@ -486,7 +486,26 @@
     document.body.appendChild(panel);
   }
 
-  window.__scOpen = function () { fab.onclick(); if (panel) panel.classList.add('open'); };
+  // phone: full-sheet behaviour — lock page scroll while open, ride the keyboard
+  function syncSheet() {
+    var open = panel && panel.classList.contains('open');
+    var phone = window.innerWidth <= 640;
+    document.documentElement.classList.toggle('sc-lock', !!(open && phone && !panel.closest('.ls-fsw')));
+    fitSheet();
+  }
+  function fitSheet() {
+    if (!panel) return;
+    if (!window.visualViewport || window.innerWidth > 640 || panel.closest('.ls-fsw')) { panel.style.height = ''; return; }
+    if (panel.classList.contains('open')) {
+      panel.style.height = window.visualViewport.height + 'px';
+      if (body) body.scrollTop = body.scrollHeight;
+    } else panel.style.height = '';
+  }
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', fitSheet);
+  }
+
+  window.__scOpen = function () { fab.onclick(); if (panel) panel.classList.add('open'); syncSheet(); };
   window.__scBook = function (pref) {
     window.__scOpen();
     setTimeout(function () { startBooking(pref); }, 350);
@@ -512,10 +531,12 @@
       build();
       setTimeout(function () {
         panel.classList.add('open');
+        syncSheet();
         setTimeout(function () { ask('wait', 'How long’s the wait?'); }, 350);
       }, 30);
     } else {
       panel.classList.toggle('open');
+      syncSheet();
     }
   };
 })();

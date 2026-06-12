@@ -928,3 +928,13 @@ body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
 .ls-fsw .sc-panel{position:absolute;right:14px;bottom:60px;top:auto;width:min(360px,58%);max-height:calc(100% - 78px);z-index:9}
 .sc-clear{font-size:1.05rem;margin-right:-4px;opacity:.75}
 .sc-clear:hover{opacity:1}
+/* shop chat: native full-sheet on phones — no URL-bar bounce, no scroll-through */
+@media (max-width:640px){
+  .sc-panel{left:0;right:0;bottom:0;top:auto;width:100%;max-height:none;height:100dvh;border-radius:0;border:none;transform:translateY(14px)}
+  .sc-panel.open{transform:none}
+  .sc-body{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .sc-input{font-size:16px}
+  .sc-head{padding-top:max(12px,env(safe-area-inset-top))}
+  .sc-form{padding-bottom:max(10px,env(safe-area-inset-bottom))}
+  html.sc-lock,html.sc-lock body{overflow:hidden;touch-action:none}
+}
