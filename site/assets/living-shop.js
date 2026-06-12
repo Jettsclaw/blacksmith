@@ -532,10 +532,11 @@
       var CHAIRS = [];
       if (LAY.CHAIR_SPAN) {
         var sp = LAY.CHAIR_SPAN;
-        // 5+ chairs: the whole row shuffles left so it hugs the bench and the
-        // end chair clears the couch (Jett 2026-06-12). REVERT = shx5 to 0.
+        // The whole row sits 55px left of the original span at EVERY count —
+        // hugs the bench, Sami clears the couch, 6 still fit (same spacing).
+        // (Jett 2026-06-12, v2: "always cleaner".) REVERT = shx5 to 0.
         var shx5 = 55;
-        var shx = (!LAY.FIT && chairN >= 5) ? shx5 : 0;
+        var shx = !LAY.FIT ? shx5 : 0;
         for (var ci = 0; ci < chairN; ci++) {
           var t = chairN === 1 ? 0.5 : ci / (chairN - 1);
           CHAIRS.push({ x: sp.x0 - shx + (sp.x1 - sp.x0) * t,
