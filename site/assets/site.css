@@ -380,8 +380,8 @@ section{position:relative}
   transform:translateY(120%);transition:transform .35s var(--ease);
 }
 .book-bar.show{transform:translateY(0)}
-/* Hide the sticky bar while the cart drawer is open so it never covers the cart on the shop page */
-body:has(.cart-drawer.open) .book-bar{transform:translateY(120%)}
+/* (cart-open hide handled in JS via .book-bar.cart-open — :has() broke on iOS Safari) */
+.book-bar.cart-open{transform:translateY(120%)}
 
 /* ---------- Reviews marquee ---------- */
 .reviews{background:var(--ink);padding-top:clamp(48px,8vw,90px);padding-bottom:clamp(56px,9vw,110px);overflow:hidden}

@@ -158,12 +158,14 @@
     if(!drawer) return;
     drawer.classList.add('open');
     overlay.classList.add('open');
+    var bb = document.getElementById('bookBar'); if(bb) bb.classList.add('cart-open'); // keep the sticky bar out of the cart's way (replaces a :has() rule that broke on iOS)
     document.body.style.overflow = 'hidden';
   }
   function close(){
     if(!drawer) return;
     drawer.classList.remove('open');
     overlay.classList.remove('open');
+    var bb = document.getElementById('bookBar'); if(bb) bb.classList.remove('cart-open');
     document.body.style.overflow = '';
   }
   function toggle(){ drawer.classList.contains('open') ? close() : open(); }
