@@ -182,6 +182,10 @@
   var FREE_LINES = ['Walk right in', 'Chair’s ready', 'No wait — come down', 'I’m free — tap me to book ✂'];
   var LOUNGE_LINES = ['I’m free — tap me to book in ✂', 'Catching a breather — tap me to book', 'Chair’s open, I’m ready — tap to book'];
   var WAIT_LINES = ['Worth the wait', 'Best cut on the coast', 'Massage chair’s mine next', 'Love this place'];
+  // Jett at the till — rotating helpful/playful prompts (shown every ~20-45s)
+  var HOST_LINES = ['Want to browse the shop? 🛍', 'Need a hand booking? Tap me', 'Tap me to book your cut ✂',
+    'After a fresh fade? Let’s sort it', 'Check out our merch — tap me 👀', 'Questions? Tap me, I’m right here',
+    'Grab some gear while you’re here', 'New here? Tap me, I’ll help you book'];
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
 
   // "That's me!" — your own sprite in the room once you book through the chat
@@ -699,8 +703,8 @@
         nextSweepAt = t + 150000 + Math.random() * 150000; // every 2.5-5 min
         var free = bs.filter(function (b) { return !b.cutting; });
         if (free.length) {
-          var pick = free[Math.floor(Math.random() * free.length)];
-          sweeps[pick.name] = { until: t + 16000, seed: Math.random() * 6 };
+          var pk = free[Math.floor(Math.random() * free.length)]; // NOT 'pick' — that shadowed the pick() helper across draw() and broke banter + host bubbles
+          sweeps[pk.name] = { until: t + 16000, seed: Math.random() * 6 };
         }
       }
 
@@ -877,12 +881,13 @@
       hb = { x: hb.x - 30, y: qy - 34, w: hb.w + 60, h: ((stroll ? HOST.stroll.y : HOST.y) - (qy - 34)) }; // generous hit area incl. the marker
       hits.push({ x: hb.x, y: hb.y, w: hb.w, h: hb.h, host: true });
       if (!reduced && t > nextBubbleAt) {
-        nextBubbleAt = t + 40000 + Math.random() * 50000;
+        nextBubbleAt = t + 20000 + Math.random() * 25000; // every ~20-45s
         bubbleUntil = t + 6500;
-        bubbleText = !snap.open ? 'We\u2019re closed \u2014 book ahead?'
-          : snap.wait_mins === 0 ? 'No wait right now \u2014 jump in!'
-          : snap.wait_mins != null ? '~' + snap.wait_mins + ' min wait \u2014 need a hand?'
-          : 'Need a hand?';
+        var pool = HOST_LINES.slice();
+        if (!snap.open) pool.push('We\u2019re closed \u2014 book ahead?', 'Closed now \u2014 lock in your next cut', 'Shop\u2019s open online 24/7 \ud83d\udecd');
+        else if (snap.wait_mins === 0) pool.push('No wait right now \u2014 jump in!', 'Chair\u2019s free \u2014 tap me to book');
+        else if (snap.wait_mins != null) pool.push('~' + snap.wait_mins + ' min wait \u2014 need a hand?');
+        bubbleText = pick(pool);
       }
       if (t < bubbleUntil && bubbleText)
         drawBubble(bubbleText, stroll ? stroll.x : HOST.x, (stroll ? HOST.stroll.y : HOST.y) - HOST.h, false, false);
@@ -908,17 +913,12 @@
       }
     }
 
-    // moodlight — golden arvo, warm evening; closed state has its own dimmer
-    var tint = snap && snap.open && moodTint();
+    // moodlight — golden arvo, warm evening; applies open OR closed so the
+    // shop is always warmly lit (Jett: keep the lights on even when closed).
+    var tint = snap && moodTint();
     if (tint) { ctx.fillStyle = tint; ctx.fillRect(0, 0, W, H); }
 
-    drawSign(t);
-
-    if (snap && !snap.open) {
-      ctx.fillStyle = 'rgba(5,5,8,0.62)';
-      ctx.fillRect(0, 0, W, H);
-    drawSign(t); // sign stays readable above the dimmer
-    }
+    drawSign(t); // the "CLOSED — BACK 9AM" banner still shows the hours, no dimmer
   }
 
   // ---------- loop ----------
