@@ -53,14 +53,14 @@
     landscape: ROOM_V5 ? {
       // measured off a labelled grid of room-v5.webp (couch x40-230, clear bench x240-1090, cabinet x1100+)
       room: 'room-v5', W: 1584, H: 672,
-      CHAIR_SPAN: { x0: 312, x1: 1012, y: 545, h: 150 }, // x0 pinned right of the couch keep-out (couch+seated client reach ~x254) so the leftmost chair/cape/barber can NEVER overlap the couch at any count or fit
+      CHAIR_SPAN: { x0: 355, x1: 1012, y: 545, h: 150 }, // x0 pinned WELL right of the couch keep-out so the leftmost chair/cape/barber can NEVER overlap the couch at any count or fit
       SOFTFIT: true, // gently shrink barbers+chairs at 5/6 so real gaps open (no shoulder overlap), full size at <=4
       BARBER_OFF: { x: 46, y: 12 }, CAPE_OFF: { x: 0, y: -6 }, // tighter X offset (was 72) so a 6th barber never leans into the next chair
-      COUCH: [{ x: 108, y: 556 }, { x: 160, y: 552 }, { x: 212, y: 548 }], // waiting clients on the baked left-corner chesterfield
+      COUCH: [{ x: 95, y: 556 }, { x: 145, y: 552 }, { x: 195, y: 548 }], // waiting clients on the baked left-corner chesterfield (kept left so they don't reach the bench)
       DOOR: { x: 1440, y: 600 }, SIGN: { x: 645, y: 116, font: 34 }, CAT_Y: 652,
       MASSAGE: { x: 72, y: 668, h: 210, sprite: true }, // far bottom-left corner — where it sits on the live shop
       FRIDGE: null,
-      HOST: { x: 1300, y: 398, h: 70, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // Jett floats above the till register
+      HOST: { x: 1308, y: 486, h: 150, sprite: 'jett-bust', float: false, flip: false, qoff: 0 }, // Jett waist-up in the pine Blacksmith hoodie, GROUNDED at the till (no floating head, clear of the shop cabinet + SHOP sign)
       LEAN: { x: 1182, y: 560 }, // 2nd spare barber leans at the bench end by the cabinet
       SHOP_SIGN: null, // the SHOP sign is BAKED into room-v5 above the cabinet — don't double-draw it
       SHOPZONES: [{ x: 1100, y: 220, w: 78, h: 300, tag: 'products' },
