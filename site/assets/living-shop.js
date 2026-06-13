@@ -47,9 +47,27 @@
   // for phones (fills the screen, no zoom/pan). Anchors are per-layout.
   var ROOM_V2 = true;
   var ROOM_V3 = true; // Jett's 2026-06-12 remodel: couch to the left corner, floor-to-top split SHOP cabinet (products|merch, tappable), Jett = floating head at the till, 2nd free barber leans at the desk. REVERT = false (checkpoint-jett-20260612 layout).
+  var ROOM_V5 = true; // 2026-06-13 full room REDRAW (room-v5.webp, 1584x672): ONE continuous evenly-lit bench (no mirror seam, no light-pool gaps, no ceiling beams), 5 pendant downlights kept but overlapped into an even wash, NEUTRAL daylight base so the moodlight does the day/night shift. SHOP sign baked above the cabinet, reeded frosted door. Chairs re-gridded to spread the FULL bench + hold 6 with no overlap. REVERT = false (back to ROOM_V3 / room-v4 layout).
   var HOST_JETT = true; // Jett as the concierge (test) — false restores the original host // Jett's 2026-06-11 refresh: honey bench, left plant corner, sprite massage chair (reclines). false = original room.
   var LAYOUTS = {
-    landscape: ROOM_V3 ? {
+    landscape: ROOM_V5 ? {
+      // measured off a labelled grid of room-v5.webp (couch x40-230, clear bench x240-1090, cabinet x1100+)
+      room: 'room-v5', W: 1584, H: 672,
+      CHAIR_SPAN: { x0: 272, x1: 1012, y: 545, h: 150 }, // span 740 across the full clear bench
+      SOFTFIT: true, // gently shrink barbers+chairs at 5/6 so real gaps open (no shoulder overlap), full size at <=4
+      BARBER_OFF: { x: 46, y: 12 }, CAPE_OFF: { x: 0, y: -6 }, // tighter X offset (was 72) so a 6th barber never leans into the next chair
+      COUCH: [{ x: 108, y: 556 }, { x: 160, y: 552 }, { x: 212, y: 548 }], // waiting clients on the baked left-corner chesterfield
+      DOOR: { x: 1440, y: 600 }, SIGN: { x: 645, y: 116, font: 34 }, CAT_Y: 652,
+      MASSAGE: { x: 72, y: 668, h: 210, sprite: true }, // far bottom-left corner — where it sits on the live shop
+      FRIDGE: null,
+      HOST: { x: 1300, y: 398, h: 70, sprite: 'jett-head', float: true, flip: false, qoff: 0 }, // Jett floats above the till register
+      LEAN: { x: 1182, y: 560 }, // 2nd spare barber leans at the bench end by the cabinet
+      SHOP_SIGN: null, // the SHOP sign is BAKED into room-v5 above the cabinet — don't double-draw it
+      SHOPZONES: [{ x: 1100, y: 220, w: 78, h: 300, tag: 'products' },
+                  { x: 1178, y: 220, w: 76, h: 300, tag: 'merch' }],
+      IDLE_SPOT: { x: 1130, y: 560 },
+      SCALE: { barber: 210, cape: 165, couch: 140, walk: 185, cat: 64 }
+    } : ROOM_V3 ? {
       room: 'room-v4', W: 1784, H: 672, // EXTENDED +200px (slat-wall insert) so 6 chairs never meet the couch
       CHAIR_SPAN: { x0: 615, x1: 1150, y: 545, h: 150 },
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
@@ -581,7 +599,8 @@
       var cap = LAY.CAP || 4;
       if (LAY.FIT) chairN = Math.min(cap, Math.max(chairN, Math.min(cap, stable.length)));
       var depth = LAY.CHAIR_SPAN && LAY.CHAIR_SPAN.y1 != null;
-      var fit = (LAY.FIT && !depth) ? Math.min(1, 3.6 / chairN) : 1;
+      var fit = (LAY.FIT && !depth) ? Math.min(1, 3.6 / chairN)
+        : (LAY.SOFTFIT ? (chairN >= 6 ? 0.84 : chairN === 5 ? 0.92 : 1) : 1);
       var CHAIRS = [];
       if (LAY.CHAIR_SPAN) {
         var sp = LAY.CHAIR_SPAN;
