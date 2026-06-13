@@ -5,12 +5,19 @@
   /* Topbar scrolled state + sticky book bar */
   var topbar = document.getElementById('topbar');
   var bookBar = document.getElementById('bookBar');
+  // iOS anchors position:fixed to the LAYOUT viewport, so a sticky bar floats
+  // into the middle of the page while pinch-zoomed — hide it until zoom is 1.
+  function zoomed(){ return !!(window.visualViewport && window.visualViewport.scale > 1.01); }
   function onScroll(){
     var y = window.scrollY || window.pageYOffset;
     if(topbar) topbar.classList.toggle('scrolled', y > 24);
-    if(bookBar) bookBar.classList.toggle('show', y > 480);
+    if(bookBar) bookBar.classList.toggle('show', y > 480 && !zoomed());
   }
   window.addEventListener('scroll', onScroll, {passive:true});
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', onScroll);
+    window.visualViewport.addEventListener('scroll', onScroll);
+  }
   onScroll();
 
   /* Hamburger drawer */
