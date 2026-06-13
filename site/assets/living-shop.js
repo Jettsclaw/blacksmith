@@ -249,16 +249,28 @@
   // device really rotates to landscape we drop the rotation and just fill.
   var fs = { on: false, rot: false, overlay: null, wrap: null, anchor: null };
   function fsLayout() {
-    if (!fs.on || !fs.wrap) return;
-    // orientation via matchMedia — reliable even while the page is pinch-zoomed
-    var landscape = window.matchMedia('(orientation: landscape)').matches;
+    if (!fs.on || !fs.wrap || !fs.overlay) return;
+    // Cover exactly the VISIBLE region. When the page is pinch-zoomed, the
+    // visual viewport is a smaller/offset slice of the layout viewport; we pin
+    // the overlay to that slice so it always fills the screen at 1:1, zoomed
+    // or not — no dependence on iOS actually unzooming.
+    var vv = window.visualViewport;
+    var VW = vv ? vv.width : window.innerWidth;
+    var VH = vv ? vv.height : window.innerHeight;
+    var OL = vv ? vv.offsetLeft : 0;
+    var OT = vv ? vv.offsetTop : 0;
+    var landscape = VW > VH;
     // Rotation-lock OFF flow: once the device has really gone landscape,
     // turning it back upright exits to the normal page (Jett 2026-06-12).
     if (landscape) fs.wasLandscape = true;
     else if (fs.wasLandscape) { fsClose(); return; }
     fs.rot = !landscape;
-    // sizing is pure CSS (viewport units, zoom-proof) — JS only flips the class
-    fs.wrap.classList.toggle('ls-rot', fs.rot);
+    var o = fs.overlay.style;
+    o.width = VW + 'px'; o.height = VH + 'px';
+    o.transform = 'translate(' + OL + 'px,' + OT + 'px)';
+    fs.wrap.style.width = (landscape ? VW : VH) + 'px';
+    fs.wrap.style.height = (landscape ? VH : VW) + 'px';
+    fs.wrap.style.transform = 'translate(-50%,-50%)' + (landscape ? '' : ' rotate(90deg)');
   }
   // iPhone-app feel: snap any pinch-zoom back to 1x and lock zoom while the
   // takeover is open, then restore on exit. Without this, a fixed overlay
@@ -321,7 +333,10 @@
     fsSettle();
     window.addEventListener('resize', fsSettle);
     window.addEventListener('orientationchange', fsSettle);
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', fsSettle);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', fsSettle);
+      window.visualViewport.addEventListener('scroll', fsLayout); // track panning while zoomed
+    }
   }
 
   // iOS reports viewport dimensions in dribs mid-rotation — lay out now AND
@@ -352,7 +367,10 @@
     vpRestore();
     window.removeEventListener('resize', fsSettle);
     window.removeEventListener('orientationchange', fsSettle);
-    if (window.visualViewport) window.visualViewport.removeEventListener('resize', fsSettle);
+    if (window.visualViewport) {
+      window.visualViewport.removeEventListener('resize', fsSettle);
+      window.visualViewport.removeEventListener('scroll', fsLayout);
+    }
     clearTimeout(settleT);
     window.scrollTo(0, fs.savedScroll || 0); // continue the scroll where they left it
   }
