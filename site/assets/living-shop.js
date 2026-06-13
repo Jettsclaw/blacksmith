@@ -51,9 +51,9 @@
   var LAYOUTS = {
     landscape: ROOM_V3 ? {
       room: 'room-v4', W: 1784, H: 672, // EXTENDED +200px (slat-wall insert) so 6 chairs never meet the couch
-      CHAIR_SPAN: { x0: 412, x1: 1158, y: 545, h: 150 }, // widened to fill the whole bench (clears couch ~310, stops before SHOP cabinet ~1248) — even spread at every count, 6 fit clean
+      CHAIR_SPAN: { x0: 412, x1: 1060, y: 545, h: 150, stride: 170 }, // centred fixed-stride row: even gaps, balanced in the bench, rightmost stays clear of the SHOP cabinet (~1248); shrinks to fit only at 6
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
-      COUCH: [{ x: 140, y: 640 }, { x: 190, y: 632 }, { x: 238, y: 624 }], // baseY = sprite FEET; dropped ~72px so bums land on the seat cushion (was 568/560/552 = floating above it)
+      COUCH: [{ x: 250, y: 642 }, { x: 340, y: 636 }, { x: 430, y: 630 }], // spread across the VISIBLE cushion (clear of the massage recliner that hid the old far-left x140 cluster); baseY = feet, bums on the cushion
       DOOR: { x: 1700, y: 640 }, SIGN: { x: 820, y: 118, font: 34 }, CAT_Y: 650,
       MASSAGE: { x: 70, y: 672, h: 218, sprite: true }, // back in the corner, properly sized
       FRIDGE: null,
@@ -590,9 +590,23 @@
         // (Jett 2026-06-12, v2: "always cleaner".) REVERT = shx5 to 0.
         var shx5 = 55;
         var shx = (!LAY.FIT && !ROOM_V3) ? shx5 : 0; // v3 room spaces chairs itself
+        // Centred fixed-stride row: a comfy gap between barbers, CENTRED in the
+        // bench so the row is balanced (not bunched) and never reaches the SHOP
+        // shelf. Only when crowded (rowW > bench) does it shrink to fit. This
+        // kills the "split down the middle" the edge-to-edge spread caused.
+        var rowStart = null, stride = sp.stride;
+        if (stride && !depth) {
+          var bench = sp.x1 - sp.x0;
+          var rowW = (chairN - 1) * stride;
+          if (rowW > bench) { stride = bench / (chairN - 1); rowW = bench; }
+          rowStart = (sp.x0 + sp.x1) / 2 - rowW / 2;
+        }
         for (var ci = 0; ci < chairN; ci++) {
           var t = chairN === 1 ? 0.5 : ci / (chairN - 1);
-          CHAIRS.push({ x: sp.x0 - shx + (sp.x1 - sp.x0) * t,
+          var cx = rowStart != null
+            ? (chairN === 1 ? (sp.x0 + sp.x1) / 2 : rowStart + ci * stride)
+            : sp.x0 - shx + (sp.x1 - sp.x0) * t;
+          CHAIRS.push({ x: cx,
                         y: depth ? sp.y + (sp.y1 - sp.y) * t : sp.y,
                         s: depth ? 1 + ((sp.s1 || 1) - 1) * t : 1 });
         }
