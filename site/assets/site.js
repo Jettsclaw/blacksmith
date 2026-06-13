@@ -5,28 +5,17 @@
   /* Topbar scrolled state + sticky book bar */
   var topbar = document.getElementById('topbar');
   var bookBar = document.getElementById('bookBar');
-  if(bookBar && !window.visualViewport) bookBar.classList.add('no-vv');
-  // Pin the bar to the bottom of the VISIBLE area via the visual viewport, and
-  // counter pinch-zoom (scale 1/z) so it stays the right size and never floats
-  // mid-page or balloons on iOS. Show after the hero is scrolled past.
-  function placeBar(){
+  // iOS floats position:fixed bars into the page while pinch-zoomed — only show
+  // the sticky bar at normal zoom, after the hero is scrolled past.
+  function zoomed(){ return !!(window.visualViewport && window.visualViewport.scale > 1.01); }
+  function onScroll(){
     var y = window.scrollY || window.pageYOffset;
     if(topbar) topbar.classList.toggle('scrolled', y > 24);
-    if(!bookBar) return;
-    bookBar.classList.toggle('show', y > 480);
-    var vv = window.visualViewport;
-    if(!vv) return; // .no-vv fallback handles positioning in CSS
-    var h = bookBar.offsetHeight || 64, z = vv.scale || 1;
-    var top = vv.offsetTop + vv.height - h / z; // bar bottom sits on the visible bottom
-    bookBar.style.transform = 'translate(' + vv.offsetLeft + 'px,' + top + 'px) scale(' + (1 / z) + ')';
+    if(bookBar) bookBar.classList.toggle('show', y > 480 && !zoomed());
   }
-  window.addEventListener('scroll', placeBar, {passive:true});
-  window.addEventListener('resize', placeBar);
-  if(window.visualViewport){
-    window.visualViewport.addEventListener('resize', placeBar);
-    window.visualViewport.addEventListener('scroll', placeBar);
-  }
-  placeBar();
+  window.addEventListener('scroll', onScroll, {passive:true});
+  if(window.visualViewport) window.visualViewport.addEventListener('resize', onScroll);
+  onScroll();
 
   /* Hamburger drawer */
   var ham = document.getElementById('hamburger');

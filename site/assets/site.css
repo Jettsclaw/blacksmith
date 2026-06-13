@@ -372,20 +372,19 @@ section{position:relative}
 .footer-bottom p{font-size:.8rem;color:var(--muted);letter-spacing:.04em}
 
 /* ---------- Sticky mobile booking bar ----------
-   Positioned in JS via the VISUAL viewport (top:0 + transform) so it pins to the
-   bottom of what's actually on screen — never floats mid-page or balloons when
-   zoomed on iOS. Show/hide is opacity only; cart-open hide is a JS class. */
+   Dead-simple standard bottom-fixed bar. Slides up after the hero, slides away
+   when the cart opens or the page is pinch-zoomed (iOS floats fixed bars while
+   zoomed). No transforms beyond translateY — fragile per-frame positioning was
+   behaving unpredictably on-device. */
 .book-bar{
-  position:fixed;left:0;right:0;top:0;z-index:900;transform-origin:0 0;
+  position:fixed;left:0;right:0;bottom:0;z-index:900;
   padding:12px 14px calc(12px + env(safe-area-inset-bottom));
   background:rgba(11,11,13,.94);backdrop-filter:blur(12px);
   border-top:1px solid var(--line);
-  opacity:0;visibility:hidden;pointer-events:none;transition:opacity .3s var(--ease);
+  transform:translateY(120%);transition:transform .35s var(--ease);
 }
-.book-bar.show{opacity:1;visibility:visible;pointer-events:auto}
-.book-bar.cart-open{opacity:0;visibility:hidden;pointer-events:none}
-/* Fallback if visualViewport is unavailable: plain bottom-fixed bar */
-.book-bar.no-vv{top:auto;bottom:0;transform:none!important}
+.book-bar.show{transform:translateY(0)}
+.book-bar.cart-open{transform:translateY(120%)}
 
 /* ---------- Reviews marquee ---------- */
 .reviews{background:var(--ink);padding-top:clamp(48px,8vw,90px);padding-bottom:clamp(56px,9vw,110px);overflow:hidden}
