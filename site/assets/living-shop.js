@@ -250,26 +250,26 @@
   var fs = { on: false, rot: false, overlay: null, wrap: null, anchor: null };
   function fsLayout() {
     if (!fs.on || !fs.wrap || !fs.overlay) return;
-    // Cover exactly the VISIBLE region. When the page is pinch-zoomed, the
-    // visual viewport is a smaller/offset slice of the layout viewport; we pin
-    // the overlay to that slice so it always fills the screen at 1:1, zoomed
-    // or not — no dependence on iOS actually unzooming.
+    // Counter the pinch-zoom UNIFORMLY: keep the overlay at full layout-viewport
+    // size (so buttons/text keep their normal proportions) and scale the WHOLE
+    // thing by 1/zoom, pinned to the visible slice. Net effect = the takeover
+    // fills the screen at 1:1 whether zoomed or not — scene AND chrome together.
+    var de = document.documentElement;
+    var LW = de.clientWidth, LH = de.clientHeight; // layout viewport — stable under pinch-zoom
     var vv = window.visualViewport;
-    var VW = vv ? vv.width : window.innerWidth;
-    var VH = vv ? vv.height : window.innerHeight;
-    var OL = vv ? vv.offsetLeft : 0;
-    var OT = vv ? vv.offsetTop : 0;
-    var landscape = VW > VH;
+    var z = (vv && vv.scale) ? vv.scale : 1;
+    var OL = vv ? vv.offsetLeft : 0, OT = vv ? vv.offsetTop : 0;
+    var landscape = window.matchMedia('(orientation: landscape)').matches;
     // Rotation-lock OFF flow: once the device has really gone landscape,
     // turning it back upright exits to the normal page (Jett 2026-06-12).
     if (landscape) fs.wasLandscape = true;
     else if (fs.wasLandscape) { fsClose(); return; }
     fs.rot = !landscape;
     var o = fs.overlay.style;
-    o.width = VW + 'px'; o.height = VH + 'px';
-    o.transform = 'translate(' + OL + 'px,' + OT + 'px)';
-    fs.wrap.style.width = (landscape ? VW : VH) + 'px';
-    fs.wrap.style.height = (landscape ? VH : VW) + 'px';
+    o.width = LW + 'px'; o.height = LH + 'px';
+    o.transform = 'translate(' + OL + 'px,' + OT + 'px) scale(' + (1 / z) + ')';
+    fs.wrap.style.width = (landscape ? LW : LH) + 'px';
+    fs.wrap.style.height = (landscape ? LH : LW) + 'px';
     fs.wrap.style.transform = 'translate(-50%,-50%)' + (landscape ? '' : ' rotate(90deg)');
   }
   // iPhone-app feel: snap any pinch-zoom back to 1x and lock zoom while the
