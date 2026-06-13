@@ -830,6 +830,19 @@ section{position:relative}
 .ls-stage.ls-immersive.ls-fit{height:auto;overflow:hidden}
 .ls-stage.ls-immersive.ls-fit .ls-canvas{width:100%;height:auto}
 
+/* "Look around" portrait explore mode */
+.ls-look{position:absolute;left:10px;bottom:10px;z-index:6;display:none;cursor:pointer;
+  background:rgba(16,16,19,.82);border:1px solid rgba(200,164,77,.8);color:#e3c578;
+  border-radius:999px;padding:8px 14px;font-size:.78rem;backdrop-filter:blur(6px);
+  -webkit-tap-highlight-color:transparent}
+@media(max-width:640px){.ls-look{display:block}}
+.ls-look-exit{position:fixed;top:calc(14px + env(safe-area-inset-top));right:14px;z-index:1400;width:42px;height:42px;
+  border-radius:12px;background:rgba(16,16,19,.86);border:1px solid rgba(200,164,77,.8);
+  color:#e3c578;font-size:20px;line-height:1;cursor:pointer;backdrop-filter:blur(6px);
+  -webkit-tap-highlight-color:transparent}
+/* immersive "look around" hides the site chrome */
+html.ls-exploring .topbar,html.ls-exploring .book-bar,html.ls-exploring .scroll-cue{display:none!important}
+
 /* portrait scene: fills the phone, no pan */
 .ls-stage.ls-portrait{height:auto;overflow:visible;border-radius:0;border-left:none;border-right:none}
 .ls-stage.ls-portrait .ls-canvas{width:100%;height:auto;aspect-ratio:768/1376}
