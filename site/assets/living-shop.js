@@ -504,48 +504,6 @@
     xbtn.innerHTML = '&#x2922;';
     xbtn.addEventListener('click', function (e) { e.stopPropagation(); fsOpen(); });
     host.querySelector('.ls-stage').appendChild(xbtn);
-
-    // "Look around" — portrait: zoom into the shop and drag a finger to pan
-    // across it (native momentum scroll on the immersive stage). Tap ✕ to exit.
-    var stageEl = host.querySelector('.ls-stage');
-    var lookBtn = document.createElement('button');
-    lookBtn.className = 'ls-look';
-    lookBtn.innerHTML = '&#8596; Look around';
-    var lookExit = null, lookHintT = null;
-    function centerOnChairs() {
-      stageEl.scrollLeft = Math.max(0, (640 / W) * stageEl.scrollWidth - stageEl.clientWidth / 2);
-    }
-    function enterLook() {
-      document.documentElement.classList.add('ls-exploring'); // hides topbar + book-bar
-      host.classList.add('ls-full');
-      stageEl.classList.add('ls-immersive');
-      lookBtn.style.display = 'none';
-      xbtn.style.display = 'none';
-      lookExit = document.createElement('button');
-      lookExit.className = 'ls-look-exit';
-      lookExit.setAttribute('aria-label', 'Done looking around');
-      lookExit.innerHTML = '&#10005;';
-      lookExit.addEventListener('click', function (e) { e.stopPropagation(); exitLook(); });
-      stageEl.appendChild(lookExit);
-      var hint = document.createElement('div');
-      hint.className = 'ls-hint'; hint.textContent = 'Drag to look around';
-      stageEl.appendChild(hint);
-      requestAnimationFrame(function () { centerOnChairs(); hint.classList.add('show'); });
-      lookHintT = setTimeout(function () { hint.classList.remove('show'); }, 2600);
-    }
-    function exitLook() {
-      document.documentElement.classList.remove('ls-exploring');
-      host.classList.remove('ls-full');
-      stageEl.classList.remove('ls-immersive');
-      if (lookExit) { lookExit.remove(); lookExit = null; }
-      var h = stageEl.querySelector('.ls-hint'); if (h) h.remove();
-      clearTimeout(lookHintT);
-      lookBtn.style.display = '';
-      xbtn.style.display = '';
-      stageEl.scrollLeft = 0;
-    }
-    lookBtn.addEventListener('click', function (e) { e.stopPropagation(); enterLook(); });
-    stageEl.appendChild(lookBtn);
   }
 
   // ---------- info line under the canvas ----------
