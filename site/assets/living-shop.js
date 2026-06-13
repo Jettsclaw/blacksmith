@@ -51,7 +51,7 @@
   var LAYOUTS = {
     landscape: ROOM_V3 ? {
       room: 'room-v4', W: 1784, H: 672, // EXTENDED +200px (slat-wall insert) so 6 chairs never meet the couch
-      CHAIR_SPAN: { x0: 615, x1: 1150, y: 545, h: 150 },
+      CHAIR_SPAN: { x0: 412, x1: 1158, y: 545, h: 150 }, // widened to fill the whole bench (clears couch ~310, stops before SHOP cabinet ~1248) — even spread at every count, 6 fit clean
       BARBER_OFF: { x: 72, y: 12 }, CAPE_OFF: { x: 0, y: -6 },
       COUCH: [{ x: 140, y: 568 }, { x: 190, y: 560 }, { x: 238, y: 552 }], // purpose-built seated sprites, bums on the cushion line
       DOOR: { x: 1700, y: 640 }, SIGN: { x: 820, y: 118, font: 34 }, CAT_Y: 650,
