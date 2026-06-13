@@ -60,7 +60,8 @@
       DOOR: { x: 1440, y: 600 }, SIGN: { x: 645, y: 116, font: 34 }, CAT_Y: 652,
       MASSAGE: { x: 72, y: 668, h: 210, sprite: true }, // far bottom-left corner — where it sits on the live shop
       FRIDGE: null,
-      HOST: { x: 1308, y: 486, h: 150, sprite: 'jett-bust', float: false, flip: false, qoff: 0 }, // Jett waist-up in the pine Blacksmith hoodie, GROUNDED at the till (no floating head, clear of the shop cabinet + SHOP sign)
+      HOST: { x: 1318, y: 498, h: 150, sprite: 'jett-bust', float: false, flip: false, qoff: 0 }, // Jett waist-up in the pine Blacksmith hoodie, standing BEHIND the till
+      HOST_OCCLUDE: { sprite: 'till-front', x: 1260, y: 462 }, // desk front re-drawn OVER Jett so his waist cut-off hides behind the counter
       LEAN: { x: 1182, y: 560 }, // 2nd spare barber leans at the bench end by the cabinet
       SHOP_SIGN: null, // the SHOP sign is BAKED into room-v5 above the cabinet — don't double-draw it
       SHOPZONES: [{ x: 1100, y: 220, w: 78, h: 300, tag: 'products' },
@@ -145,6 +146,7 @@
   if (ROOM_V3) toLoad.push('sit-1', 'sit-2', 'sit-3');
   if (LAY.FRIDGE) toLoad.push('fridge');
   if (HOST_JETT) toLoad.push(LAY.HOST.sprite);
+  if (LAY.HOST_OCCLUDE) toLoad.push(LAY.HOST_OCCLUDE.sprite);
 
   var loaded = 0, failed = false;
   toLoad.forEach(function (n) {
@@ -854,6 +856,12 @@
         hb = HOST.sprite
           ? drawSprite(HOST.sprite, HOST.x, hostY, HOST.h, !!HOST.flip)
           : drawTorso('host-1', HOST.x, HOST.y, HOST.h);
+      }
+      // draw the till counter front OVER him so his waist cut-off hides behind it
+      if (LAY.HOST_OCCLUDE) {
+        var occ = IMGS[LAY.HOST_OCCLUDE.sprite];
+        if (occ && occ.naturalWidth)
+          ctx.drawImage(occ, px(LAY.HOST_OCCLUDE.x), px(LAY.HOST_OCCLUDE.y), px(occ.naturalWidth), px(occ.naturalHeight));
       }
       // bobbing gold "?" so people know he's tappable
       var qx = (stroll ? stroll.x : HOST.x) + (HOST.qoff || 0);
