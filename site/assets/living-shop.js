@@ -260,11 +260,26 @@
     fs.wrap.style.height = (landscape ? window.innerHeight : window.innerWidth) + 'px';
     fs.wrap.style.transform = 'translate(-50%,-50%)' + (landscape ? '' : ' rotate(90deg)');
   }
+  // iPhone-app feel: snap any pinch-zoom back to 1x and lock zoom while the
+  // takeover is open, then restore on exit. Without this, a fixed overlay
+  // opened while the page is pinch-zoomed anchors to the (off-screen) layout
+  // viewport → blank screen, no scroll, stuck (Jett's expand-while-zoomed bug).
+  var VP_LOCK = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
+  function vpLock() {
+    var m = document.querySelector('meta[name=viewport]');
+    if (m && fs.vpOrig == null) { fs.vpOrig = m.content; m.content = VP_LOCK; }
+  }
+  function vpRestore() {
+    var m = document.querySelector('meta[name=viewport]');
+    if (m && fs.vpOrig != null) { m.content = fs.vpOrig; }
+    fs.vpOrig = null;
+  }
   function fsOpen() {
     if (fs.on) return;
     fs.on = true;
     fs.wasLandscape = false;
     fs.savedScroll = window.scrollY; // seamless return to the same spot
+    vpLock();                        // kill any pinch-zoom before we build the overlay
     card.hidden = true;
     var stage = host.querySelector('.ls-stage');
     fs.anchor = host.querySelector('.ls-info');
@@ -306,6 +321,7 @@
     fsSettle();
     window.addEventListener('resize', fsSettle);
     window.addEventListener('orientationchange', fsSettle);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', fsSettle);
   }
 
   // iOS reports viewport dimensions in dribs mid-rotation — lay out now AND
@@ -324,14 +340,19 @@
     if (!fs.on) return;
     fs.on = false; fs.rot = false;
     card.hidden = true;
-    var stage = fs.overlay.querySelector('.ls-stage');
-    fs.anchor.parentNode.insertBefore(stage, fs.anchor);
-    fs.anchor.parentNode.insertBefore(card, fs.anchor);
-    document.body.removeChild(fs.overlay);
+    try {
+      var stage = fs.overlay.querySelector('.ls-stage');
+      fs.anchor.parentNode.insertBefore(stage, fs.anchor);
+      fs.anchor.parentNode.insertBefore(card, fs.anchor);
+      document.body.removeChild(fs.overlay);
+    } catch (e) { /* never let a half-built overlay strand the user */ }
     fs.overlay = fs.wrap = null;
+    // ALWAYS undo the page locks, even if the DOM moves above threw
     document.documentElement.classList.remove('ls-noscroll');
+    vpRestore();
     window.removeEventListener('resize', fsSettle);
     window.removeEventListener('orientationchange', fsSettle);
+    if (window.visualViewport) window.visualViewport.removeEventListener('resize', fsSettle);
     clearTimeout(settleT);
     window.scrollTo(0, fs.savedScroll || 0); // continue the scroll where they left it
   }
