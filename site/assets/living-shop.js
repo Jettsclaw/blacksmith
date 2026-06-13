@@ -249,16 +249,16 @@
   // device really rotates to landscape we drop the rotation and just fill.
   var fs = { on: false, rot: false, overlay: null, wrap: null, anchor: null };
   function fsLayout() {
-    if (!fs.on) return;
-    var landscape = window.innerWidth > window.innerHeight;
+    if (!fs.on || !fs.wrap) return;
+    // orientation via matchMedia — reliable even while the page is pinch-zoomed
+    var landscape = window.matchMedia('(orientation: landscape)').matches;
     // Rotation-lock OFF flow: once the device has really gone landscape,
     // turning it back upright exits to the normal page (Jett 2026-06-12).
     if (landscape) fs.wasLandscape = true;
     else if (fs.wasLandscape) { fsClose(); return; }
     fs.rot = !landscape;
-    fs.wrap.style.width = (landscape ? window.innerWidth : window.innerHeight) + 'px';
-    fs.wrap.style.height = (landscape ? window.innerHeight : window.innerWidth) + 'px';
-    fs.wrap.style.transform = 'translate(-50%,-50%)' + (landscape ? '' : ' rotate(90deg)');
+    // sizing is pure CSS (viewport units, zoom-proof) — JS only flips the class
+    fs.wrap.classList.toggle('ls-rot', fs.rot);
   }
   // iPhone-app feel: snap any pinch-zoom back to 1x and lock zoom while the
   // takeover is open, then restore on exit. Without this, a fixed overlay
