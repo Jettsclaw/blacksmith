@@ -3,6 +3,7 @@
    credentials live here: the Mac executor (which holds the key) picks the
    request up within seconds and writes a result blob this API serves back. */
 import { put, head } from '@vercel/blob';
+import crypto from 'node:crypto';
 
 const OK_ORIGINS = ['https://blacksmithbarbers.com.au', 'https://www.blacksmithbarbers.com.au', 'https://blacksmith-ten.vercel.app'];
 const SERVICES = {
@@ -45,6 +46,16 @@ export default async function handler(req, res) {
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0] || 'x';
   const phone = String(b.phone || '').replace(/\D/g, '');
   if (limited(ip) || limited(phone)) return res.status(429).json({ error: 'Too many attempts — call us on 0479 087 782.' });
+
+  if (b.action === 'cancel') { // in-chat cancellation — same relay pattern as booking
+    const cname = String(b.name || '').slice(0, 40);
+    if (!/^[a-zA-Z '\-]{2,40}$/.test(cname)) return res.status(400).json({ error: 'Add your name (letters only).' });
+    if (!/^04\d{8}$/.test(phone)) return res.status(400).json({ error: 'Mobile should look like 04xx xxx xxx.' });
+    const cid = crypto.randomUUID();
+    await put(`creq/${cid}.json`, JSON.stringify({ name: cname, phone, ip, ts: Date.now() }),
+      { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+    return res.status(200).json({ id: cid });
+  }
 
   const shop = String(b.shop || '');
   const sid = parseInt(b.service_id, 10);

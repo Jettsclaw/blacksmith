@@ -210,7 +210,7 @@
         <address>
           9 Gateway Drive<br>
           Biggera Waters QLD 4216<br>
-          <a href="tel:+61755638960">(07) 5563 8960</a><br>
+          <a href="tel:+61479087782">0479 087 782</a><br>
           <a class="mail" href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a><br><br>
           Mon&ndash;Fri 9:00&ndash;5:30<br>
           Sat&ndash;Sun 9:00&ndash;3:30
@@ -239,76 +239,94 @@
 
   // Real roster (from barbers.html) — scores accumulate per barber id.
   var BARBERS = {
-    jarred: {
-      name:"Jarred", role:"Head Barber",
-      line:"Fade obsessive. The kind of barber who won't let you leave until every line is right.",
-      photo:"assets/barbers/jarred.jpg",
-      book:"https://web.slikr.com.au/shop/1121/res"
+    bayli: {
+      name:"Bayli", role:"Head of Walk-Ins",
+      line:"On the walk-in floor Monday to Friday from 9am. Easy going, meticulous and great with every hairstyle — a fade and texture specialist.",
+      photo:"assets/barbers/bayli.jpg",
+      book:"https://web.slikr.com.au/shop/421/res"
     },
-    locky: {
-      name:"Locky", role:"Barber",
-      line:"One of the busiest chairs in the shop. Sharp fades, clean lines and a book full of regulars who don't sit anywhere else.",
-      photo:"assets/barbers/locky.jpg",
+    jarred: {
+      name:"Jarred", role:"Manager · Head Barber",
+      line:"Runs the shop and in the chair mainly Wednesday to Sunday. Cool under pressure, a master of the blade and beard, and brilliant with kids.",
+      photo:"assets/barbers/jarred.jpg",
       book:"https://web.slikr.com.au/shop/1121/res"
     },
     ben: {
       name:"Ben", role:"Barber",
-      line:"Solid hands, clean work. Keeps his chair full and his clients coming back.",
+      line:"Scissor work on another level. Classic cuts, long hair and proper styling — and the man for a big change.",
       photo:"assets/barbers/ben.jpg",
       book:"https://web.slikr.com.au/shop/421/res"
     },
-    bayli: {
-      name:"Bayli", role:"Head Barber",
-      line:"Runs the floor with precision and zero ego. Sets the standard every chair aims for.",
-      photo:"assets/barbers/bayli.jpg",
+    mubarak: {
+      name:"Mubarak", role:"Barber",
+      line:"Fast hands, sharp results. Fades and curly hair are his specialty — an easy, friendly chair and a favourite with teens and younger blokes.",
+      photo:"assets/barbers/mubarak.jpg",
+      book:"https://web.slikr.com.au/shop/421/res"
+    },
+    locky: {
+      name:"Locky", role:"Barber",
+      line:"Fades and custom work, sharp lines, clean finish. Skilled across the board.",
+      photo:"assets/barbers/locky.jpg",
+      book:"https://web.slikr.com.au/shop/1121/res"
+    },
+    jayden: {
+      name:"Jayden", role:"Apprentice",
+      line:"Trained by Jarred and cut from the same cloth. Doesn't rush, actually listens, no ego. Great for walk-ins, regulars and school cuts.",
+      photo:"assets/barbers/jayden.jpg",
       book:"https://web.slikr.com.au/shop/421/res"
     },
     sammi: {
       name:"Sammi", role:"Blackrose Stylist",
-      line:"Runs Blackrose — the salon side of the Blacksmith world. Colour, foils, precision styling and full transformations.",
+      line:"Runs Blackrose next door — a private, secluded salon space away from the busy barber floor. A genuine all-rounder doing colour, fades and scissor work; ideal if you'd rather a quieter chair, and great for couples coming in together.",
       photo:"assets/barbers/sammi.jpg?v=2",
       book:"https://web.slikr.com.au/blackrosesalon"
     }
   };
 
   // Each option carries a service suggestion + weighted scores toward barbers.
+  // Weights tuned to each barber's real strengths (Beau, Jun 2026).
   var QUESTIONS = [
     {
       q:"What are you after?",
       sub:"Pick the cut you'd book today.",
       options:[
-        {label:"Skin fade",            service:"Skin Fade", scores:{jarred:3, locky:2}},
-        {label:"Scissor cut & style",  service:"Scissor Cut & Style", scores:{ben:3, bayli:1}},
-        {label:"Beard sculpt",         service:"Beard Sculpt & Line-up", scores:{bayli:3, jarred:1}},
-        {label:"Full overhaul",        service:"Full Overhaul (cut + beard)", scores:{jarred:2, bayli:2}},
+        {label:"Skin / skin fade",        service:"Skin Fade", scores:{jarred:3, locky:3, mubarak:3, sammi:1}},
+        {label:"Scissor cut & classic style", service:"Scissor Cut & Style", scores:{ben:4, bayli:2, sammi:1}},
+        {label:"Beard sculpt & line-up",  service:"Beard Sculpt & Line-up", scores:{jarred:4, bayli:1}},
+        {label:"Curly hair",              service:"Curly Cut", scores:{mubarak:4}},
+        {label:"Long hair restyle",       service:"Long Hair Restyle", scores:{ben:4}},
+        {label:"Full overhaul (cut + beard)", service:"Full Overhaul", scores:{jarred:2, bayli:2, ben:1}},
         {label:"Colour & transformation", service:"Colour & Style", force:"sammi", scores:{}}
       ]
     },
     {
-      q:"How often do you cut?",
-      sub:"How tight you keep it tells us who'll suit you.",
+      q:"Who's sitting in the chair?",
+      sub:"Helps us point you to the right hands.",
       options:[
-        {label:"Weekly to fortnightly", service:"", scores:{jarred:2, locky:2}},
-        {label:"Monthly",               service:"", scores:{ben:2, bayli:1}},
-        {label:"When it gets bad",      service:"", scores:{ben:1, bayli:2}}
+        {label:"School-aged kid",         service:"", scores:{jayden:4, jarred:2}},
+        {label:"Teen / young adult",      service:"", scores:{mubarak:3, jayden:2}},
+        {label:"Adult (25–45)",           service:"", scores:{bayli:3, ben:1, jarred:1}},
+        {label:"Mature, or prefers a private space", service:"", scores:{sammi:6, ben:1, bayli:1}},
+        {label:"Any age — it's for me",   service:"", scores:{bayli:1, ben:1}}
       ]
     },
     {
-      q:"Your vibe in the chair?",
+      q:"What matters most to you?",
       sub:"There's no wrong answer here.",
       options:[
-        {label:"Sharp & precise",       service:"", scores:{jarred:3, locky:1, bayli:1}},
-        {label:"Relaxed & classic",     service:"", scores:{ben:3, bayli:1}},
-        {label:"Up for something new",  service:"", scores:{bayli:2, jarred:1, locky:1}}
+        {label:"Every line perfect — I'm fussy", service:"", scores:{jarred:4, ben:1}},
+        {label:"Feeling at home — I'm new to this", service:"", scores:{bayli:4, jayden:1}},
+        {label:"In and out — time matters", service:"", scores:{mubarak:3, ben:1, locky:1}},
+        {label:"A proper change — something new", service:"", scores:{ben:3, bayli:1}}
       ]
     },
     {
-      q:"How long since a cut you actually liked?",
+      q:"First time at Blacksmith?",
       sub:"Last thing — then we'll match you.",
       options:[
-        {label:"Got a barber, just shopping", service:"", scores:{locky:2, jarred:1}},
-        {label:"A while — need a reset",       service:"", scores:{bayli:2, jarred:1}},
-        {label:"First time at Blacksmith",     service:"", scores:{ben:2, bayli:1}}
+        {label:"First time — point me to safe hands", service:"", scores:{bayli:3, ben:1}},
+        {label:"Got a barber elsewhere, just shopping", service:"", scores:{locky:3, jarred:1}},
+        {label:"Walk-in, not fussy",       service:"", scores:{jayden:3, mubarak:1}}
       ]
     }
   ];
@@ -384,7 +402,7 @@
     // Forced result (colour -> Sammi) short-circuits the scoring entirely.
     var q1 = answers[0] !== null ? QUESTIONS[0].options[answers[0]] : null;
     if(q1 && q1.force){ return {winner:q1.force, service:q1.service || "Colour & Style"}; }
-    var totals = {jarred:0, locky:0, ben:0, bayli:0};
+    var totals = {bayli:0, jarred:0, ben:0, sammi:0, mubarak:0, locky:0, jayden:0};
     var serviceFromQ1 = QUESTIONS[0].options[answers[0]] ? QUESTIONS[0].options[answers[0]].service : "Cut";
     answers.forEach(function(oi, qi){
       if(oi === null) return;
@@ -392,7 +410,7 @@
       Object.keys(sc).forEach(function(k){ totals[k] += sc[k]; });
     });
     // pick winner; deterministic tie-break order
-    var order = ['jarred','locky','ben','bayli'];
+    var order = ['bayli','jarred','ben','sammi','mubarak','locky','jayden'];
     var winner = order[0], best = -1;
     order.forEach(function(k){ if(totals[k] > best){ best = totals[k]; winner = k; } });
     return {winner:winner, service:serviceFromQ1 || "Cut"};
@@ -409,11 +427,13 @@
 
   function whyCopy(id, service){
     switch(id){
-      case 'jarred': return "You want it sharp and you keep it tight — that's Jarred's whole game. He's the fade obsessive who won't sign off until every line is right.";
-      case 'locky':  return "You know what good looks like and you're after a chair that delivers it on repeat — Locky's book is full of regulars for exactly that reason.";
-      case 'ben':    return "Clean, classic, no fuss — Ben's solid hands keep clients coming back. A safe, sharp first chair at Blacksmith.";
-      case 'bayli':  return "You're after precision or a proper reset — Bayli runs the floor and sets the standard every other chair aims for.";
-      case 'sammi':  return "You're after colour or a full transformation — that's Sammi's world. She runs Blackrose, the salon side of Blacksmith, doing colour, foils and precision styling.";
+      case 'bayli':  return "You want an easy chair that nails any style — that's Bayli, Head of Walk-Ins, Monday to Friday from 9am. Meticulous, great with every hairstyle, and a fade and texture specialist.";
+      case 'jarred': return "You're after a master of the blade and beard who's cool under pressure — that's Jarred, running the shop and cutting mainly Wednesday to Sunday. (And the best chair for the kids.)";
+      case 'ben':    return "Scissor work, classic styling, long hair or a proper change — that's Ben. Precise, efficient, fully equipped, and genuinely good company in the chair.";
+      case 'mubarak':return "Fades or curly hair done fast and sharp — that's Mubarak. Skilled and time-efficient, with an easy, friendly chair the younger crowd loves.";
+      case 'locky':  return "Sharp fades and custom work, clean lines every time — Locky's lane. Skilled across the board.";
+      case 'jayden': return "Someone who won't rush, actually listens, and gets it done right — that's Jayden. Trained by Jarred, no ego, perfect for walk-ins and school cuts.";
+      case 'sammi':  return "A true all-rounder who keeps it straightforward and gets it right — that's Sammi at Blackrose, a private, secluded salon space next door, away from the busy barber floor. Colour, a clean fade or a classic scissor cut, and great for couples coming in together.";
       default:       return "";
     }
   }

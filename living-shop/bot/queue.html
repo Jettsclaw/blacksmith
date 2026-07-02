@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Join tomorrow's queue — Blacksmith Barbers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0f;--gold:#c8a44d;--paper:#f3f1ea;--line:rgba(243,241,234,.14)}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--ink);color:var(--paper);font-family:Inter,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:460px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;padding:34px 24px}
+.eyebrow{font-family:Oswald;font-weight:600;letter-spacing:3px;font-size:12px;color:var(--gold);text-transform:uppercase;margin-bottom:12px}
+h1{font-family:Oswald;font-weight:700;font-size:34px;line-height:1.02;text-transform:uppercase;letter-spacing:.5px}
+.lede{margin-top:12px;color:#b8b6ad;font-weight:300;font-size:14.5px;line-height:1.5}
+form{margin-top:26px;display:flex;flex-direction:column;gap:15px}
+label{font-family:Oswald;font-weight:500;letter-spacing:1.5px;font-size:11px;text-transform:uppercase;color:#9a988f;display:block;margin-bottom:7px}
+input,select{width:100%;background:#161618;border:1px solid var(--line);color:var(--paper);font-family:Inter;font-size:16px;padding:14px 14px;border-radius:11px;outline:none;transition:border-color .2s}
+input:focus,select:focus{border-color:var(--gold)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c8a44d' stroke-width='1.6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+.row{display:flex;gap:12px}.row>div{flex:1}
+button{margin-top:8px;font-family:Oswald;font-weight:600;letter-spacing:2px;text-transform:uppercase;font-size:15px;color:var(--ink);background:var(--gold);border:none;border-radius:11px;padding:17px;cursor:pointer;transition:transform .15s,opacity .2s}
+button:active{transform:scale(.985)}button:disabled{opacity:.5}
+.fine{margin-top:14px;color:#76746c;font-size:12px;line-height:1.5;text-align:center}
+.err{color:#e88;font-size:13px;min-height:16px;margin-top:2px}
+.done{text-align:center}
+.done .tick{width:62px;height:62px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-size:30px;color:var(--gold)}
+.done h1{font-size:30px}.done p{margin-top:14px;color:#b8b6ad;font-weight:300;line-height:1.55}
+.brand{position:fixed;top:22px;left:0;width:100%;text-align:center;font-family:Oswald;font-weight:700;letter-spacing:4px;font-size:13px;color:var(--paper);text-transform:uppercase}
+</style></head>
+<body>
+<div class="brand">Blacksmith Barbers</div>
+<div class="wrap" id="wrap">
+  <div class="eyebrow">Walk-in shop · book ahead</div>
+  <h1>Join tomorrow's<br>queue</h1>
+  <p class="lede">No online slots for the walk-in chairs — so reserve your spot for tomorrow and we'll have you on the list when the doors open. SLIKR texts you the confirmation.</p>
+  <form id="f" novalidate>
+    <div><label>Your name</label><input id="name" autocomplete="name" placeholder="Jack Smith" required></div>
+    <div><label>Mobile</label><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0400 123 456" required></div>
+    <div><label>Service</label><select id="service"></select></div>
+    <div class="row">
+      <div><label>Barber</label><select id="barber">
+        <option>First available</option><option>Bayli</option><option>Ben</option><option>Mubarak</option><option>Jayden</option>
+      </select></div>
+      <div><label>Preferred time</label><select id="time"></select></div>
+    </div>
+    <div class="err" id="err"></div>
+    <button id="btn" type="submit">Add me to the queue</button>
+  </form>
+  <p class="fine">It's a request, not a fixed slot — the shop confirms your spot in the morning.</p>
+</div>
+
+<script>
+const SVC_FALLBACK=[[1391,"Men's Cut",45],[4910,"Men's Cut + Beard",70],[2114,"Zero/Skin Fade",55],[4911,"Zero/Skin Fade + Beard",80],[1435,"Pensioner's Cut",30],[5499,"Scissor / Long Hair",78],[2113,"Buzz cut",35],[1517,"Beard trim",30]];
+const FEED='https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
+const svc=document.getElementById('service'),time=document.getElementById('time');
+// time options 9:00–17:00 every 30m + First available
+const topts=['First available'];for(let h=9;h<=17;h++){topts.push((h%12||12)+':00'+(h>=12?'pm':'am'));if(h<17)topts.push((h%12||12)+':30'+(h>=12?'pm':'am'));}
+time.innerHTML=topts.map(t=>`<option>${t}</option>`).join('');
+function fillSvc(list){svc.innerHTML=list.map(s=>`<option value="${s[0]}">${s[1]} · $${s[2]}</option>`).join('');}
+fillSvc(SVC_FALLBACK);
+fetch(FEED+'?t='+Date.now()).then(r=>r.json()).then(d=>{const b=(d.services&&d.services.barber)||[];if(b.length)fillSvc(b.map(m=>[m.id,m.name,m.cost]));}).catch(()=>{});
+
+const f=document.getElementById('f'),err=document.getElementById('err'),btn=document.getElementById('btn'),wrap=document.getElementById('wrap');
+f.addEventListener('submit',async e=>{e.preventDefault();err.textContent='';
+  const name=document.getElementById('name').value.trim();
+  const phone=document.getElementById('phone').value.replace(/\D/g,'').replace(/^61/,'0');
+  if(!/^[a-zA-Z][a-zA-Z '\-]{1,39}$/.test(name)){err.textContent='Pop your name in (letters only).';return;}
+  if(!/^04\d{8}$/.test(phone)){err.textContent='Aussie mobile please — like 0400 123 456.';return;}
+  btn.disabled=true;btn.textContent='Sending…';
+  try{
+    const r=await fetch('/api/queue',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,phone,service:document.getElementById('service').value,barber:document.getElementById('barber').value,time:document.getElementById('time').value})});
+    const j=await r.json();
+    if(!j.ok)throw 0;
+    wrap.innerHTML=`<div class="done"><div class="tick">✓</div><h1>You're on the list</h1><p>See you tomorrow, ${name.split(' ')[0]}. The shop locks in your spot first thing — SLIKR will text <b>${phone}</b> to confirm.</p><p class="fine" style="margin-top:22px">Need it sooner? Call the shop on 0479 087 782.</p></div>`;
+  }catch(_){err.textContent='Hmm, that didn\'t send — try again or call 0479 087 782.';btn.disabled=false;btn.textContent='Add me to the queue';}
+});
+</script>
+</body></html>

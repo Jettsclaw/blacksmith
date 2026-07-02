@@ -82,7 +82,7 @@
       return 'The menu:\n' + menu.map(function (m) { return m.name + ' — $' + m.cost; }).join('\n') + '\nTap Book and I’ll lock one in.';
     }
     if (kind === 'remote') return 'You never have to stand around — join the queue from right here, watch your spot live, and walk in when it’s your turn. Tap Book and I’ll set you up.';
-    if (kind === 'cancel') return 'To change or cancel a booking, give us a quick call on ' + PHONE + ' and we’ll sort it.';
+    if (kind === 'cancel') { cancelMode = true; return 'No worries — type the name and mobile you booked with and I’ll cancel it.\nLike: Jack Smith, 0400 123 456'; }
     if (kind === 'pay') return 'You pay at the shop after your cut — card or cash both sweet.';
     if (kind === 'how') return 'Two ways in: join the live queue (walk-in, I’ll show you the wait) or book a time with Jarred or Locky. Tap Book and I’ll walk you through it.';
     if (kind === 'app') return 'The Blacksmith app has booking + queue too: https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905';
@@ -271,7 +271,7 @@
       }, true);
     } else {
       wiz.slot = 'now';
-      bubble('You’ll join the live queue — current wait ~' + (snap.wait_mins || 0) + ' min.', 'bot');
+      bubble((snap && snap.barbers && snap.barbers.length) ? 'You’ll join the live queue — current wait ~' + (snap.wait_mins || 0) + ' min.' : 'You’ll join the live queue — I can’t see anyone clocked on right now, so the shop will confirm your spot.', 'bot');
       askDetails();
     }
   }
@@ -279,6 +279,29 @@
   function askDetails() {
     wiz.step = 'details';
     bubble('Last bit — type your name and mobile.\nLike: Jack Smith, 0400 123 456', 'bot');
+  }
+
+  var cancelMode = false;
+  function submitCancel(name, phone) {
+    bubble('One sec — cancelling…', 'bot');
+    fetch(BOOK_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'cancel', name: name, phone: phone }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.id) { bubble(d.error || 'That didn’t go through — call us on ' + PHONE + '.', 'bot'); cancelMode = false; return; }
+        var tries = 0;
+        var poll = setInterval(function () {
+          tries++;
+          fetch(BOOK_API + '?id=' + d.id).then(function (r) { return r.json(); }).then(function (st) {
+            if (st.done) {
+              clearInterval(poll);
+              bubble((st.ok ? '✅ ' : '❌ ') + (st.msg || 'All sorted.'), 'bot');
+              cancelMode = false;
+            } else if (tries > 25) { clearInterval(poll); bubble('Taking longer than usual — call ' + PHONE + ' and we’ll sort it.', 'bot'); cancelMode = false; }
+          }).catch(function () {});
+        }, 2500);
+      })
+      .catch(function () { bubble('Network hiccup — try again.', 'bot'); cancelMode = false; });
   }
 
   function submitBooking(name, phone) {
@@ -297,7 +320,7 @@
               if (st.ok && window.__lsYou) window.__lsYou(name); // your sprite walks into the living shop
               bubble(st.ok ? '✅ Booked! ' + (st.time === 'now' ? 'You’re in the queue — head in.' :
                 (wizDateLabel() + fmtT(st.time) + ' with ' + st.barber + '. You’ll get an SMS confirmation.')) :
-                '❌ ' + (st.msg || 'Couldn’t book that — try another time.'), 'bot');
+                '❌ ' + ((st.msg || '').indexOf('not available') >= 0 ? 'That barber isn’t taking that slot right now — try “any barber” or another time.' : (st.msg || 'Couldn’t book that — try another time.')), 'bot');
               wiz = null; setWizUI(false);
             } else if (tries > 25) { clearInterval(poll); bubble('Taking longer than usual — you’ll get an SMS if it landed, or call 0479 087 782.', 'bot'); wiz = null; setWizUI(false); }
           }).catch(function () {});
@@ -312,8 +335,12 @@
 
   function handleDetails(text) {
     var m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
-    if (!m) { bubble('Almost — send it like: Jack Smith, 0400 123 456', 'bot'); return; }
+    if (!m) {
+      if (cancelMode && /book|menu|price|wait|never ?mind|stop/i.test(text)) { cancelMode = false; bubble('No worries — cancelled the cancel. What next?', 'bot'); return; }
+      bubble('Almost — send it like: Jack Smith, 0400 123 456', 'bot'); return;
+    }
     var phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
+    if (cancelMode) { submitCancel(m[1].trim(), phone); return; }
     submitBooking(m[1].trim(), phone);
   }
 
@@ -458,7 +485,7 @@
       if (!t) return;
       input.value = '';
       bubble(t, 'me');
-      if (wiz && wiz.step === 'details') { handleDetails(t); return; }
+      if (cancelMode || (wiz && wiz.step === 'details')) { handleDetails(t); return; }
       var lower = t.toLowerCase();
       var kind = route(lower);
       if (kind === 'book') { startBooking(barberIn(lower)); return; }

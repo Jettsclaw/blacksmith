@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Now playing — Blacksmith Barbers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d0d0f;--gold:#c8a44d;--paper:#f3f1ea;--line:rgba(243,241,234,.12)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--ink);color:var(--paper);font-family:Inter,sans-serif;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+.np{width:100%;max-width:420px;display:flex;align-items:center;gap:16px;background:#161618;border:1px solid var(--line);border-radius:16px;padding:16px 18px;text-decoration:none;color:inherit;transition:border-color .25s,transform .2s}
+.np:hover{border-color:var(--gold);transform:translateY(-2px)}
+.art{width:62px;height:62px;border-radius:10px;flex:0 0 62px;background:#222 center/cover no-repeat;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.meta{min-width:0;flex:1}
+.eyebrow{display:flex;align-items:center;gap:8px;font-family:Oswald;font-weight:600;letter-spacing:2px;font-size:10px;text-transform:uppercase;color:var(--gold);margin-bottom:7px}
+.bars{display:inline-flex;gap:2px;align-items:flex-end;height:11px}
+.bars i{width:2.5px;background:var(--gold);border-radius:1px;animation:eq .9s ease-in-out infinite}
+.bars i:nth-child(2){animation-delay:.2s}.bars i:nth-child(3){animation-delay:.4s}.bars i:nth-child(4){animation-delay:.15s}
+@keyframes eq{0%,100%{height:3px}50%{height:11px}}
+.track{font-family:Oswald;font-weight:600;font-size:18px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.artist{color:#9a988f;font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.off .bars{display:none}.off .eyebrow{color:#6b6960}
+.sp{flex:0 0 auto;color:#1DB954;opacity:.85}
+</style></head>
+<body>
+<a class="np off" id="np" href="#" target="_blank" rel="noopener">
+  <div class="art" id="art"></div>
+  <div class="meta">
+    <div class="eyebrow"><span class="bars" id="bars"><i></i><i></i><i></i><i></i></span><span id="label">Spotify</span></div>
+    <div class="track" id="track">—</div>
+    <div class="artist" id="artist">Nothing playing right now</div>
+  </div>
+  <svg class="sp" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.6 14.4a.6.6 0 0 1-.86.2c-2.35-1.43-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.2c3.8-.87 7.07-.49 9.71 1.12.3.18.39.57.22.84Zm1.23-2.74a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.13-9.97-1.17a.78.78 0 1 1-.45-1.49c3.63-1.1 8.15-.56 11.24 1.33.36.22.48.69.25 1.07Zm.1-2.85C14.42 8.96 8.7 8.78 5.4 9.78a.93.93 0 1 1-.54-1.78c3.79-1.15 10.1-.93 14.06 1.42a.93.93 0 1 1-.95 1.6Z"/></svg>
+</a>
+<script>
+const $=id=>document.getElementById(id);
+async function tick(){
+  try{
+    const d=await (await fetch('/api/nowplaying',{cache:'no-store'})).json();
+    const np=$('np');
+    if(d.playing){
+      np.classList.remove('off');
+      $('label').textContent='Now playing in the shop';
+      $('track').textContent=d.track;
+      $('artist').textContent=d.artist;
+      $('art').style.backgroundImage=d.art?`url("${d.art}")`:'none';
+      np.href=d.url||'#';
+    }else{
+      np.classList.add('off');
+      $('label').textContent='Spotify';
+      $('track').textContent='Off air';
+      $('artist').textContent='Nothing playing right now';
+      $('art').style.backgroundImage='none';
+      np.href='#';
+    }
+  }catch(_){}
+}
+tick(); setInterval(tick,10000);
+</script>
+</body></html>

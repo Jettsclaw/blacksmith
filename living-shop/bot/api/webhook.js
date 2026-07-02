@@ -165,8 +165,20 @@ async function bkStep(token, chat, data) {
 async function bkDetails(token, chat, text) {
   const st = await getState(chat);
   if (!st || st.step !== 'details') return false;
+  // escape hatch: commands/greetings break out of the details trap instead of looping
+  if (text.trim().startsWith('/') || /\b(cancel|stop|restart|start over|menu|nvm|never ?mind|exit|quit|book|hi|hey|hello|help)\b/i.test(text)) {
+    await clearState(chat);
+    return false; // fall through to normal menu handling
+  }
   const m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
   if (!m) {
+    st.tries = (st.tries || 0) + 1;
+    if (st.tries >= 2) {
+      await clearState(chat);
+      await tg(token, 'sendMessage', { chat_id: chat, text: 'No worries — cancelled that. Tap ✂️ Book me in whenever you’re ready.', reply_markup: KEYBOARD });
+      return true;
+    }
+    await setState(chat, st);
     await tg(token, 'sendMessage', { chat_id: chat, text: 'Almost — send it like: Jack Smith, 0400 123 456' });
     return true;
   }
@@ -225,6 +237,45 @@ async function tg(token, method, body) {
   });
 }
 
+// ---- "Join tomorrow's queue" shop-side actions (qadd / qdis) ----
+async function readQueue(id) {
+  try { const m = await head(`queue/${id}.json`); return await (await fetch(m.downloadUrl)).json(); }
+  catch { return null; }
+}
+async function qAction(token, cq) {
+  const chat = cq.message.chat.id, mid = cq.message.message_id;
+  const who = (cq.from && cq.from.first_name) || 'shop';
+  const [act, id] = cq.data.split(':');
+  const rec = await readQueue(id);
+  // keep the original detail lines, swap the header line
+  const body = cq.message.text ? cq.message.text.split('\n').slice(1).join('\n').trim() : '';
+  if (act === 'qdis') {
+    await tg(token, 'editMessageText', { chat_id: chat, message_id: mid,
+      text: `✕ Dismissed by ${who}\n\n${body}`, reply_markup: { inline_keyboard: [] } });
+    return;
+  }
+  if (!rec) {
+    await tg(token, 'editMessageText', { chat_id: chat, message_id: mid,
+      text: `⚠️ Couldn't find that request to book — enter it into SLIKR manually.\n\n${body}`, reply_markup: { inline_keyboard: [] } });
+    return;
+  }
+  // map preferred time → SLIKR slot ("now" or 24h HH:MM)
+  let slot = 'now';
+  const tm = String(rec.time || '').match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i);
+  if (tm) { let h = +tm[1]; const mn = tm[2] || '00'; const ap = tm[3].toLowerCase();
+    if (ap === 'pm' && h < 12) h += 12; if (ap === 'am' && h === 12) h = 0;
+    slot = String(h).padStart(2, '0') + ':' + mn; }
+  const barber = rec.barber === 'First available' ? 'any' : rec.barber;
+  // hand the booking to the Mac executor (it creates the real SLIKR reservation
+  // + SLIKR texts the customer). Result/▒fail comes back to THIS shop chat.
+  await put(`req/${id}.json`, JSON.stringify({
+    service_id: rec.service, shop: 'barber', barber, slot,
+    name: rec.name, phone: rec.phone, tg_chat: chat, at: new Date().toISOString()
+  }), { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+  await tg(token, 'editMessageText', { chat_id: chat, message_id: mid,
+    text: `⏳ Booking ${rec.name} into SLIKR (by ${who})…\n\n${body}`, reply_markup: { inline_keyboard: [] } });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(200).send('ok');
   if (req.headers['x-telegram-bot-api-secret-token'] !== process.env.WEBHOOK_SECRET)
@@ -240,6 +291,7 @@ export default async function handler(req, res) {
         if (cq.data === 'bk') await bkStart(token, chat);
         else if (cq.data === 'bks') await bkSalon(token, chat);
         else if (cq.data.startsWith('bk')) await bkStep(token, chat, cq.data);
+        else if (cq.data.startsWith('qadd:') || cq.data.startsWith('qdis:')) await qAction(token, cq);
         else {
           const text = await answerFor(cq.data);
           await tg(token, 'sendMessage', { chat_id: chat, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
