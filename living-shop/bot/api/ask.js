@@ -3,6 +3,7 @@
    No model keys live in the cloud; this endpoint only ferries text. */
 import { put, head } from '@vercel/blob';
 
+const OK_ORIGINS = ['https://blacksmithbarbers.com.au', 'https://www.blacksmithbarbers.com.au', 'https://blacksmith-ten.vercel.app'];
 const hits = new Map();
 function limited(key) {
   const now = Date.now();
@@ -13,7 +14,7 @@ function limited(key) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', 'https://blacksmith-ten.vercel.app');
+  const _o = req.headers.origin; res.setHeader('Access-Control-Allow-Origin', OK_ORIGINS.includes(_o) ? _o : OK_ORIGINS[0]); res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
