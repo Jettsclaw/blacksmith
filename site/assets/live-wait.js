@@ -89,4 +89,39 @@
   }
   tick();
   setInterval(tick, 60000);
+
+  // "Join tomorrow's queue" → reveal the walk-in barbers rostered for the next
+  // open day (from SLIKR via the feed's walkin_next), then continue on Telegram.
+  var joinBtn = el('lw-join'), panel = el('lw-queue');
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+  function fmtDate(iso){
+    var d = new Date(iso + 'T00:00:00');
+    if (isNaN(d)) return '';
+    return d.toLocaleDateString('en-AU', { weekday:'short', day:'numeric', month:'short' });
+  }
+  if (joinBtn && panel) {
+    joinBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var w = lastSnap && lastSnap.walkin_next;
+      if (!w) { window.open(joinBtn.href, '_blank'); return; }
+      var label = w.label || 'the next open day';
+      var names = w.barbers || [];
+      el('lw-queue-head').innerHTML =
+        '<span class="eyebrow">Walk-ins ' + esc(label) + '</span>' +
+        (w.date ? '<span class="lw-queue-date">' + esc(fmtDate(w.date)) + '</span>' : '');
+      el('lw-queue-barbers').innerHTML = names.length
+        ? names.map(function (n) {
+            return '<span class="lw-chip"><span class="lw-chip-dot"></span>' + esc(n) + '</span>';
+          }).join('')
+        : '';
+      el('lw-queue-note').textContent = names.length
+        ? names.length + (names.length === 1 ? ' barber' : ' barbers') +
+          ' on walk-ins ' + label + ' · a spot every hour, 9am–4pm.'
+        : 'Walk-in barbers for ' + label + ' are set each morning — tap below and we’ll sort you a spot.';
+      var show = panel.hidden;
+      panel.hidden = !show;
+      joinBtn.setAttribute('aria-expanded', show ? 'true' : 'false');
+      if (show) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  }
 })();

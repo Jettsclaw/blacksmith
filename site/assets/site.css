@@ -964,3 +964,13 @@ section{position:relative}
 .ls-fsback{position:absolute;top:14px;left:16px;z-index:10;display:none;align-items:center;background:#e3c578;color:#141417;border:none;border-radius:999px;padding:11px 20px;font-family:Oswald,sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.07em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.45)}
 .ls-fsback.show{display:flex}
 .ls-fsw .sc-panel{z-index:9}
+
+/* Join-tomorrow's-queue reveal panel (live-wait card) */
+.lw-queue{margin-top:16px;padding-top:16px;border-top:1px solid rgba(200,164,77,.25)}
+.lw-queue[hidden]{display:none}
+.lw-queue-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+.lw-queue-date{color:#b9b3a6;font-size:.85rem;white-space:nowrap}
+.lw-queue-barbers{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.lw-queue-barbers:empty{display:none}
+.lw-queue-note{font-size:.85rem;line-height:1.5;color:#c9c3b6;margin:0 0 14px}
+.lw-join{cursor:pointer}
