@@ -497,7 +497,8 @@
     if (!b || !snap) return;
     var txt = snap.open ? 'Live Queue' : 'Tomorrow’s Queue';
     var big = b.querySelector('.hero-app-big');
-    if (big && big.textContent !== txt) big.textContent = txt;
+    if (big) { if (big.textContent !== txt) big.textContent = txt; }
+    else if (b.textContent !== txt) b.textContent = txt;
     b.setAttribute('aria-label', txt + ' — join the walk-in queue');
   }
   function tick() {
