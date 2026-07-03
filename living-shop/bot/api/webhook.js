@@ -230,8 +230,10 @@ async function wqSubmit(token, chat, promptText, userText) {
   const phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
   const time = (m[3] || 'First available').trim().slice(0, 20);
   const svcName = svc ? svc.name : 'Cut';
+  const fs = await feed().catch(() => null);
+  const date = fs && fs.next_date; // the day this walk-in is for → carried to SLIKR
   const id = globalThis.crypto.randomUUID().toLowerCase();
-  await put(`queue/${id}.json`, JSON.stringify({ id, name, phone, service: (svc ? svc.id : 0), service_name: svcName, barber: 'First available', time, at: new Date().toISOString() }),
+  await put(`queue/${id}.json`, JSON.stringify({ id, name, phone, service: (svc ? svc.id : 0), service_name: svcName, barber: 'First available', time, date: date || undefined, at: new Date().toISOString() }),
     { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
   const card = `🆕 *Tomorrow's walk-in* (via Telegram)\n\n👤 ${name}\n📱 ${phone}\n✂️ ${svcName}\n💈 First available\n🕐 Preferred: ${time}`;
   await tg(token, 'sendMessage', { chat_id: process.env.QUEUE_CHAT, text: card, parse_mode: 'Markdown',
@@ -311,12 +313,17 @@ async function qAction(token, cq) {
     if (ap === 'pm' && h < 12) h += 12; if (ap === 'am' && h === 12) h = 0;
     slot = String(h).padStart(2, '0') + ':' + mn; }
   const barber = rec.barber === 'First available' ? 'any' : rec.barber;
+  // Walk-in cards are for the NEXT OPEN DAY, so book with that date — otherwise the
+  // executor books TODAY and SLIKR rejects "Date Time is in the past" once that time
+  // has passed. Prefer the date stored on the card; else the feed's next_date.
+  let date = rec.date;
+  if (!date) { const s = await feed().catch(() => null); date = (s && s.next_date) || undefined; }
   // hand the booking to the Mac executor (it creates the real SLIKR reservation
   // + SLIKR texts the customer). Result/▒fail comes back to THIS shop chat.
   await put(`req/${id}.json`, JSON.stringify({
-    service_id: rec.service, shop: 'barber', barber, slot,
+    service_id: rec.service, shop: 'barber', barber, slot, date,
     name: rec.name, phone: rec.phone, tg_chat: chat, at: new Date().toISOString()
-  }), { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+  }), { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
   await tg(token, 'editMessageText', { chat_id: chat, message_id: mid,
     text: `⏳ Booking ${rec.name} into SLIKR (by ${who})…\n\n${body}`, reply_markup: { inline_keyboard: [] } });
 }

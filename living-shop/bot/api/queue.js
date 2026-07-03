@@ -43,12 +43,17 @@ export default async function handler(req, res) {
   if (!/^04\d{8}$/.test(phone)) return res.status(400).json({ ok: false, err: 'phone' });
   if (!SERVICES[service]) return res.status(400).json({ ok: false, err: 'service' });
 
+  // the day this walk-in is for = the shop's next open day → carried through so the
+  // Add-to-SLIKR booking uses the right date (not today → "Date Time is in the past").
+  let nextDate;
+  try { const fr = await fetch('https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' }); const fs = await fr.json(); nextDate = fs && fs.next_date; } catch {}
+
   const id = globalThis.crypto.randomUUID().toLowerCase();
-  const rec = { id, name, phone, service, service_name: SERVICES[service], barber, time, at: new Date().toISOString() };
+  const rec = { id, name, phone, service, service_name: SERVICES[service], barber, time, date: nextDate || undefined, at: new Date().toISOString() };
 
   try {
     await put(`queue/${id}.json`, JSON.stringify(rec),
-      { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+      { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
 
     const card =
       `🆕 *Tomorrow's walk-in* (via website)\n\n` +
