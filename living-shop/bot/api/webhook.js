@@ -208,13 +208,30 @@ async function wqStart(token, chat) {
   await tg(token, 'sendMessage', { chat_id: chat, text: "Tomorrow's walk-in list 🚶 — what are you after?",
     reply_markup: { inline_keyboard: menu.map(m => [{ text: m.cost ? `${m.name} · $${m.cost}` : m.name, callback_data: 'wqs:' + m.id }]) } });
 }
-// Time choices for a next-day walk-in: "First available" + half-hourly 9:00–4:00.
-function wqTimes() {
+// Dates offered: Tomorrow + next 6 days (shop's open every day). code = MMDD.
+const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function wqDates() {
+  const out = [], base = Date.now();
+  for (let i = 1; i <= 7; i++) {
+    const d = new Date(base + i * 86400000);
+    const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    out.push({ iso, code: String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0'),
+      label: i === 1 ? 'Tomorrow' : `${DOW[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}` });
+  }
+  return out;
+}
+// Half-hourly slots for a date, using that day's real hours from feed.week.
+async function wqDayTimes(iso) {
+  const s = await feed().catch(() => null);
+  const dow = DOW[new Date(iso + 'T12:00:00').getDay()];
+  let start = '09:00', close = '17:30';
+  ((s && s.week) || []).forEach(w => { if (String(w.day).split(',').indexOf(dow) >= 0) { start = w.start; close = w.close; } });
+  const sMin = +start.slice(0, 2) * 60 + +start.slice(3, 5), eMin = +close.slice(0, 2) * 60 + +close.slice(3, 5);
   const out = [{ code: 'fa', label: 'First available' }];
-  for (let h = 9; h <= 16; h++) for (const mn of ['00', '30']) {
-    if (h === 16 && mn === '30') continue;
-    const ap = h >= 12 ? 'pm' : 'am', hh = h % 12 || 12;
-    out.push({ code: String(h).padStart(2, '0') + mn, label: hh + (mn === '00' ? '' : ':' + mn) + ap });
+  for (let m = sMin; m <= eMin - 30; m += 30) {
+    const h = Math.floor(m / 60), mn = m % 60, ap = h >= 12 ? 'pm' : 'am', hh = h % 12 || 12;
+    out.push({ code: String(h).padStart(2, '0') + String(mn).padStart(2, '0'), label: hh + (mn === 0 ? '' : ':' + String(mn).padStart(2, '0')) + ap });
   }
   return out;
 }
@@ -222,18 +239,28 @@ async function wqService(token, chat, data) {
   const id = parseInt(data.slice(4), 10);
   const menu = await wqMenu();
   const svc = menu.find(x => x.id === id) || { id, name: 'Cut' };
-  const times = wqTimes(); const rows = []; let row = [];
-  times.forEach((t, i) => { row.push({ text: t.label, callback_data: `wqt:${id}:${t.code}` }); if (row.length === 3 || i === times.length - 1) { rows.push(row); row = []; } });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `${svc.name} 🚶 — what time tomorrow?`, reply_markup: { inline_keyboard: rows } });
+  const dates = wqDates(); const rows = []; let row = [];
+  dates.forEach((dt, i) => { row.push({ text: dt.label, callback_data: `wqd:${id}:${dt.code}` }); if (row.length === 2 || i === dates.length - 1) { rows.push(row); row = []; } });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `${svc.name} 🚶 — which day?`, reply_markup: { inline_keyboard: rows } });
 }
-async function wqTime(token, chat, data) {
-  const p = data.split(':'); const id = parseInt(p[1], 10);
+async function wqDate(token, chat, data) {
+  const p = data.split(':'); const id = parseInt(p[1], 10), code = p[2];
   const menu = await wqMenu();
   const svc = menu.find(x => x.id === id) || { id, name: 'Cut' };
-  const t = wqTimes().find(x => x.code === p[2]) || { label: 'First available' };
-  // force_reply carries svc + time (recovered from reply_to_message on submit) — stateless
+  const dt = wqDates().find(x => x.code === code) || wqDates()[0];
+  const times = await wqDayTimes(dt.iso); const rows = []; let row = [];
+  times.forEach((t, i) => { row.push({ text: t.label, callback_data: `wqt:${id}:${code}:${t.code}` }); if (row.length === 3 || i === times.length - 1) { rows.push(row); row = []; } });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `${svc.name} · ${dt.label} — what time?`, reply_markup: { inline_keyboard: rows } });
+}
+async function wqTime(token, chat, data) {
+  const p = data.split(':'); const id = parseInt(p[1], 10), dcode = p[2], tcode = p[3];
+  const menu = await wqMenu();
+  const svc = menu.find(x => x.id === id) || { id, name: 'Cut' };
+  const dt = wqDates().find(x => x.code === dcode) || wqDates()[0];
+  const t = (await wqDayTimes(dt.iso)).find(x => x.code === tcode) || { label: 'First available' };
+  // force_reply carries svc + date + time (recovered from reply_to_message) — stateless
   await tg(token, 'sendMessage', { chat_id: chat,
-    text: `${svc.name} · ${t.label} — you're going ${WQ_MARK}.\nLast bit — reply with your name and mobile.\nLike: Jack Smith, 0400 123 456`,
+    text: `${svc.name} · ${dt.label} · ${t.label} — you're going ${WQ_MARK}.\nLast bit — reply with your name and mobile.\nLike: Jack Smith, 0400 123 456`,
     reply_markup: { force_reply: true } });
 }
 async function wqSubmit(token, chat, promptText, userText) {
@@ -241,13 +268,14 @@ async function wqSubmit(token, chat, promptText, userText) {
   // recover the service = the LONGEST menu name that appears in the prompt
   let svc = null;
   menu.slice().sort((a, b) => b.name.length - a.name.length).forEach(m => { if (!svc && promptText.indexOf(m.name) >= 0) svc = m; });
-  // recover the chosen time = the token between "· " and " —"
-  const tmm = promptText.match(/·\s*(.+?)\s*—/);
+  // recover chosen date (match a day label) + time (token right before "—")
+  let dt = null; wqDates().forEach(x => { if (!dt && promptText.indexOf(x.label) >= 0) dt = x; });
+  const tmm = promptText.match(/·\s*([^·]+?)\s*—/);
   const time = (tmm ? tmm[1] : 'First available').trim().slice(0, 20);
   const m = userText.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
   if (!m) {
     await tg(token, 'sendMessage', { chat_id: chat,
-      text: `Almost — reply with your name and mobile.\nLike: Jack Smith, 0400 123 456\n\n${svc ? svc.name : 'Cut'} · ${time} — you're going ${WQ_MARK}.`,
+      text: `Almost — reply with your name and mobile.\nLike: Jack Smith, 0400 123 456\n\n${svc ? svc.name : 'Cut'} · ${dt ? dt.label : 'Tomorrow'} · ${time} — you're going ${WQ_MARK}.`,
       reply_markup: { force_reply: true } });
     return;
   }
@@ -255,14 +283,16 @@ async function wqSubmit(token, chat, promptText, userText) {
   const phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
   const svcName = svc ? svc.name : 'Cut';
   const fs = await feed().catch(() => null);
-  const date = fs && fs.next_date; // the day this walk-in is for → carried to SLIKR
+  const date = (dt && dt.iso) || (fs && fs.next_date);
+  const dayLabel = dt ? dt.label : 'Tomorrow';
+  const daySentence = dayLabel === 'Tomorrow' ? 'tomorrow' : dayLabel;
   const id = globalThis.crypto.randomUUID().toLowerCase();
   await put(`queue/${id}.json`, JSON.stringify({ id, name, phone, service: (svc ? svc.id : 0), service_name: svcName, barber: 'First available', time, date: date || undefined, at: new Date().toISOString() }),
     { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
-  const card = `🆕 *Tomorrow's walk-in* (via Telegram)\n\n👤 ${name}\n📱 ${phone}\n✂️ ${svcName}\n💈 First available\n🕐 Preferred: ${time}`;
+  const card = `🆕 *Walk-in* (via Telegram)\n\n👤 ${name}\n📱 ${phone}\n✂️ ${svcName}\n💈 First available\n🗓 ${dayLabel}\n🕐 Preferred: ${time}`;
   await tg(token, 'sendMessage', { chat_id: process.env.QUEUE_CHAT, text: card, parse_mode: 'Markdown',
     reply_markup: { inline_keyboard: [[{ text: '✅ Add to SLIKR', callback_data: 'qadd:' + id }, { text: '✕ Dismiss', callback_data: 'qdis:' + id }]] } });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on tomorrow's walk-in list, ${name.split(' ')[0]} — we'll text you to confirm your time in the morning. See you then! ✂️` });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on the walk-in list for ${daySentence}, ${name.split(' ')[0]} — we'll text you to confirm your time. See you then! ✂️` });
 }
 
 async function answerFor(kind) {
@@ -368,6 +398,7 @@ export default async function handler(req, res) {
         else if (cq.data === 'bks') await bkSalon(token, chat);
         else if (cq.data === 'wq') await wqStart(token, chat);
         else if (cq.data.startsWith('wqs:')) await wqService(token, chat, cq.data);
+        else if (cq.data.startsWith('wqd:')) await wqDate(token, chat, cq.data);
         else if (cq.data.startsWith('wqt:')) await wqTime(token, chat, cq.data);
         else if (cq.data.startsWith('bk')) await bkStep(token, chat, cq.data);
         else if (cq.data.startsWith('qadd:') || cq.data.startsWith('qdis:')) await qAction(token, cq);
