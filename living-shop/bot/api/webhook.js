@@ -72,13 +72,12 @@ async function bkStart(token, chat) {
   if (!s) return;
   if (!s.open) {
     const names = Object.keys(s.slots_next || {}).filter(n => (s.slots_next[n] || []).length);
-    if (!names.length) {
-      await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed and tomorrow's book isn't open yet — try again in the morning, or call ${PHONE}.` });
-      return;
-    }
-    await setState(chat, { step: 'barber', ahead: true, date: s.next_date });
-    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now, but you can lock in ${s.next_label}. Who with?`,
-      reply_markup: { inline_keyboard: names.map(n => [{ text: n, callback_data: 'bk1:' + n }]) } });
+    if (names.length) await setState(chat, { step: 'barber', ahead: true, date: s.next_date });
+    const rows = [[{ text: "🚶 Join tomorrow's walk-in queue", callback_data: 'wq' }]];
+    names.forEach(n => rows.push([{ text: '📅 Book ahead · ' + n, callback_data: 'bk1:' + n }]));
+    const tail = names.length ? ` Or lock a set time ${s.next_label} with a barber below.` : '';
+    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now. Join tomorrow's walk-in queue and we'll confirm your time in the morning.${tail}`,
+      reply_markup: { inline_keyboard: rows } });
     return;
   }
   await setState(chat, { step: 'barber' });
@@ -194,6 +193,52 @@ async function bkDetails(token, chat, text) {
   return true;
 }
 
+// ---- "Join tomorrow's walk-in queue" — STATELESS. The chosen service rides
+//      Telegram's own reply chain (force_reply → the customer's reply comes back
+//      with reply_to_message = our prompt), so there is NO server state to read
+//      stale. Posts a card to QUEUE_CHAT for Bayli. (Winston 2026-07-03) ----
+const WQ_MARK = "on tomorrow's walk-in list"; // unique phrase in the prompt = our marker
+async function wqMenu() {
+  const s = await feed().catch(() => null);
+  return (s && s.services && s.services.barber && s.services.barber.length) ? s.services.barber : [];
+}
+async function wqStart(token, chat) {
+  const menu = await wqMenu();
+  if (!menu.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `Our menu's offline for a moment — try again shortly, or call ${PHONE}.` }); return; }
+  await tg(token, 'sendMessage', { chat_id: chat, text: "Tomorrow's walk-in list 🚶 — what are you after?",
+    reply_markup: { inline_keyboard: menu.map(m => [{ text: m.cost ? `${m.name} · $${m.cost}` : m.name, callback_data: 'wqs:' + m.id }]) } });
+}
+async function wqPrompt(token, chat, svcName, lead) {
+  await tg(token, 'sendMessage', { chat_id: chat,
+    text: `${lead}${svcName} — you're going ${WQ_MARK}.\nReply with your name, mobile and a preferred time.\nLike: Jack Smith, 0400 123 456, 9:30am\n(or just name + mobile for first available)`,
+    reply_markup: { force_reply: true } });
+}
+async function wqService(token, chat, data) {
+  const id = parseInt(data.slice(4), 10);
+  const menu = await wqMenu();
+  const svc = menu.find(x => x.id === id) || { id, name: 'Cut' };
+  await wqPrompt(token, chat, svc.name, '');
+}
+async function wqSubmit(token, chat, promptText, userText) {
+  const menu = await wqMenu();
+  // recover the service = the LONGEST menu name that appears in the prompt
+  let svc = null;
+  menu.slice().sort((a, b) => b.name.length - a.name.length).forEach(m => { if (!svc && promptText.indexOf(m.name) >= 0) svc = m; });
+  const m = userText.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})(?:[,\s]+(.+))?\s*$/);
+  if (!m) { await wqPrompt(token, chat, (svc ? svc.name : 'Cut'), 'Almost — send it like: Jack Smith, 0400 123 456, 9:30am\n\n'); return; }
+  const name = m[1].trim();
+  const phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
+  const time = (m[3] || 'First available').trim().slice(0, 20);
+  const svcName = svc ? svc.name : 'Cut';
+  const id = globalThis.crypto.randomUUID().toLowerCase();
+  await put(`queue/${id}.json`, JSON.stringify({ id, name, phone, service: (svc ? svc.id : 0), service_name: svcName, barber: 'First available', time, at: new Date().toISOString() }),
+    { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
+  const card = `🆕 *Tomorrow's walk-in* (via Telegram)\n\n👤 ${name}\n📱 ${phone}\n✂️ ${svcName}\n💈 First available\n🕐 Preferred: ${time}`;
+  await tg(token, 'sendMessage', { chat_id: process.env.QUEUE_CHAT, text: card, parse_mode: 'Markdown',
+    reply_markup: { inline_keyboard: [[{ text: '✅ Add to SLIKR', callback_data: 'qadd:' + id }, { text: '✕ Dismiss', callback_data: 'qdis:' + id }]] } });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on tomorrow's walk-in list, ${name.split(' ')[0]} — we'll text you to confirm your time in the morning. See you then! ✂️` });
+}
+
 async function answerFor(kind) {
   let s;
   try { s = await feed(); } catch { return `Couldn't reach the shop feed — call us on ${PHONE}.`; }
@@ -290,6 +335,8 @@ export default async function handler(req, res) {
       if (!limited(chat)) {
         if (cq.data === 'bk') await bkStart(token, chat);
         else if (cq.data === 'bks') await bkSalon(token, chat);
+        else if (cq.data === 'wq') await wqStart(token, chat);
+        else if (cq.data.startsWith('wqs:')) await wqService(token, chat, cq.data);
         else if (cq.data.startsWith('bk')) await bkStep(token, chat, cq.data);
         else if (cq.data.startsWith('qadd:') || cq.data.startsWith('qdis:')) await qAction(token, cq);
         else {
@@ -302,6 +349,12 @@ export default async function handler(req, res) {
       const chatId = u.message.chat.id;
       if (!limited(chatId)) {
         const raw = u.message.text || '';
+        // walk-in: reply to our force_reply prompt → post the card (no state read)
+        const rtm = u.message.reply_to_message;
+        if (rtm && rtm.text && rtm.text.indexOf(WQ_MARK) >= 0) {
+          await wqSubmit(token, chatId, rtm.text, raw);
+          return res.status(200).send('ok');
+        }
         if (await bkDetails(token, chatId, raw)) return res.status(200).send('ok');
         const t = raw.toLowerCase();
         const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
