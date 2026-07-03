@@ -293,6 +293,37 @@ async function wqSubmit(token, chat, promptText, userText) {
   await tg(token, 'sendMessage', { chat_id: process.env.QUEUE_CHAT, text: card, parse_mode: 'Markdown',
     reply_markup: { inline_keyboard: [[{ text: '✅ Add to SLIKR', callback_data: 'qadd:' + id }, { text: '✕ Dismiss', callback_data: 'qdis:' + id }]] } });
   await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on the walk-in list for ${daySentence}, ${name.split(' ')[0]} — we'll text you to confirm your time. See you then! ✂️` });
+  await saveCustomer(chat, { name, phone, last_service: svcName, last_time: time });
+}
+
+// ---- Cancel via the bot — stateless force_reply → creq for the Mac executor ----
+const CANCEL_MARK = "cancel your booking";
+async function cancelStart(token, chat) {
+  await tg(token, 'sendMessage', { chat_id: chat,
+    text: `No worries — reply with the name and mobile you booked with and I'll cancel your booking.\nLike: Jack Smith, 0400 123 456`,
+    reply_markup: { force_reply: true } });
+}
+async function cancelSubmit(token, chat, userText) {
+  const m = userText.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
+  if (!m) { await tg(token, 'sendMessage', { chat_id: chat, text: `Almost — send the name + mobile you booked with.\nLike: Jack Smith, 0400 123 456\n\n(to ${CANCEL_MARK})`, reply_markup: { force_reply: true } }); return; }
+  const name = m[1].trim(), phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
+  const id = globalThis.crypto.randomUUID().toLowerCase();
+  await put(`creq/${id}.json`, JSON.stringify({ name, phone, tg_chat: chat, ts: Date.now() }),
+    { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `Done ${name.split(' ')[0]} — I've sent your cancellation to the shop and you won't be marked a no-show. ✂️` });
+}
+// ---- Customer memory: remember returning customers. Written on booking, read on a
+//      later visit (always days apart) so head() is fully consistent here. ----
+async function getCustomer(chat) {
+  try { const m = await head(`cust/${chat}.json`); return await (await fetch(m.downloadUrl, { cache: 'no-store' })).json(); }
+  catch { return null; }
+}
+async function saveCustomer(chat, prof) {
+  try {
+    const prev = (await getCustomer(chat)) || {};
+    await put(`cust/${chat}.json`, JSON.stringify({ ...prev, ...prof, chat, visits: (prev.visits || 0) + 1, updated: new Date().toISOString() }),
+      { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
+  } catch {}
 }
 
 async function answerFor(kind) {
@@ -418,6 +449,10 @@ export default async function handler(req, res) {
           await wqSubmit(token, chatId, rtm.text, raw);
           return res.status(200).send('ok');
         }
+        if (rtm && rtm.text && rtm.text.indexOf(CANCEL_MARK) >= 0) {
+          await cancelSubmit(token, chatId, raw);
+          return res.status(200).send('ok');
+        }
         if (await bkDetails(token, chatId, raw)) return res.status(200).send('ok');
         const t = raw.toLowerCase();
         const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
@@ -440,6 +475,7 @@ export default async function handler(req, res) {
         else if (/wait|long|busy|queue/.test(t)) kind = 'wait';
         else if (/who|on today|working/.test(t) || nm) kind = 'who';
         if (kind === 'book') { await bkStart(token, chatId); return res.status(200).send('ok'); }
+        if (kind === 'cancel') { await cancelStart(token, chatId); return res.status(200).send('ok'); }
         let text;
         const s2 = await feed().catch(() => null);
         if (kind === 'prices') {
@@ -457,7 +493,7 @@ export default async function handler(req, res) {
         else if (kind === 'jobs') text = `Keen to join the trade? Call ${PHONE} or drop in — we also run the Blacksmith Academy.`;
         else if (kind === 'gift') text = `Ask at the counter or call ${PHONE}.`;
         else if (kind === 'human') text = `Call the shop: ${PHONE}.`;
-        else if (kind === 'hi') text = 'G\u2019day! Live wait, who\u2019s on, prices, or a booking — what do you need?';
+        else if (kind === 'hi') { const c = await getCustomer(chatId); text = (c && c.name) ? `G\u2019day ${c.name.split(' ')[0]}! 👋 Live wait, who\u2019s on, prices, or a booking — what do you need?` : 'G\u2019day! Live wait, who\u2019s on, prices, or a booking — what do you need?'; }
         else if (kind === 'thanks') text = 'Easy as. Anything else?';
         else if (kind === 'who' && nm && s2) {
           const b = s2.barbers.find(x => x.name.toLowerCase().startsWith(nm));
