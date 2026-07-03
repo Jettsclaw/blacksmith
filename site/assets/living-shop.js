@@ -136,7 +136,7 @@
   // ---------- assets ----------
   var IMGS = {}, toLoad = [LAY.room], BARBER_KEYS = {};
   // barber sprite frames: 0 stand, 1+2 cutting, 3 idle
-  var BARBER_NAMES = ['bayli','ben','cam','jarred','jayden','locky','mubarak','sami'];
+  var BARBER_NAMES = ['bayli','ben','cam','jarred','jayden','johnnatan','locky','mubarak','sami'];
   BARBER_NAMES.forEach(function (n) {
     for (var i = 0; i < 4; i++) toLoad.push(n + '-' + i);
   });
