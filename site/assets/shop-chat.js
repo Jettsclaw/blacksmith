@@ -632,6 +632,17 @@
     if (!body) return;
     setWizUI(false);
     if (!snap) { setTimeout(scWaitList, 500); return; }
+    if (!snap.open) {
+      // CLOSED walk-in path (Live Queue / Join tomorrow's queue): no live queue
+      // yet — invite them onto tomorrow's list early via Telegram. (Beau 2026-07-03)
+      bubble('We’re closed right now — but you can get on tomorrow’s walk-in list early. Leave your details and we’ll put you down first thing in the morning.', 'bot');
+      var tg = el('div', 'sc-msg bot');
+      var ta = el('a', 'sc-book', 'Message us on Telegram →');
+      ta.href = TG_URL; ta.target = '_blank'; ta.rel = 'noopener';
+      tg.appendChild(ta);
+      body.appendChild(tg); body.scrollTop = body.scrollHeight;
+      return;
+    }
     bubble(answer('wait', snap), 'bot');
     if (snap.open && fresh(snap) && snap.walkin_wait != null) {
       var asOfD = new Date(snap.as_of.replace(/(\d{2})(\d{2})$/, '$1:$2'));
@@ -661,16 +672,20 @@
           opts.push({ label: b.name.split(' ')[0], barber: b.name });
       });
     } else {
+      // CLOSED: list EVERY barber on tomorrow's bookings roster (all slots_next
+      // keys) even if their times array is momentarily empty, so the list never
+      // collapses to whoever happens to be loaded. (Beau 2026-07-03)
       Object.keys(snap.slots_next || {}).forEach(function (n) {
-        if ((snap.slots_next[n] || []).length)
-          opts.push({ label: n.split(' ')[0], barber: n, ahead: true });
+        opts.push({ label: n.split(' ')[0], barber: n, ahead: true });
       });
     }
-    // Sami — the salon stylist. Shown as just "Sami" (never "Blackrose"/"salon"),
-    // and only when her book actually has live slots.
+    // Sami — the salon stylist. Shown as just "Sami" (never "Blackrose"/"salon").
+    // When OPEN she appears if her book has live slots; when CLOSED she ALWAYS
+    // appears (salon / next-day path) — startSalon routes to her booking flow.
+    // (Beau 2026-07-03)
     var sal = snap.salon || {};
     var hasSalon = Object.keys(sal.slots || {}).some(function (k) { return (sal.slots[k] || []).length; });
-    if (hasSalon) opts.push({ label: 'Sami', salon: true });
+    if (hasSalon || !snap.open) opts.push({ label: 'Sami', salon: true });
 
     if (!opts.length) {
       bubble(snap.open
@@ -682,6 +697,16 @@
     chipRow(opts, function (o) {
       if (o.salon) { bubble('Sami', 'me'); startSalon('Sami'); return; }
       bubble(o.label, 'me');
+      // On tomorrow's roster but times not loaded yet → graceful, not a dead end.
+      if (o.ahead && !((snap.slots_next && snap.slots_next[o.barber]) || []).length) {
+        bubble(o.label + '’s ' + (snap.next_label || 'tomorrow') + ' times load closer to the day — check back in the morning, or message us on Telegram to lock a spot.', 'bot');
+        var tg2 = el('div', 'sc-msg bot');
+        var ta2 = el('a', 'sc-book', 'Message us on Telegram →');
+        ta2.href = TG_URL; ta2.target = '_blank'; ta2.rel = 'noopener';
+        tg2.appendChild(ta2);
+        body.appendChild(tg2); body.scrollTop = body.scrollHeight;
+        return;
+      }
       setWizUI(true);
       wiz = { step: 'service', shop: 'bookings', barber: o.barber };
       if (o.ahead) { wiz.ahead = true; wiz.date = snap.next_date; }
@@ -721,18 +746,19 @@
   document.addEventListener('click', function (e) {
     // Live-wait card foot: route its buttons into the in-chat views instead of
     // SLIKR / the static reveal panels. Decide by the live label (set by
-    // live-wait.js): "Join the Queue" = walk-in view; "Book Now" = book-ahead
-    // view; "Join tomorrow's queue" is left to live-wait.js.
+    // live-wait.js): "Book Now" = book-ahead view; "Join the Queue" (open) and
+    // "Join tomorrow's queue" (closed) both = the walk-in path (__scWalkins,
+    // which branches open/closed itself). (Beau 2026-07-03)
     var lw = e.target.closest && e.target.closest('#lw-cta, #lw-join');
     if (lw) {
       var txt = (lw.textContent || '').toLowerCase();
       if (txt.indexOf('book now') >= 0) {
         e.preventDefault(); e.stopImmediatePropagation(); window.__scBookAhead(); return;
       }
-      if (txt.indexOf('join the queue') >= 0) {
+      if (txt.indexOf('join the queue') >= 0 || txt.indexOf('tomorrow') >= 0) {
         e.preventDefault(); e.stopImmediatePropagation(); window.__scWalkins(); return;
       }
-      return; // e.g. "Join tomorrow's queue" — handled by live-wait.js
+      return;
     }
     var a = e.target.closest && e.target.closest('a[href*="slikr.com.au"]');
     if (!a) return;
