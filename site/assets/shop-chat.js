@@ -613,10 +613,10 @@
 
   window.__scOpen = function () { fab.onclick(); if (panel) panel.classList.add('open'); syncSheet(); };
   window.__scClose = function () { if (panel) panel.classList.remove('open'); syncSheet(); };
-  window.__scBook = function (pref) {
-    window.__scOpen();
-    setTimeout(function () { startBooking(pref); }, 350);
-  };
+  // Site-wide "Book a Cut" CTAs (intercepted SLIKR /res links) now mimic the
+  // card's "Book Now" button exactly → the in-chat book-ahead names view.
+  // (Beau 2026-07-03) — no old full picker, no SLIKR redirect.
+  window.__scBook = function () { window.__scBookAhead(); };
 
   // ---------- live-wait card → in-chat views (Beau 2026-07-03) ----------
   // Flow A (Join the Queue): the walk-in wait line + walk-in barbers ONLY,
@@ -711,6 +711,10 @@
   }
   window.__scWalkins = function () { scCardOpen(scWaitList); };
   window.__scBookAhead = function () { scCardOpen(scBookNames); };
+
+  // Hero "Live Queue" button → same walk-in flow as the card's Join the Queue.
+  var heroLQ = document.getElementById('hero-live-queue');
+  if (heroLQ) heroLQ.addEventListener('click', function (e) { e.preventDefault(); window.__scWalkins(); });
 
   // Never send people to SLIKR from the site: any booking link opens the
   // in-chat wizard instead (Blackrose salon links stay external).
