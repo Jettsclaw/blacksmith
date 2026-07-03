@@ -429,14 +429,30 @@
   }
 
   // ---- CLOSED-hours "join tomorrow's walk-in list" (in-chat → /api/queue) ----
-  function wqTimeChips() {
+  var WQ_DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var WQ_MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function wqDateChips() {
+    var out = [];
+    for (var i = 1; i <= 7; i++) {
+      var d = new Date(Date.now() + i * 86400000);
+      var iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      out.push({ label: i === 1 ? 'Tomorrow' : WQ_DOW[d.getDay()] + ' ' + d.getDate() + ' ' + WQ_MON[d.getMonth()], date: iso });
+    }
+    return out;
+  }
+  function wqTimeChips(iso) {
+    var start = '09:00', close = '17:30';
+    if (iso && snap && snap.week) {
+      var dow = WQ_DOW[new Date(iso + 'T12:00:00').getDay()];
+      for (var k = 0; k < snap.week.length; k++) if (snap.week[k].day.split(',').indexOf(dow) >= 0) { start = snap.week[k].start; close = snap.week[k].close; }
+    }
+    var sMin = (+start.slice(0, 2)) * 60 + (+start.slice(3, 5)), eMin = (+close.slice(0, 2)) * 60 + (+close.slice(3, 5));
     var out = [{ label: 'First available', time: 'First available' }];
-    for (var h = 9; h <= 16; h++) { for (var j = 0; j < 2; j++) {
-      if (h === 16 && j) continue;
-      var mn = j ? '30' : '00', ap = h >= 12 ? 'pm' : 'am', hh = (h % 12) || 12;
-      var lab = hh + (mn === '00' ? '' : ':' + mn) + ap;
+    for (var m = sMin; m <= eMin - 30; m += 30) {
+      var h = Math.floor(m / 60), mn = m % 60, ap = h >= 12 ? 'pm' : 'am', hh = (h % 12) || 12;
+      var lab = hh + (mn === 0 ? '' : ':' + String(mn).padStart(2, '0')) + ap;
       out.push({ label: lab, time: lab });
-    } }
+    }
     return out;
   }
   function startTomorrowWalkin() {
@@ -444,15 +460,20 @@
     var menu = (snap && snap.services && snap.services.barber) || [];
     if (!menu.length) { bubble('Our menu’s offline for a sec — try again in a bit, or call ' + PHONE + '.', 'bot'); setWizUI(false); return; }
     twq = { step: 'service' };
-    bubble('We’re closed right now — but I’ll get you on tomorrow’s walk-in list. What are you after?', 'bot');
+    bubble('We’re closed right now — but I’ll get you on the walk-in list. What are you after?', 'bot');
     chipRow(menu.map(function (s) { return { label: svcName(s.name) + ' · $' + s.cost, service: s.id, sname: svcName(s.name) }; }), function (o) {
       bubble(o.label, 'me');
-      twq.service = o.service; twq.sname = o.sname; twq.step = 'time';
-      bubble('What time tomorrow?', 'bot');
-      chipRow(wqTimeChips(), function (o2) {
-        bubble(o2.label, 'me');
-        twq.time = o2.time; twq.step = 'details';
-        bubble('Last bit — your name and mobile.\nLike: Jack Smith, 0400 123 456', 'bot');
+      twq.service = o.service; twq.sname = o.sname; twq.step = 'date';
+      bubble('Which day?', 'bot');
+      chipRow(wqDateChips(), function (od) {
+        bubble(od.label, 'me');
+        twq.date = od.date; twq.datelabel = od.label; twq.step = 'time';
+        bubble('What time?', 'bot');
+        chipRow(wqTimeChips(twq.date), function (o2) {
+          bubble(o2.label, 'me');
+          twq.time = o2.time; twq.step = 'details';
+          bubble('Last bit — your name and mobile.\nLike: Jack Smith, 0400 123 456', 'bot');
+        }, true);
       }, true);
     });
   }
@@ -478,7 +499,7 @@
   function submitQueue(name, phone, time, email) {
     bubble('Popping you on tomorrow’s list…', 'bot');
     fetch(QUEUE_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, phone: phone, email: email || '', service: twq.service, barber: 'First available', time: time }) })
+      body: JSON.stringify({ name: name, phone: phone, email: email || '', service: twq.service, barber: 'First available', time: time, date: twq.date || undefined }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (d && d.ok) bubble('✅ You’re on tomorrow’s walk-in list, ' + name.split(' ')[0] + ' — we’ll text you to confirm your time first thing in the morning. See you then! ✂️', 'bot');

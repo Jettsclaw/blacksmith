@@ -43,13 +43,15 @@ export default async function handler(req, res) {
   if (!/^04\d{8}$/.test(phone)) return res.status(400).json({ ok: false, err: 'phone' });
   if (!SERVICES[service]) return res.status(400).json({ ok: false, err: 'service' });
 
-  // the day this walk-in is for = the shop's next open day → carried through so the
-  // Add-to-SLIKR booking uses the right date (not today → "Date Time is in the past").
-  let nextDate;
-  try { const fr = await fetch('https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' }); const fs = await fr.json(); nextDate = fs && fs.next_date; } catch {}
+  // The day this walk-in is for → carried through so Add-to-SLIKR uses the right date
+  // (not today → "Date Time is in the past"). Prefer the customer's chosen date;
+  // fall back to the shop's next open day.
+  const picked = String(b.date || '');
+  let date = /^\d{4}-\d{2}-\d{2}$/.test(picked) ? picked : undefined;
+  if (!date) { try { const fr = await fetch('https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' }); const fs = await fr.json(); date = fs && fs.next_date; } catch {} }
 
   const id = globalThis.crypto.randomUUID().toLowerCase();
-  const rec = { id, name, phone, service, service_name: SERVICES[service], barber, time, date: nextDate || undefined, at: new Date().toISOString() };
+  const rec = { id, name, phone, service, service_name: SERVICES[service], barber, time, date: date || undefined, at: new Date().toISOString() };
 
   try {
     await put(`queue/${id}.json`, JSON.stringify(rec),
