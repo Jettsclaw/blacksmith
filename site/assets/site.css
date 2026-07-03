@@ -932,8 +932,9 @@ section{position:relative}
 /* chat inside the landscape takeover: side panel, landscape coords */
 .ls-fsw .sc-panel{position:absolute;right:14px;bottom:60px;top:auto;width:min(360px,58%);max-height:calc(100% - 78px);z-index:9}
 .sc-live{font-family:Oswald,sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#5ddb7a;border:1px solid rgba(93,219,122,.45);border-radius:99px;padding:1px 7px;flex:none}
-.sc-clear{margin-left:auto;background:none;border:1px solid #3a3a42;color:#a2a2aa;font-family:Oswald,sans-serif;font-size:.68rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:3px 9px;border-radius:6px;line-height:1}
-.sc-clear:hover{color:#f3f1ea;border-color:#55555f}
+.sc-clear,.sc-close{background:none;border:1px solid #3a3a42;color:#a2a2aa;font-family:Oswald,sans-serif;font-size:.68rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;padding:4px 10px;border-radius:6px;line-height:1}
+.sc-clear{margin-left:auto}
+.sc-clear:hover,.sc-close:hover{color:#f3f1ea;border-color:#55555f}
 /* shop chat: native full-sheet on phones — no URL-bar bounce, no scroll-through */
 @media (max-width:640px){
   .sc-panel{left:0;right:0;bottom:0;top:auto;width:100%;max-height:none;height:100dvh;border-radius:0;border:none;transform:translateY(14px)}

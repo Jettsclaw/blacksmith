@@ -596,7 +596,7 @@
     clr.title = 'Clear chat';
     clr.onclick = function () { clearChat(); };
     head.appendChild(clr);
-    var x = el('button', 'sc-x', '×');
+    var x = el('button', 'sc-close', 'Close');
     x.setAttribute('aria-label', 'Close chat');
     x.onclick = function () { panel.classList.remove('open'); syncSheet(); };
     head.appendChild(x);
