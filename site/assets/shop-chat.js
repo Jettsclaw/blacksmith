@@ -372,10 +372,10 @@
       .catch(function () { bubble('Network hiccup — try again.', 'bot'); cancelMode = false; });
   }
 
-  function submitBooking(name, phone) {
+  function submitBooking(name, phone, email) {
     bubble('Locking it in…', 'bot');
     fetch(BOOK_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ shop: wiz.shop, service_id: wiz.service, barber: wiz.barber, slot: wiz.slot, name: name, phone: phone, date: wiz.date || undefined }) })
+      body: JSON.stringify({ shop: wiz.shop, service_id: wiz.service, barber: wiz.barber, slot: wiz.slot, name: name, phone: phone, email: email || '', date: wiz.date || undefined }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (!d.id) { bubble(d.error || 'That didn’t go through — try again.', 'bot'); wiz = null; setWizUI(false); return; }
@@ -401,6 +401,9 @@
     return (wiz && wiz.ahead && snap.next_label) ? snap.next_label + ' ' : '';
   }
 
+  // Simple email check — good enough to catch typos, not to gatekeep. (Beau 2026-07-03)
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   function handleDetails(text) {
     var m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
     if (!m) {
@@ -409,7 +412,18 @@
     }
     var phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
     if (cancelMode) { submitCancel(m[1].trim(), phone); return; }
-    submitBooking(m[1].trim(), phone);
+    // Stash name + mobile, then ask for email before locking it in.
+    wiz.name = m[1].trim();
+    wiz.phone = phone;
+    wiz.step = 'email';
+    bubble('And your email? (so we can send your booking confirmation)\nOr type “skip”.', 'bot');
+  }
+
+  function handleEmail(text) {
+    var e = text.trim();
+    if (/^skip$/i.test(e)) { submitBooking(wiz.name, wiz.phone, ''); return; }
+    if (!EMAIL_RE.test(e)) { bubble('Hmm — that email doesn’t look right. Try again, or type “skip”.', 'bot'); return; }
+    submitBooking(wiz.name, wiz.phone, e);
   }
 
   // ---- CLOSED-hours "join tomorrow's walk-in list" (in-chat → /api/queue) ----
@@ -445,13 +459,24 @@
     var m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
     if (!m) { bubble('Almost — send it like: Jack Smith, 0400 123 456', 'bot'); return; }
     var phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
-    submitQueue(m[1].trim(), phone, twq.time || 'First available');
+    // Stash name + mobile, then ask for email before submitting.
+    twq.name = m[1].trim();
+    twq.phone = phone;
+    twq.step = 'email';
+    bubble('And your email? (so we can send your booking confirmation)\nOr type “skip”.', 'bot');
   }
 
-  function submitQueue(name, phone, time) {
+  function handleWalkinEmail(text) {
+    var e = text.trim();
+    if (/^skip$/i.test(e)) { submitQueue(twq.name, twq.phone, twq.time || 'First available', ''); return; }
+    if (!EMAIL_RE.test(e)) { bubble('Hmm — that email doesn’t look right. Try again, or type “skip”.', 'bot'); return; }
+    submitQueue(twq.name, twq.phone, twq.time || 'First available', e);
+  }
+
+  function submitQueue(name, phone, time, email) {
     bubble('Popping you on tomorrow’s list…', 'bot');
     fetch(QUEUE_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, phone: phone, service: twq.service, barber: 'First available', time: time }) })
+      body: JSON.stringify({ name: name, phone: phone, email: email || '', service: twq.service, barber: 'First available', time: time }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (d && d.ok) bubble('✅ You’re on tomorrow’s walk-in list, ' + name.split(' ')[0] + ' — we’ll text you to confirm your time first thing in the morning. See you then! ✂️', 'bot');
@@ -603,7 +628,9 @@
       input.value = '';
       bubble(t, 'me');
       if (twq && twq.step === 'details') { handleWalkinDetails(t); return; }
+      if (twq && twq.step === 'email') { handleWalkinEmail(t); return; }
       if (cancelMode || (wiz && wiz.step === 'details')) { handleDetails(t); return; }
+      if (wiz && wiz.step === 'email') { handleEmail(t); return; }
       var lower = t.toLowerCase();
       var kind = route(lower);
       if (kind === 'book') { startBookMenu(); return; }
