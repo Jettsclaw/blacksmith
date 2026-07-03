@@ -208,27 +208,51 @@ async function wqStart(token, chat) {
   await tg(token, 'sendMessage', { chat_id: chat, text: "Tomorrow's walk-in list 🚶 — what are you after?",
     reply_markup: { inline_keyboard: menu.map(m => [{ text: m.cost ? `${m.name} · $${m.cost}` : m.name, callback_data: 'wqs:' + m.id }]) } });
 }
-async function wqPrompt(token, chat, svcName, lead) {
-  await tg(token, 'sendMessage', { chat_id: chat,
-    text: `${lead}${svcName} — you're going ${WQ_MARK}.\nReply with your name, mobile and a preferred time.\nLike: Jack Smith, 0400 123 456, 9:30am\n(or just name + mobile for first available)`,
-    reply_markup: { force_reply: true } });
+// Time choices for a next-day walk-in: "First available" + half-hourly 9:00–4:00.
+function wqTimes() {
+  const out = [{ code: 'fa', label: 'First available' }];
+  for (let h = 9; h <= 16; h++) for (const mn of ['00', '30']) {
+    if (h === 16 && mn === '30') continue;
+    const ap = h >= 12 ? 'pm' : 'am', hh = h % 12 || 12;
+    out.push({ code: String(h).padStart(2, '0') + mn, label: hh + (mn === '00' ? '' : ':' + mn) + ap });
+  }
+  return out;
 }
 async function wqService(token, chat, data) {
   const id = parseInt(data.slice(4), 10);
   const menu = await wqMenu();
   const svc = menu.find(x => x.id === id) || { id, name: 'Cut' };
-  await wqPrompt(token, chat, svc.name, '');
+  const times = wqTimes(); const rows = []; let row = [];
+  times.forEach((t, i) => { row.push({ text: t.label, callback_data: `wqt:${id}:${t.code}` }); if (row.length === 3 || i === times.length - 1) { rows.push(row); row = []; } });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `${svc.name} 🚶 — what time tomorrow?`, reply_markup: { inline_keyboard: rows } });
+}
+async function wqTime(token, chat, data) {
+  const p = data.split(':'); const id = parseInt(p[1], 10);
+  const menu = await wqMenu();
+  const svc = menu.find(x => x.id === id) || { id, name: 'Cut' };
+  const t = wqTimes().find(x => x.code === p[2]) || { label: 'First available' };
+  // force_reply carries svc + time (recovered from reply_to_message on submit) — stateless
+  await tg(token, 'sendMessage', { chat_id: chat,
+    text: `${svc.name} · ${t.label} — you're going ${WQ_MARK}.\nLast bit — reply with your name and mobile.\nLike: Jack Smith, 0400 123 456`,
+    reply_markup: { force_reply: true } });
 }
 async function wqSubmit(token, chat, promptText, userText) {
   const menu = await wqMenu();
   // recover the service = the LONGEST menu name that appears in the prompt
   let svc = null;
   menu.slice().sort((a, b) => b.name.length - a.name.length).forEach(m => { if (!svc && promptText.indexOf(m.name) >= 0) svc = m; });
-  const m = userText.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})(?:[,\s]+(.+))?\s*$/);
-  if (!m) { await wqPrompt(token, chat, (svc ? svc.name : 'Cut'), 'Almost — send it like: Jack Smith, 0400 123 456, 9:30am\n\n'); return; }
+  // recover the chosen time = the token between "· " and " —"
+  const tmm = promptText.match(/·\s*(.+?)\s*—/);
+  const time = (tmm ? tmm[1] : 'First available').trim().slice(0, 20);
+  const m = userText.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
+  if (!m) {
+    await tg(token, 'sendMessage', { chat_id: chat,
+      text: `Almost — reply with your name and mobile.\nLike: Jack Smith, 0400 123 456\n\n${svc ? svc.name : 'Cut'} · ${time} — you're going ${WQ_MARK}.`,
+      reply_markup: { force_reply: true } });
+    return;
+  }
   const name = m[1].trim();
   const phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
-  const time = (m[3] || 'First available').trim().slice(0, 20);
   const svcName = svc ? svc.name : 'Cut';
   const fs = await feed().catch(() => null);
   const date = fs && fs.next_date; // the day this walk-in is for → carried to SLIKR
@@ -344,6 +368,7 @@ export default async function handler(req, res) {
         else if (cq.data === 'bks') await bkSalon(token, chat);
         else if (cq.data === 'wq') await wqStart(token, chat);
         else if (cq.data.startsWith('wqs:')) await wqService(token, chat, cq.data);
+        else if (cq.data.startsWith('wqt:')) await wqTime(token, chat, cq.data);
         else if (cq.data.startsWith('bk')) await bkStep(token, chat, cq.data);
         else if (cq.data.startsWith('qadd:') || cq.data.startsWith('qdis:')) await qAction(token, cq);
         else {

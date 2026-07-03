@@ -413,6 +413,16 @@
   }
 
   // ---- CLOSED-hours "join tomorrow's walk-in list" (in-chat → /api/queue) ----
+  function wqTimeChips() {
+    var out = [{ label: 'First available', time: 'First available' }];
+    for (var h = 9; h <= 16; h++) { for (var j = 0; j < 2; j++) {
+      if (h === 16 && j) continue;
+      var mn = j ? '30' : '00', ap = h >= 12 ? 'pm' : 'am', hh = (h % 12) || 12;
+      var lab = hh + (mn === '00' ? '' : ':' + mn) + ap;
+      out.push({ label: lab, time: lab });
+    } }
+    return out;
+  }
   function startTomorrowWalkin() {
     setWizUI(true);
     var menu = (snap && snap.services && snap.services.barber) || [];
@@ -421,17 +431,21 @@
     bubble('We’re closed right now — but I’ll get you on tomorrow’s walk-in list. What are you after?', 'bot');
     chipRow(menu.map(function (s) { return { label: s.name + ' · $' + s.cost, service: s.id, sname: s.name }; }), function (o) {
       bubble(o.label, 'me');
-      twq.service = o.service; twq.sname = o.sname; twq.step = 'details';
-      bubble('Nice. Last bit — your name, mobile and a preferred time.\nLike: Jack Smith, 0400 123 456, 9:30am\n(or just name + mobile for first available)', 'bot');
+      twq.service = o.service; twq.sname = o.sname; twq.step = 'time';
+      bubble('What time tomorrow?', 'bot');
+      chipRow(wqTimeChips(), function (o2) {
+        bubble(o2.label, 'me');
+        twq.time = o2.time; twq.step = 'details';
+        bubble('Last bit — your name and mobile.\nLike: Jack Smith, 0400 123 456', 'bot');
+      }, true);
     });
   }
 
   function handleWalkinDetails(text) {
-    var m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})(?:[,\s]+(.+))?\s*$/);
-    if (!m) { bubble('Almost — send it like: Jack Smith, 0400 123 456, 9:30am', 'bot'); return; }
+    var m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
+    if (!m) { bubble('Almost — send it like: Jack Smith, 0400 123 456', 'bot'); return; }
     var phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
-    var time = (m[3] || 'First available').trim();
-    submitQueue(m[1].trim(), phone, time);
+    submitQueue(m[1].trim(), phone, twq.time || 'First available');
   }
 
   function submitQueue(name, phone, time) {
