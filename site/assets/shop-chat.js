@@ -142,6 +142,8 @@
 
   // ---------- booking wizard ----------
   var BOOK_API = 'https://blacksmith-wait-bot.vercel.app/api/book';
+  var QUEUE_API = 'https://blacksmith-wait-bot.vercel.app/api/queue';
+  var twq = null; // tomorrow-walk-in intake (browser-side state; no server round-trip)
   var ASK_API = 'https://blacksmith-wait-bot.vercel.app/api/ask';
 
   function askTheMac(q) {
@@ -410,6 +412,41 @@
     submitBooking(m[1].trim(), phone);
   }
 
+  // ---- CLOSED-hours "join tomorrow's walk-in list" (in-chat → /api/queue) ----
+  function startTomorrowWalkin() {
+    setWizUI(true);
+    var menu = (snap && snap.services && snap.services.barber) || [];
+    if (!menu.length) { bubble('Our menu’s offline for a sec — try again in a bit, or call ' + PHONE + '.', 'bot'); setWizUI(false); return; }
+    twq = { step: 'service' };
+    bubble('We’re closed right now — but I’ll get you on tomorrow’s walk-in list. What are you after?', 'bot');
+    chipRow(menu.map(function (s) { return { label: s.name + ' · $' + s.cost, service: s.id, sname: s.name }; }), function (o) {
+      bubble(o.label, 'me');
+      twq.service = o.service; twq.sname = o.sname; twq.step = 'details';
+      bubble('Nice. Last bit — your name, mobile and a preferred time.\nLike: Jack Smith, 0400 123 456, 9:30am\n(or just name + mobile for first available)', 'bot');
+    });
+  }
+
+  function handleWalkinDetails(text) {
+    var m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})(?:[,\s]+(.+))?\s*$/);
+    if (!m) { bubble('Almost — send it like: Jack Smith, 0400 123 456, 9:30am', 'bot'); return; }
+    var phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
+    var time = (m[3] || 'First available').trim();
+    submitQueue(m[1].trim(), phone, time);
+  }
+
+  function submitQueue(name, phone, time) {
+    bubble('Popping you on tomorrow’s list…', 'bot');
+    fetch(QUEUE_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, phone: phone, service: twq.service, barber: 'First available', time: time }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.ok) bubble('✅ You’re on tomorrow’s walk-in list, ' + name.split(' ')[0] + ' — we’ll text you to confirm your time first thing in the morning. See you then! ✂️', 'bot');
+        else bubble('Hmm, that didn’t go through — give us a call on ' + PHONE + ' and we’ll pop you down.', 'bot');
+        twq = null; setWizUI(false);
+      })
+      .catch(function () { bubble('Network hiccup — try that again, or call ' + PHONE + '.', 'bot'); twq = null; setWizUI(false); });
+  }
+
   // ---------- UI ----------
   var snap = null;
   function tick() {
@@ -551,6 +588,7 @@
       if (!t) return;
       input.value = '';
       bubble(t, 'me');
+      if (twq && twq.step === 'details') { handleWalkinDetails(t); return; }
       if (cancelMode || (wiz && wiz.step === 'details')) { handleDetails(t); return; }
       var lower = t.toLowerCase();
       var kind = route(lower);
@@ -655,14 +693,10 @@
     setWizUI(false);
     if (!snap) { setTimeout(scWaitList, 500); return; }
     if (!snap.open) {
-      // CLOSED walk-in path (Live Queue / Join tomorrow's queue): no live queue
-      // yet — invite them onto tomorrow's list early via Telegram. (Beau 2026-07-03)
-      bubble('We’re closed right now — but you can get on tomorrow’s walk-in list early. Give us a call and we’ll put you down first thing in the morning.', 'bot');
-      var tg = el('div', 'sc-msg bot');
-      var ta = el('a', 'sc-book', '📞 Call to get on the list');
-      ta.href = 'tel:' + PHONE.replace(/\s/g, ''); ta.rel = 'noopener';
-      tg.appendChild(ta);
-      body.appendChild(tg); body.scrollTop = body.scrollHeight;
+      // CLOSED walk-in path: capture them onto tomorrow's walk-in list right in chat.
+      // Posts to /api/queue → a card for Bayli to add to SLIKR in the morning; SLIKR
+      // sends the confirmation SMS. No call, no missed lead. (Winston 2026-07-03)
+      startTomorrowWalkin();
       return;
     }
     bubble(answer('wait', snap), 'bot');

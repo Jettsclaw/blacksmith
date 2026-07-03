@@ -8,7 +8,7 @@ import { put } from '@vercel/blob';
 const SERVICES = {
   1391: "Men's Cut", 4910: "Men's Cut + Beard", 2114: "Zero/Skin Fade",
   4911: "Zero/Skin Fade + Beard", 1435: "Pensioner's Cut", 5499: "Scissor / Long Hair",
-  2113: "Buzz cut", 1517: "Beard trim"
+  2113: "Buzz cut", 5041: "Apprentice/Student Cut", 1517: "Beard trim"
 };
 // walk-in four (default Bayli); Sami always displays "Sammi"
 const WALKIN = new Set(["First available", "Bayli", "Ben", "Mubarak", "Jayden"]);
