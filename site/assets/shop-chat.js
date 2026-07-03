@@ -490,10 +490,20 @@
 
   // ---------- UI ----------
   var snap = null;
+  // Hero button label follows the shop: "Live Queue" when open, "Tomorrow's
+  // Queue" when closed (lights off — no live queue to join). (Beau 2026-07-04)
+  function updateHeroLabel() {
+    var b = document.getElementById('hero-live-queue');
+    if (!b || !snap) return;
+    var txt = snap.open ? 'Live Queue' : 'Tomorrow’s Queue';
+    var big = b.querySelector('.hero-app-big');
+    if (big && big.textContent !== txt) big.textContent = txt;
+    b.setAttribute('aria-label', txt + ' — join the walk-in queue');
+  }
   function tick() {
     fetch(FEED + '?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
-      .then(function (s) { snap = s; })
+      .then(function (s) { snap = s; updateHeroLabel(); })
       .catch(function () {});
   }
 
