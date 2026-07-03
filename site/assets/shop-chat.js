@@ -21,6 +21,8 @@
   function fmtHours(h) {
     return h === 'closed today' ? 'closed today' : h.split('–').map(fmtT).join(' – ');
   }
+  // Tidy SLIKR service labels — Beau: apprentice cut lists Jayden only, drop "Jay".
+  function svcName(n) { return String(n || '').replace(/,\s*Jay\b/i, ''); }
   function fresh(s) {
     var d = new Date(s.as_of.replace(/(\d{2})(\d{2})$/, '$1:$2'));
     return !isNaN(d) && Date.now() - d.getTime() <= STALE_MS;
@@ -82,7 +84,7 @@
     if (kind === 'prices' || kind === 'services') {
       var menu = (s.services && s.services.barber) || [];
       if (!menu.length) return 'Call us for the menu: ' + PHONE;
-      return 'The menu:\n' + menu.map(function (m) { return m.name + ' — $' + m.cost; }).join('\n') + '\nTap Book and I’ll lock one in.';
+      return 'The menu:\n' + menu.map(function (m) { return svcName(m.name) + ' — $' + m.cost; }).join('\n') + '\nTap Book and I’ll lock one in.';
     }
     if (kind === 'remote') return 'You never have to stand around — join the queue from right here, watch your spot live, and walk in when it’s your turn. Tap Book and I’ll set you up.';
     if (kind === 'cancel') { cancelMode = true; return 'No worries — type the name and mobile you booked with and I’ll cancel it.\nLike: Jack Smith, 0400 123 456'; }
@@ -274,7 +276,7 @@
     wiz = { step: 'service', shop: 'salon', barber: stylist, salonSlots: slots, date: sal.date, salonLabel: sal.label };
     bubble((heading || '🌹 Blackrose Salon') + ' — what are we doing?', 'bot');
     chipRow(sal.services.map(function (s) {
-      return { label: s.name + ' · $' + s.cost, service: s.id };
+      return { label: svcName(s.name) + ' · $' + s.cost, service: s.id };
     }), function (o) {
       bubble(o.label, 'me');
       wiz.service = o.service;
@@ -309,7 +311,7 @@
     if (!menu.length) { bubble('Menu’s offline — tap Join the queue instead.', 'bot', true); wiz = null; setWizUI(false); return; }
     bubble('What are we doing?', 'bot');
     chipRow(menu.map(function (s) {
-      return { label: s.name + ' · $' + s.cost, service: s.id };
+      return { label: svcName(s.name) + ' · $' + s.cost, service: s.id };
     }), function (o) {
       bubble(o.label, 'me');
       wiz.service = o.service;
@@ -443,7 +445,7 @@
     if (!menu.length) { bubble('Our menu’s offline for a sec — try again in a bit, or call ' + PHONE + '.', 'bot'); setWizUI(false); return; }
     twq = { step: 'service' };
     bubble('We’re closed right now — but I’ll get you on tomorrow’s walk-in list. What are you after?', 'bot');
-    chipRow(menu.map(function (s) { return { label: s.name + ' · $' + s.cost, service: s.id, sname: s.name }; }), function (o) {
+    chipRow(menu.map(function (s) { return { label: svcName(s.name) + ' · $' + s.cost, service: s.id, sname: svcName(s.name) }; }), function (o) {
       bubble(o.label, 'me');
       twq.service = o.service; twq.sname = o.sname; twq.step = 'time';
       bubble('What time tomorrow?', 'bot');
