@@ -578,9 +578,7 @@
     var dot = el('span', 'sc-dot');
     head.appendChild(dot);
     head.appendChild(el('strong', null, 'Blacksmith — live from the shop'));
-    var tg = el('a', 'sc-tg', 'Telegram →');
-    tg.href = TG_URL; tg.target = '_blank'; tg.rel = 'noopener';
-    head.appendChild(tg);
+    // "Telegram →" header link hidden — the bot needs work before customers use it (Beau 2026-07-04).
     var clr = el('button', 'sc-x sc-clear', '⟳');
     clr.setAttribute('aria-label', 'Clear chat');
     clr.title = 'Clear chat';
@@ -798,10 +796,10 @@
       bubble(o.label, 'me');
       // On tomorrow's roster but times not loaded yet → graceful, not a dead end.
       if (o.ahead && !((snap.slots_next && snap.slots_next[o.barber]) || []).length) {
-        bubble(o.label + '’s ' + (snap.next_label || 'tomorrow') + ' times load closer to the day — check back in the morning, or message us on Telegram to lock a spot.', 'bot');
+        bubble(o.label + '’s ' + (snap.next_label || 'tomorrow') + ' times load closer to the day — check back in the morning, or call us to lock a spot.', 'bot');
         var tg2 = el('div', 'sc-msg bot');
-        var ta2 = el('a', 'sc-book', 'Message us on Telegram →');
-        ta2.href = TG_URL; ta2.target = '_blank'; ta2.rel = 'noopener';
+        var ta2 = el('a', 'sc-book', '📞 Call to lock a spot');
+        ta2.href = 'tel:' + PHONE.replace(/\s/g, ''); ta2.rel = 'noopener';
         tg2.appendChild(ta2);
         body.appendChild(tg2); body.scrollTop = body.scrollHeight;
         return;
