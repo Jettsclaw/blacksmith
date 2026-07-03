@@ -97,9 +97,13 @@
     if (!s.open)
       return 'Lights are off — we’re back ' + (s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])) + '. You can book ahead any time.';
     if (kind === 'wait') {
-      if (stale || s.wait_mins == null) return 'Live feed’s catching its breath — call us for the wait: ' + PHONE;
-      if (s.wait_mins === 0) return '🟢 No wait right now — ' + s.barbers_on + ' barbers on, walk straight in (' + asOf(s) + ')';
-      return '⏱ ~' + s.wait_mins + ' min wait · ' + s.waiting + ' waiting · ' + s.barbers_on + ' barbers on (' + asOf(s) + ')';
+      // Walk-ins ONLY — never fold in bookings or Blackrose (Beau 2026-07-03).
+      // Those are referenced only under Book Now.
+      if (stale) return 'Live feed’s catching its breath — call us for the wait: ' + PHONE;
+      if (s.walkin_wait == null) return 'No barbers on walk-ins right now — you can book ahead any time. Tap Book and I’ll set you up.';
+      var won = s.barbers.filter(function (b) { return b.walkin; }).length;
+      if (s.walkin_wait === 0) return '🟢 No wait right now — walk straight in (' + asOf(s) + ')';
+      return '⏱ ~' + s.walkin_wait + ' min till the next walk-in · ' + won + (won === 1 ? ' barber' : ' barbers') + ' on walk-ins (' + asOf(s) + ')';
     }
     if (kind === 'book') return 'Lock your chair — tap below.';
     if (kind === 'who') {
