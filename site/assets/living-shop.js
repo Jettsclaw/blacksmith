@@ -952,12 +952,15 @@
       }
     }
 
-    // moodlight — golden arvo, warm evening; applies open OR closed so the
-    // shop is always warmly lit (Jett: keep the lights on even when closed).
+    // moodlight — golden arvo, warm evening while open.
     var tint = snap && moodTint();
     if (tint) { ctx.fillStyle = tint; ctx.fillRect(0, 0, W, H); }
 
-    drawSign(t); // the "CLOSED — BACK 9AM" banner still shows the hours, no dimmer
+    // Lights off after hours — dim the whole room to a dark night wash so the
+    // closed shop actually reads as shut, not just quieter (Beau 2026-07-03).
+    if (snap && !snap.open) { ctx.fillStyle = 'rgba(7,9,22,0.62)'; ctx.fillRect(0, 0, W, H); }
+
+    drawSign(t); // the "CLOSED — BACK 9AM" banner sits above the dim, still readable
   }
 
   // ---------- loop ----------
