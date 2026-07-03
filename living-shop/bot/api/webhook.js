@@ -54,10 +54,14 @@ const KEYBOARD = {
 };
 
 async function getState(chat) {
-  try {
-    const m = await head(`state/${chat}.json`);
-    return await (await fetch(m.downloadUrl)).json();
-  } catch { return null; }
+  // one retry + no-store: Blob head/read can lag a fresh put on the fast path
+  for (let i = 0; i < 2; i++) {
+    try {
+      const m = await head(`state/${chat}.json`);
+      return await (await fetch(m.downloadUrl, { cache: 'no-store' })).json();
+    } catch { if (i === 0) await new Promise(r => setTimeout(r, 400)); }
+  }
+  return null;
 }
 async function setState(chat, st) {
   await put(`state/${chat}.json`, JSON.stringify(st),
