@@ -680,12 +680,12 @@
       });
     }
     // Sami — the salon stylist. Shown as just "Sami" (never "Blackrose"/"salon").
-    // When OPEN she appears if her book has live slots; when CLOSED she ALWAYS
-    // appears (salon / next-day path) — startSalon routes to her booking flow.
-    // (Beau 2026-07-03)
+    // Appears ONLY when she's actually on the Blackrose schedule that day —
+    // i.e. the salon feed has real slots (today when open, next-day when closed).
+    // No salon schedule → no Sami. (Beau 2026-07-03)
     var sal = snap.salon || {};
     var hasSalon = Object.keys(sal.slots || {}).some(function (k) { return (sal.slots[k] || []).length; });
-    if (hasSalon || !snap.open) opts.push({ label: 'Sami', salon: true });
+    if (hasSalon) opts.push({ label: 'Sami', salon: true });
 
     if (!opts.length) {
       bubble(snap.open
