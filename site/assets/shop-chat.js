@@ -644,11 +644,9 @@
           return (b.cutting ? '✂️ ' : '🟢 ') + b.name.split(' ')[0] + ' — ' + st;
         }).join('\n'), 'bot');
       }
-      var m = el('div', 'sc-msg bot');
-      var a = el('a', 'sc-book sc-qjoin', 'Join the queue →');
-      a.href = 'https://web.slikr.com.au/shop/421/res'; a.target = '_blank'; a.rel = 'noopener';
-      m.appendChild(a);
-      body.appendChild(m); body.scrollTop = body.scrollHeight;
+      // CTA → in-chat walk-in queue join (barber/Any picker → details → relay),
+      // never a SLIKR redirect. (Beau 2026-07-03)
+      chipRow([{ label: 'Join the queue →' }], function () { startWalkin(); });
     }
   }
 
@@ -735,7 +733,6 @@
     var a = e.target.closest && e.target.closest('a[href*="slikr.com.au"]');
     if (!a) return;
     if (/blackrosesalon/.test(a.href)) return;
-    if (a.classList.contains('sc-qjoin')) return; // walk-in join → real SLIKR tab
     if (/\/res/.test(a.href) || /shop\/(421|1121)/.test(a.href)) {
       e.preventDefault();
       window.__scBook();
