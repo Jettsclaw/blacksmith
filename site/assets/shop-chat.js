@@ -93,9 +93,28 @@
     if (kind === 'hi') return 'G’day! I can tell you the live wait, who’s on, prices, or book you in — what do you need?';
     if (kind === 'thanks') return 'Easy as. Anything else — wait, prices, booking?';
     if (kind === 'hours')
-      return '📍 ' + ADDRESS + '\n🕐 Today: ' + fmtHours(s.hours_today) + '\n🅿️ Free parking out front.\n📞 ' + PHONE;
-    if (!s.open)
+      return !s.open
+        ? 'We’ll be in-store at 9am. 🅿️ Parking’s just out front and around the side.\n📞 ' + PHONE
+        : '📍 ' + ADDRESS + '\n🕐 Today: ' + fmtHours(s.hours_today) + '\n🅿️ Free parking out front.\n📞 ' + PHONE;
+    if (!s.open) {
+      // Closed-state chip answers (Beau 2026-07-03).
+      if (kind === 'wait')
+        return 'We’re closed right now — no wait, we open at 9am. Get on tomorrow’s walk-in list or book ahead.';
+      if (kind === 'who') {
+        var wtm = ((s.walkin_next && s.walkin_next.barbers) || []).map(function (n) { return n.split(' ')[0]; });
+        var bkm = Object.keys(s.slots_next || {}).map(function (n) { return n.split(' ')[0]; });
+        if (Object.keys((s.salon && s.salon.slots) || {}).some(function (k) { return ((s.salon.slots[k]) || []).length; }))
+          bkm.push('Sami');
+        if (!wtm.length && !bkm.length)
+          return 'Lights are off — back 9am. Tap Book to lock a chair, or Join the queue to get on tomorrow’s walk-in list.';
+        var lbl = (s.walkin_next && s.walkin_next.label) || 'tomorrow';
+        var lines = 'On ' + lbl + ':';
+        if (wtm.length) lines += '\n💈 Walk-ins — ' + wtm.join(', ');
+        if (bkm.length) lines += '\n📅 Booking — ' + bkm.join(', ');
+        return lines;
+      }
       return 'Lights are off — we’re back ' + (s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])) + '. You can book ahead any time.';
+    }
     if (kind === 'wait') {
       // Walk-ins ONLY — never fold in bookings or Blackrose (Beau 2026-07-03).
       // Those are referenced only under Book Now.
