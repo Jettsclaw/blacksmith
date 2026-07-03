@@ -5,6 +5,9 @@
   var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
   var BOOK_URL = 'https://web.slikr.com.au/shop/421/res?ref=shopchat';
   var TG_URL = 'https://t.me/Blacksmithbarbers_bot';
+  // After-hours walk-in queue — customers leave their details here for the
+  // morning crew to enter into SLIKR. (Beau 2026-07-03)
+  var AFTERHOURS_TG = 'https://t.me/+FdP08AnnO3swZmJl';
   var PHONE = '0479 087 782';
   var ADDRESS = '9 Gateway Drive, Biggera Waters — 1 min from Harbour Town';
   var STALE_MS = 8 * 60 * 1000;
@@ -657,7 +660,7 @@
       bubble('We’re closed right now — but you can get on tomorrow’s walk-in list early. Leave your details and we’ll put you down first thing in the morning.', 'bot');
       var tg = el('div', 'sc-msg bot');
       var ta = el('a', 'sc-book', 'Message us on Telegram →');
-      ta.href = TG_URL; ta.target = '_blank'; ta.rel = 'noopener';
+      ta.href = AFTERHOURS_TG; ta.target = '_blank'; ta.rel = 'noopener';
       tg.appendChild(ta);
       body.appendChild(tg); body.scrollTop = body.scrollHeight;
       return;
