@@ -588,9 +588,10 @@
     var head = el('div', 'sc-head');
     var dot = el('span', 'sc-dot');
     head.appendChild(dot);
-    head.appendChild(el('strong', null, 'Blacksmith — live from the shop'));
+    head.appendChild(el('strong', null, 'Queue or Book'));
+    head.appendChild(el('span', 'sc-live', 'Live'));
     // "Telegram →" header link hidden — the bot needs work before customers use it (Beau 2026-07-04).
-    var clr = el('button', 'sc-x sc-clear', '⟳');
+    var clr = el('button', 'sc-clear', 'Clear');
     clr.setAttribute('aria-label', 'Clear chat');
     clr.title = 'Clear chat';
     clr.onclick = function () { clearChat(); };
