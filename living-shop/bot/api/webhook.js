@@ -54,14 +54,10 @@ const KEYBOARD = {
 };
 
 async function getState(chat) {
-  // one retry + no-store: Blob head/read can lag a fresh put on the fast path
-  for (let i = 0; i < 2; i++) {
-    try {
-      const m = await head(`state/${chat}.json`);
-      return await (await fetch(m.downloadUrl, { cache: 'no-store' })).json();
-    } catch { if (i === 0) await new Promise(r => setTimeout(r, 400)); }
-  }
-  return null;
+  try {
+    const m = await head(`state/${chat}.json`);
+    return await (await fetch(m.downloadUrl)).json();
+  } catch { return null; }
 }
 async function setState(chat, st) {
   await put(`state/${chat}.json`, JSON.stringify(st),
@@ -76,12 +72,13 @@ async function bkStart(token, chat) {
   if (!s) return;
   if (!s.open) {
     const names = Object.keys(s.slots_next || {}).filter(n => (s.slots_next[n] || []).length);
+    if (!names.length) {
+      await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed and tomorrow's book isn't open yet — try again in the morning, or call ${PHONE}.` });
+      return;
+    }
     await setState(chat, { step: 'barber', ahead: true, date: s.next_date });
-    const rows = [[{ text: "🚶 Join tomorrow's walk-in queue", callback_data: 'wq' }]];
-    names.forEach(n => rows.push([{ text: '📅 Book ahead · ' + n, callback_data: 'bk1:' + n }]));
-    const tail = names.length ? ` Or lock a set time ${s.next_label} with a barber below.` : '';
-    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now. Join tomorrow's walk-in queue and we'll confirm your time in the morning.${tail}`,
-      reply_markup: { inline_keyboard: rows } });
+    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now, but you can lock in ${s.next_label}. Who with?`,
+      reply_markup: { inline_keyboard: names.map(n => [{ text: n, callback_data: 'bk1:' + n }]) } });
     return;
   }
   await setState(chat, { step: 'barber' });
@@ -197,52 +194,6 @@ async function bkDetails(token, chat, text) {
   return true;
 }
 
-// ---- "Join tomorrow's walk-in queue" DM flow (posts the Bayli card; NO SLIKR here) ----
-const WQ_SERVICES = [{ id: 1391, name: "Men's Cut" }, { id: 4910, name: "Men's Cut + Beard" }, { id: 1437, name: "Skin Fade" }, { id: 1517, name: "Beard trim" }];
-async function wqMenu() {
-  const s = await feed().catch(() => null);
-  return (s && s.services && s.services.barber && s.services.barber.length) ? s.services.barber : WQ_SERVICES;
-}
-async function wqStart(token, chat) {
-  const menu = await wqMenu();
-  await setState(chat, { step: 'wq_service' });
-  await tg(token, 'sendMessage', { chat_id: chat, text: "Tomorrow's walk-in list 🚶 — what are you after?",
-    reply_markup: { inline_keyboard: menu.map(m => [{ text: m.cost ? `${m.name} · $${m.cost}` : m.name, callback_data: 'wqs:' + m.id }]) } });
-}
-async function wqService(token, chat, data) {
-  const st = (await getState(chat)) || {};
-  st.service = parseInt(data.slice(4), 10); st.step = 'wq_details';
-  await setState(chat, st);
-  await tg(token, 'sendMessage', { chat_id: chat, text: "Nearly there. Reply with your name, mobile and a preferred time — like:\nJack Smith, 0400 123 456, 9:30am\n(or just name + mobile for first available)" });
-}
-async function wqDetails(token, chat, text) {
-  const st = await getState(chat);
-  if (!st || st.step !== 'wq_details') return false;
-  if (text.trim().startsWith('/') || /\b(cancel|stop|restart|menu|nvm|never ?mind|exit|quit|book|hi|hey|hello|help)\b/i.test(text)) { await clearState(chat); return false; }
-  const m = text.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})(?:[,\s]+(.+))?$/);
-  if (!m) {
-    st.tries = (st.tries || 0) + 1;
-    if (st.tries >= 2) { await clearState(chat); await tg(token, 'sendMessage', { chat_id: chat, text: 'No worries — cancelled that. Tap ✂️ Book me in whenever you’re ready.', reply_markup: KEYBOARD }); return true; }
-    await setState(chat, st);
-    await tg(token, 'sendMessage', { chat_id: chat, text: 'Almost — send it like: Jack Smith, 0400 123 456, 9:30am' });
-    return true;
-  }
-  const menu = await wqMenu();
-  const svcName = (menu.find(x => x.id === st.service) || {}).name || 'Cut';
-  const name = m[1].trim();
-  const phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
-  const time = (m[3] || 'First available').trim().slice(0, 20);
-  const id = globalThis.crypto.randomUUID().toLowerCase();
-  await put(`queue/${id}.json`, JSON.stringify({ id, name, phone, service: st.service, service_name: svcName, barber: 'First available', time, at: new Date().toISOString() }),
-    { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
-  const card = `🆕 *Tomorrow's walk-in* (via Telegram)\n\n👤 ${name}\n📱 ${phone}\n✂️ ${svcName}\n💈 First available\n🕐 Preferred: ${time}`;
-  await tg(token, 'sendMessage', { chat_id: process.env.QUEUE_CHAT, text: card, parse_mode: 'Markdown',
-    reply_markup: { inline_keyboard: [[{ text: '✅ Add to SLIKR', callback_data: 'qadd:' + id }, { text: '✕ Dismiss', callback_data: 'qdis:' + id }]] } });
-  await clearState(chat);
-  await tg(token, 'sendMessage', { chat_id: chat, text: `You’re on tomorrow’s walk-in list, ${name.split(' ')[0]} — we’ll confirm your time in the morning with a text. See you then! ✂️` });
-  return true;
-}
-
 async function answerFor(kind) {
   let s;
   try { s = await feed(); } catch { return `Couldn't reach the shop feed — call us on ${PHONE}.`; }
@@ -339,8 +290,6 @@ export default async function handler(req, res) {
       if (!limited(chat)) {
         if (cq.data === 'bk') await bkStart(token, chat);
         else if (cq.data === 'bks') await bkSalon(token, chat);
-        else if (cq.data === 'wq') await wqStart(token, chat);
-        else if (cq.data.startsWith('wqs:')) await wqService(token, chat, cq.data);
         else if (cq.data.startsWith('bk')) await bkStep(token, chat, cq.data);
         else if (cq.data.startsWith('qadd:') || cq.data.startsWith('qdis:')) await qAction(token, cq);
         else {
@@ -353,7 +302,6 @@ export default async function handler(req, res) {
       const chatId = u.message.chat.id;
       if (!limited(chatId)) {
         const raw = u.message.text || '';
-        if (await wqDetails(token, chatId, raw)) return res.status(200).send('ok');
         if (await bkDetails(token, chatId, raw)) return res.status(200).send('ok');
         const t = raw.toLowerCase();
         const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
