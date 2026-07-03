@@ -191,6 +191,46 @@
     });
   }
 
+  // In-chat "Book" = a clean fork: lock a time (Bookings) vs join the live
+  // queue (Walk-in). The card's split buttons stay separate. (Beau 2026-07-03)
+  function startBookMenu() {
+    setWizUI(false);
+    if (!snap) { setTimeout(startBookMenu, 800); return; }
+    if (!snap.open) { scBookNames(); return; } // closed: no walk-ins to join
+    bubble('Lock a time, or join the walk-in queue?', 'bot');
+    chipRow([
+      { label: '📅 Bookings', cat: 'book' },
+      { label: '💈 Walk-in', cat: 'walk' }
+    ], function (o) {
+      if (o.cat === 'book') { bubble('Bookings', 'me'); scBookNames(); return; }
+      bubble('Walk-in', 'me'); startWalkin();
+    });
+  }
+
+  function startWalkin() {
+    setWizUI(false);
+    if (!snap) { setTimeout(startWalkin, 800); return; }
+    if (!snap.open) {
+      bubble('We’re closed right now — walk-ins run when we’re open. Tap Book to lock a time, or call ' + PHONE + '.', 'bot');
+      return;
+    }
+    var wb = (snap.barbers || []).filter(function (b) { return b.walkin === true; });
+    if (!wb.length) {
+      bubble('No barbers on walk-ins right now — tap Book to lock a time instead, or call ' + PHONE + '.', 'bot');
+      return;
+    }
+    bubble('On walk-ins ' + asOf(snap) + ': ' + wb.map(function (b) { return b.name.split(' ')[0]; }).join(', ') +
+      '.\nWho would you like? I’ll pop you in the live queue.', 'bot');
+    var opts = wb.map(function (b) { return { label: b.name.split(' ')[0], barber: b.name }; });
+    opts.push({ label: 'Any barber', barber: 'any' });
+    chipRow(opts, function (o) {
+      bubble(o.label, 'me');
+      setWizUI(true);
+      wiz = { step: 'service', shop: 'barber', barber: o.barber };
+      askService();
+    });
+  }
+
   function startSalon(heading) {
     setWizUI(true);
     if (!snap) { setTimeout(function () { startSalon(heading); }, 800); return; }
@@ -460,7 +500,7 @@
     [['wait', '⏱ Wait time'], ['who', '💈 Who’s on'], ['hours', '🕐 Hours & parking'], ['book', '✂️ Book']].forEach(function (c) {
       var ch = el('button', 'sc-chip', c[1]);
       ch.onclick = function () {
-        if (c[0] === 'book') { bubble('Book me in', 'me'); startBooking(); }
+        if (c[0] === 'book') { bubble('Book me in', 'me'); startBookMenu(); }
         else ask(c[0], c[1].replace(/^\S+\s/, ''));
       };
       chips.appendChild(ch);
@@ -492,7 +532,7 @@
       if (cancelMode || (wiz && wiz.step === 'details')) { handleDetails(t); return; }
       var lower = t.toLowerCase();
       var kind = route(lower);
-      if (kind === 'book') { startBooking(barberIn(lower)); return; }
+      if (kind === 'book') { startBookMenu(); return; }
       if (kind === 'salon') { startSalon(); return; }
       if (kind === 'hours') {
         var dh = dayHours(lower);
