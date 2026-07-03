@@ -191,9 +191,9 @@
     });
   }
 
-  function startSalon() {
+  function startSalon(heading) {
     setWizUI(true);
-    if (!snap) { setTimeout(function () { startSalon(); }, 800); return; }
+    if (!snap) { setTimeout(function () { startSalon(heading); }, 800); return; }
     var sal = snap.salon || {};
     var stylist = null, slots = [];
     Object.keys(sal.slots || {}).forEach(function (k) {
@@ -208,7 +208,7 @@
       setWizUI(false); return;
     }
     wiz = { step: 'service', shop: 'salon', barber: stylist, salonSlots: slots, date: sal.date, salonLabel: sal.label };
-    bubble('🌹 Blackrose Salon — what are we doing?', 'bot');
+    bubble((heading || '🌹 Blackrose Salon') + ' — what are we doing?', 'bot');
     chipRow(sal.services.map(function (s) {
       return { label: s.name + ' · $' + s.cost, service: s.id };
     }), function (o) {
@@ -578,12 +578,124 @@
     setTimeout(function () { startBooking(pref); }, 350);
   };
 
+  // ---------- live-wait card → in-chat views (Beau 2026-07-03) ----------
+  // Flow A (Join the Queue): the walk-in wait line + walk-in barbers ONLY,
+  // then a real walk-in reservation link. Flow B (Book Now): book-ahead names
+  // (bookings barbers + Sami) → the existing slot wizard. The two never mix.
+  function fmtClock(d) {
+    var h = d.getHours(), m = ('0' + d.getMinutes()).slice(-2);
+    var ap = h >= 12 ? 'pm' : 'am'; h = h % 12 || 12;
+    return h + ':' + m + ap;
+  }
+
+  function scWaitList() {
+    if (!body) return;
+    setWizUI(false);
+    if (!snap) { setTimeout(scWaitList, 500); return; }
+    bubble(answer('wait', snap), 'bot');
+    if (snap.open && fresh(snap) && snap.walkin_wait != null) {
+      var asOfD = new Date(snap.as_of.replace(/(\d{2})(\d{2})$/, '$1:$2'));
+      var wb = (snap.barbers || []).filter(function (b) { return b.walkin === true; });
+      if (wb.length) {
+        bubble('On walk-ins ' + asOf(snap) + ':\n' + wb.map(function (b) {
+          var st = b.cutting
+            ? 'cutting · free ~' + fmtClock(new Date(asOfD.getTime() + (+b.free_in || 0) * 60000))
+            : 'free now';
+          return (b.cutting ? '✂️ ' : '🟢 ') + b.name.split(' ')[0] + ' — ' + st;
+        }).join('\n'), 'bot');
+      }
+      var m = el('div', 'sc-msg bot');
+      var a = el('a', 'sc-book sc-qjoin', 'Join the queue →');
+      a.href = 'https://web.slikr.com.au/shop/421/res'; a.target = '_blank'; a.rel = 'noopener';
+      m.appendChild(a);
+      body.appendChild(m); body.scrollTop = body.scrollHeight;
+    }
+  }
+
+  function scBookNames() {
+    if (!body) return;
+    setWizUI(false);
+    if (!snap) { setTimeout(scBookNames, 500); return; }
+    var opts = [];
+    if (snap.open) {
+      (snap.barbers || []).forEach(function (b) {
+        if ((b.book || []).indexOf('bookings') >= 0)
+          opts.push({ label: b.name.split(' ')[0], barber: b.name });
+      });
+    } else {
+      Object.keys(snap.slots_next || {}).forEach(function (n) {
+        if ((snap.slots_next[n] || []).length)
+          opts.push({ label: n.split(' ')[0], barber: n, ahead: true });
+      });
+    }
+    // Sami — the salon stylist. Shown as just "Sami" (never "Blackrose"/"salon"),
+    // and only when her book actually has live slots.
+    var sal = snap.salon || {};
+    var hasSalon = Object.keys(sal.slots || {}).some(function (k) { return (sal.slots[k] || []).length; });
+    if (hasSalon) opts.push({ label: 'Sami', salon: true });
+
+    if (!opts.length) {
+      bubble(snap.open
+        ? 'No book-ahead chairs open right now — tap ⏱ Wait time to join the walk-in queue, or call ' + PHONE + '.'
+        : 'Tomorrow’s book isn’t open yet — try again in the morning or call ' + PHONE + '.', 'bot');
+      return;
+    }
+    bubble('Book ahead — who with?', 'bot');
+    chipRow(opts, function (o) {
+      if (o.salon) { bubble('Sami', 'me'); startSalon('Sami'); return; }
+      bubble(o.label, 'me');
+      setWizUI(true);
+      wiz = { step: 'service', shop: 'bookings', barber: o.barber };
+      if (o.ahead) { wiz.ahead = true; wiz.date = snap.next_date; }
+      askService();
+    });
+  }
+
+  // Open the panel (building it on first use) then render the requested card
+  // view — without the default auto "wait" ask that the bubble/FAB fires.
+  function scCardOpen(cb) {
+    if (!opened) {
+      opened = true;
+      tick();
+      setInterval(tick, 60000);
+      build();
+      setTimeout(function () {
+        panel.classList.add('open');
+        syncSheet();
+        setTimeout(cb, 60);
+      }, 30);
+    } else {
+      if (body) { body.innerHTML = ''; wiz = null; setWizUI(false); }
+      panel.classList.add('open');
+      syncSheet();
+      setTimeout(cb, 50);
+    }
+  }
+  window.__scWalkins = function () { scCardOpen(scWaitList); };
+  window.__scBookAhead = function () { scCardOpen(scBookNames); };
+
   // Never send people to SLIKR from the site: any booking link opens the
   // in-chat wizard instead (Blackrose salon links stay external).
   document.addEventListener('click', function (e) {
+    // Live-wait card foot: route its buttons into the in-chat views instead of
+    // SLIKR / the static reveal panels. Decide by the live label (set by
+    // live-wait.js): "Join the Queue" = walk-in view; "Book Now" = book-ahead
+    // view; "Join tomorrow's queue" is left to live-wait.js.
+    var lw = e.target.closest && e.target.closest('#lw-cta, #lw-join');
+    if (lw) {
+      var txt = (lw.textContent || '').toLowerCase();
+      if (txt.indexOf('book now') >= 0) {
+        e.preventDefault(); e.stopImmediatePropagation(); window.__scBookAhead(); return;
+      }
+      if (txt.indexOf('join the queue') >= 0) {
+        e.preventDefault(); e.stopImmediatePropagation(); window.__scWalkins(); return;
+      }
+      return; // e.g. "Join tomorrow's queue" — handled by live-wait.js
+    }
     var a = e.target.closest && e.target.closest('a[href*="slikr.com.au"]');
     if (!a) return;
     if (/blackrosesalon/.test(a.href)) return;
+    if (a.classList.contains('sc-qjoin')) return; // walk-in join → real SLIKR tab
     if (/\/res/.test(a.href) || /shop\/(421|1121)/.test(a.href)) {
       e.preventDefault();
       window.__scBook();
