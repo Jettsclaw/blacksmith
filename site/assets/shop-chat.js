@@ -495,7 +495,7 @@
   function updateHeroLabel() {
     var b = document.getElementById('hero-live-queue');
     if (!b || !snap) return;
-    var txt = snap.open ? 'Live Queue' : 'Tomorrow’s Queue';
+    var txt = snap.open ? 'Live Queue' : 'Walk-In Queue';
     var big = b.querySelector('.hero-app-big');
     if (big) { if (big.textContent !== txt) big.textContent = txt; }
     else if (b.textContent !== txt) b.textContent = txt;
