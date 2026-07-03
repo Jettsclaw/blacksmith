@@ -45,6 +45,15 @@
     "active": true
   },
   {
+    "name": "Johnnatan",
+    "role": "Barber",
+    "shop": "Blacksmith Barbers",
+    "photo": "assets/barbers/johnnatan.jpg",
+    "photoSource": "AI avatar from Beau's reference photos (2026-07-03), dark in-shop style to match the set",
+    "blurb": "Fresh energy on the walk-in floor. Sharp fades, clean lines and an easy chair.",
+    "active": true
+  },
+  {
     "name": "Sammi",
     "role": "Blackrose Stylist",
     "shop": "Blackrose Salon",
