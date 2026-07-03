@@ -61,7 +61,7 @@ async function getState(chat) {
 }
 async function setState(chat, st) {
   await put(`state/${chat}.json`, JSON.stringify(st),
-    { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+    { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
 }
 async function clearState(chat) {
   try { await del(`state/${chat}.json`); } catch {}
