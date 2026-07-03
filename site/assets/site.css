@@ -982,3 +982,8 @@ section{position:relative}
 .lw-book-head .eyebrow{margin:0}
 .lw-book-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:520px){.lw-book-opts{grid-template-columns:1fr}}
+
+/* Barber Instagram handle link */
+.barber-ig{display:inline-block;margin:-2px 0 10px;font-family:'Oswald',sans-serif;font-size:.82rem;letter-spacing:.04em;color:var(--gold);text-decoration:none;opacity:.9;transition:opacity .2s}
+.barber-ig::before{content:"◎ ";}
+.barber-ig:hover{opacity:1;text-decoration:underline}
