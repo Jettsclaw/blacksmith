@@ -974,3 +974,11 @@ section{position:relative}
 .lw-queue-barbers:empty{display:none}
 .lw-queue-note{font-size:.85rem;line-height:1.5;color:#c9c3b6;margin:0 0 14px}
 .lw-join{cursor:pointer}
+
+/* Book Now reveal panel (live-wait card) */
+.lw-book{margin-top:16px;padding-top:16px;border-top:1px solid rgba(200,164,77,.25)}
+.lw-book[hidden]{display:none}
+.lw-book-head{margin-bottom:12px}
+.lw-book-head .eyebrow{margin:0}
+.lw-book-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.lw-book-opts{grid-template-columns:1fr}}
