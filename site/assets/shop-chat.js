@@ -657,10 +657,10 @@
     if (!snap.open) {
       // CLOSED walk-in path (Live Queue / Join tomorrow's queue): no live queue
       // yet — invite them onto tomorrow's list early via Telegram. (Beau 2026-07-03)
-      bubble('We’re closed right now — but you can get on tomorrow’s walk-in list early. Leave your details and we’ll put you down first thing in the morning.', 'bot');
+      bubble('We’re closed right now — but you can get on tomorrow’s walk-in list early. Give us a call and we’ll put you down first thing in the morning.', 'bot');
       var tg = el('div', 'sc-msg bot');
-      var ta = el('a', 'sc-book', 'Message us on Telegram →');
-      ta.href = AFTERHOURS_TG; ta.target = '_blank'; ta.rel = 'noopener';
+      var ta = el('a', 'sc-book', '📞 Call to get on the list');
+      ta.href = 'tel:' + PHONE.replace(/\s/g, ''); ta.rel = 'noopener';
       tg.appendChild(ta);
       body.appendChild(tg); body.scrollTop = body.scrollHeight;
       return;
