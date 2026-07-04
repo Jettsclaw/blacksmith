@@ -160,6 +160,8 @@
   // Map a feed name ("Jayden (Apprentice)") to a sprite key.
   function spriteKey(name) {
     var k = name.toLowerCase();
+    // SLIKR spells him "Jhonatan"; his sprite assets are filed under "johnnatan".
+    if (k.indexOf('jhonatan') === 0) k = 'johnnatan';
     for (var i = 0; i < BARBER_NAMES.length; i++)
       if (k.indexOf(BARBER_NAMES[i]) === 0) return BARBER_NAMES[i];
     return null; // unknown barber -> generic idle silhouette (use 'ben' tinted)
