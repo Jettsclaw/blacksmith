@@ -73,7 +73,7 @@
     entries.forEach(function(en){
       if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
     });
-  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  }, {threshold:0, rootMargin:'0px 0px -8% 0px'}); // threshold:0 so tall single elements (e.g. the mobile barber grid) can trigger — 0.12 was unreachable on phones and left cards stuck invisible
   document.querySelectorAll('.reveal,.stagger').forEach(function(el){ io.observe(el); });
 })();
 
