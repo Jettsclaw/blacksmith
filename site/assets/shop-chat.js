@@ -821,44 +821,65 @@
     }
   }
 
-  // A real week of availability → let them pick ANY scheduled day (incl. today
-  // while we're open), then who's on that day, then a time. Jarred/Locky/etc
-  // each have their own roster, so we drive it off SLIKR's book_days rather
-  // than a single next day.
+  // Barber-first book-ahead: pick who you want, THEN that barber's own
+  // schedule (only the days they're actually on — Jarred Tue–Sun, Locky
+  // Wed–Sun, etc.), then a time. Driven off SLIKR's book_days, inverted to
+  // a per-barber view so each chair shows its real roster. (Beau/Jett 2026-07-05)
+  function dayChip(d) {
+    var t = new Date(); t.setHours(0, 0, 0, 0);
+    var dd = new Date(d.date + 'T00:00:00');
+    var diff = Math.round((dd - t) / 86400000);
+    if (diff <= 0) return 'Today';
+    if (diff === 1) return 'Tomorrow';
+    var wk = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dd.getDay()];
+    var mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][dd.getMonth()];
+    return wk + ' ' + dd.getDate() + ' ' + mo;
+  }
+
   function scPickBookDay() {
     setWizUI(false);
     var days = (snap.book_days || []).filter(function (d) {
       return d.barbers && Object.keys(d.barbers).some(function (n) { return (d.barbers[n] || []).length; });
     });
+    // Invert book_days → barber : [{date,label,times}] so we can show each
+    // barber's own working days.
+    var byBarber = {}, order = [];
+    days.forEach(function (d) {
+      Object.keys(d.barbers).forEach(function (n) {
+        if (!(d.barbers[n] || []).length) return;
+        if (!byBarber[n]) { byBarber[n] = []; order.push(n); }
+        byBarber[n].push({ date: d.date, label: d.label, times: d.barbers[n] });
+      });
+    });
     var sal = snap.salon || {};
     var hasSalon = Object.keys(sal.slots || {}).some(function (k) { return (sal.slots[k] || []).length; });
-    if (!days.length && !hasSalon) {
+    if (!order.length && !hasSalon) {
       bubble('Tomorrow’s book isn’t open yet — try again in the morning or call ' + PHONE + '.', 'bot', true);
       return;
     }
-    bubble(snap.open ? 'Which day would you like?' : 'We’re closed now — book ahead. Which day?', 'bot');
-    var opts = days.map(function (d) { return { label: d.label, day: d }; });
+    bubble(snap.open ? 'Who would you like to book with?' : 'We’re closed now — book ahead. Who with?', 'bot');
+    var opts = order.map(function (n) { return { label: n.split(' ')[0], barber: n }; });
     if (hasSalon) opts.push({ label: '🌹 Sami', salon: true });
     chipRow(opts, function (o) {
       if (o.salon) { bubble('Sami', 'me'); startSalon('Sami'); return; }
       bubble(o.label, 'me');
-      scDayBarbers(o.day);
-    }, true);
+      scBarberDays(o.barber, byBarber[o.barber]);
+    });
   }
 
-  function scDayBarbers(day) {
-    var names = Object.keys(day.barbers).filter(function (n) { return (day.barbers[n] || []).length; });
-    function go(barber) {
+  function scBarberDays(barber, sched) {
+    function go(day) {
       setWizUI(true);
       wiz = { step: 'service', shop: 'bookings', barber: barber, ahead: true,
-              date: day.date, label: day.label, dayBarbers: day.barbers };
+              date: day.date, label: dayChip(day), dayBarbers: {} };
+      wiz.dayBarbers[barber] = day.times;
       askService();
     }
-    if (names.length === 1) { bubble(names[0].split(' ')[0], 'me'); go(names[0]); return; }
-    bubble(day.label + ' — who with?', 'bot');
-    chipRow(names.map(function (n) { return { label: n.split(' ')[0], barber: n }; }), function (o) {
-      bubble(o.label, 'me'); go(o.barber);
-    });
+    if (sched.length === 1) { bubble(dayChip(sched[0]), 'me'); go(sched[0]); return; }
+    bubble(barber.split(' ')[0] + '’s schedule — which day?', 'bot');
+    chipRow(sched.map(function (s) { return { label: dayChip(s), day: s }; }), function (o) {
+      bubble(o.label, 'me'); go(o.day);
+    }, true);
   }
 
   function scBookNames() {
