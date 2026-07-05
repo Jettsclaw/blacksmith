@@ -321,8 +321,9 @@
 
   function askTime() {
     if (wiz.ahead) {
-      var slots2 = (snap.slots_next && snap.slots_next[wiz.barber]) || [];
-      bubble('What time ' + snap.next_label + '?', 'bot');
+      var slots2 = (wiz.dayBarbers && wiz.dayBarbers[wiz.barber]) ||
+                   (snap.slots_next && snap.slots_next[wiz.barber]) || [];
+      bubble('What time ' + (wiz.label || snap.next_label) + '?', 'bot');
       chipRow(slots2.map(function (t) { return { label: fmtT(t), slot: t }; }), function (o) {
         bubble(o.label, 'me'); wiz.slot = o.slot; askDetails();
       }, true);
@@ -402,7 +403,8 @@
   }
 
   function wizDateLabel() {
-    return (wiz && wiz.ahead && snap.next_label) ? snap.next_label + ' ' : '';
+    var lbl = wiz && wiz.ahead && (wiz.label || snap.next_label);
+    return lbl ? lbl + ' ' : '';
   }
 
   // Simple email check — good enough to catch typos, not to gatekeep. (Beau 2026-07-03)
@@ -819,10 +821,50 @@
     }
   }
 
+  // Closed + a real week of availability → let them pick ANY day this week,
+  // then who's on that day, then a time. Jarred/Locky/etc each have their own
+  // roster, so we drive it off SLIKR's book_days rather than a single next day.
+  function scPickBookDay() {
+    setWizUI(false);
+    var days = (snap.book_days || []).filter(function (d) {
+      return d.barbers && Object.keys(d.barbers).some(function (n) { return (d.barbers[n] || []).length; });
+    });
+    var sal = snap.salon || {};
+    var hasSalon = Object.keys(sal.slots || {}).some(function (k) { return (sal.slots[k] || []).length; });
+    if (!days.length && !hasSalon) {
+      bubble('Tomorrow’s book isn’t open yet — try again in the morning or call ' + PHONE + '.', 'bot', true);
+      return;
+    }
+    bubble('We’re closed now — book ahead. Which day?', 'bot');
+    var opts = days.map(function (d) { return { label: d.label, day: d }; });
+    if (hasSalon) opts.push({ label: '🌹 Sami', salon: true });
+    chipRow(opts, function (o) {
+      if (o.salon) { bubble('Sami', 'me'); startSalon('Sami'); return; }
+      bubble(o.label, 'me');
+      scDayBarbers(o.day);
+    }, true);
+  }
+
+  function scDayBarbers(day) {
+    var names = Object.keys(day.barbers).filter(function (n) { return (day.barbers[n] || []).length; });
+    function go(barber) {
+      setWizUI(true);
+      wiz = { step: 'service', shop: 'bookings', barber: barber, ahead: true,
+              date: day.date, label: day.label, dayBarbers: day.barbers };
+      askService();
+    }
+    if (names.length === 1) { bubble(names[0].split(' ')[0], 'me'); go(names[0]); return; }
+    bubble(day.label + ' — who with?', 'bot');
+    chipRow(names.map(function (n) { return { label: n.split(' ')[0], barber: n }; }), function (o) {
+      bubble(o.label, 'me'); go(o.barber);
+    });
+  }
+
   function scBookNames() {
     if (!body) return;
     setWizUI(false);
     if (!snap) { setTimeout(scBookNames, 500); return; }
+    if (!snap.open && (snap.book_days || []).length) { scPickBookDay(); return; }
     var opts = [];
     if (snap.open) {
       (snap.barbers || []).forEach(function (b) {
