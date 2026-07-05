@@ -590,7 +590,15 @@
     if (withBook) {
       b.appendChild(document.createElement('br'));
       var a = el('a', 'sc-book', 'Join the queue →');
-      a.href = BOOK_URL; a.target = '_blank'; a.rel = 'noopener';
+      // In-chat walk-in path — never a SLIKR redirect. Closed → tomorrow's
+      // walk-in list; open → live queue. Same chain as "Join tomorrow's
+      // queue". (Beau 2026-07-05)
+      a.href = '#';
+      a.onclick = function (e) {
+        e.preventDefault();
+        if (snap && !snap.open) startTomorrowWalkin();
+        else startWalkin();
+      };
       b.appendChild(a);
     }
     body.appendChild(b);
