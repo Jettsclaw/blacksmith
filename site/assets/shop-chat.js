@@ -821,9 +821,10 @@
     }
   }
 
-  // Closed + a real week of availability → let them pick ANY day this week,
-  // then who's on that day, then a time. Jarred/Locky/etc each have their own
-  // roster, so we drive it off SLIKR's book_days rather than a single next day.
+  // A real week of availability → let them pick ANY scheduled day (incl. today
+  // while we're open), then who's on that day, then a time. Jarred/Locky/etc
+  // each have their own roster, so we drive it off SLIKR's book_days rather
+  // than a single next day.
   function scPickBookDay() {
     setWizUI(false);
     var days = (snap.book_days || []).filter(function (d) {
@@ -835,7 +836,7 @@
       bubble('Tomorrow’s book isn’t open yet — try again in the morning or call ' + PHONE + '.', 'bot', true);
       return;
     }
-    bubble('We’re closed now — book ahead. Which day?', 'bot');
+    bubble(snap.open ? 'Which day would you like?' : 'We’re closed now — book ahead. Which day?', 'bot');
     var opts = days.map(function (d) { return { label: d.label, day: d }; });
     if (hasSalon) opts.push({ label: '🌹 Sami', salon: true });
     chipRow(opts, function (o) {
@@ -864,7 +865,7 @@
     if (!body) return;
     setWizUI(false);
     if (!snap) { setTimeout(scBookNames, 500); return; }
-    if (!snap.open && (snap.book_days || []).length) { scPickBookDay(); return; }
+    if ((snap.book_days || []).length) { scPickBookDay(); return; }
     var opts = [];
     if (snap.open) {
       (snap.barbers || []).forEach(function (b) {
