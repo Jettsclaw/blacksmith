@@ -846,9 +846,13 @@
     if (hasSalon) opts.push({ label: 'Sami', salon: true });
 
     if (!opts.length) {
-      bubble(snap.open
-        ? 'No book-ahead chairs open right now — tap ⏱ Wait time to join the walk-in queue, or call ' + PHONE + '.'
-        : 'Tomorrow’s book isn’t open yet — try again in the morning or call ' + PHONE + '.', 'bot');
+      if (snap.open) {
+        bubble('No book-ahead chairs open right now — tap ⏱ Wait time to join the walk-in queue, or call ' + PHONE + '.', 'bot');
+      } else {
+        // Closed + no roster loaded → don't dead-end them; offer the walk-in
+        // list. withBook link runs startTomorrowWalkin. (Beau 2026-07-05)
+        bubble('Tomorrow’s book isn’t open yet — but I can get you on the walk-in list, or call ' + PHONE + '.', 'bot', true);
+      }
       return;
     }
     bubble('Book ahead — who with?', 'bot');
