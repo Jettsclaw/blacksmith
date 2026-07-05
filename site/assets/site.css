@@ -783,6 +783,7 @@ section{position:relative}
 .sc-msg.bot{background:#1a1a1f;color:#f3f1ea;border:1px solid #26262c;align-self:flex-start;border-bottom-left-radius:4px}
 .sc-msg.me{background:var(--gold,#c8a44d);color:#141417;align-self:flex-end;border-bottom-right-radius:4px}
 .sc-book{display:inline-block;margin-top:6px;color:var(--gold,#c8a44d);text-decoration:none;border-bottom:1px solid rgba(200,164,77,.4);font-weight:600}
+.sc-link{color:var(--gold,#c8a44d);border-bottom:1px solid rgba(200,164,77,.55);font-weight:600;cursor:pointer}
 .sc-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 10px}
 .sc-chip{background:#16161a;border:1px solid #2c2c33;color:#e7e5de;border-radius:999px;padding:7px 12px;font-size:.78rem;cursor:pointer}
 .sc-chip:hover{border-color:var(--gold,#c8a44d)}

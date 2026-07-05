@@ -332,7 +332,9 @@
       var b = snap.barbers.filter(function (x) { return x.name === wiz.barber; })[0];
       var slots = (b && b.slots) || [];
       if (!slots.length) {
-        bubble((wiz.barber.split(' ')[0]) + ' is booked out today — pick someone else or join the walk-in queue.', 'bot');
+        bubbleLink((wiz.barber.split(' ')[0]) + ' is booked out today — pick someone else or join the walk-in queue.', 'join the walk-in queue', function () {
+          bubble('Join the walk-in queue', 'me'); startWalkin();
+        });
         wiz = null; setWizUI(false); return;
       }
       bubble('What time today?', 'bot');
@@ -591,6 +593,24 @@
       a.href = BOOK_URL; a.target = '_blank'; a.rel = 'noopener';
       b.appendChild(a);
     }
+    body.appendChild(b);
+    body.scrollTop = body.scrollHeight;
+    pokeIdle();
+  }
+
+  // Bot bubble with one inline tappable phrase that runs onTap.
+  function bubbleLink(text, phrase, onTap) {
+    var b = el('div', 'sc-msg bot');
+    var i = text.indexOf(phrase);
+    if (i < 0) { bubble(text, 'bot'); return; }
+    b.appendChild(document.createTextNode(text.slice(0, i)));
+    var link = el('span', 'sc-link', phrase);
+    link.setAttribute('role', 'button');
+    link.setAttribute('tabindex', '0');
+    link.onclick = onTap;
+    link.onkeydown = function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onTap(); } };
+    b.appendChild(link);
+    b.appendChild(document.createTextNode(text.slice(i + phrase.length)));
     body.appendChild(b);
     body.scrollTop = body.scrollHeight;
     pokeIdle();
