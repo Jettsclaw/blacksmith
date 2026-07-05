@@ -851,7 +851,7 @@
       } else {
         // Closed + no roster loaded → don't dead-end them; offer the walk-in
         // list. withBook link runs startTomorrowWalkin. (Beau 2026-07-05)
-        bubble('Tomorrow’s book isn’t open yet — but I can get you on the walk-in list, or call ' + PHONE + '.', 'bot', true);
+        bubble('Tomorrow’s book isn’t open yet — try again in the morning or call ' + PHONE + '.', 'bot', true);
       }
       return;
     }
