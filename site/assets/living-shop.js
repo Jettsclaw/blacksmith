@@ -963,7 +963,7 @@
       } else if (hostAsk) { // host tap — three-way: Join Queue / Book / Shop (Beau 2026-07-06)
         ctx.font = '700 22px Oswald, sans-serif';
         ctx.textAlign = 'center';
-        var opts = [{ t: 'Join Queue', a: 'q', g: true }, { t: 'Book', a: 'bk', g: false }, { t: 'Shop', a: 'sh', g: false }];
+        var opts = [{ t: 'Walk-In’s', a: 'q', g: true }, { t: 'Book', a: 'bk', g: false }, { t: 'Shop', a: 'sh', g: false }];
         var gap = 10, bh2 = 40;
         var ws = opts.map(function (o) { return Math.max(72, ctx.measureText(o.t).width + 40); });
         var total = ws.reduce(function (a, b) { return a + b; }, 0) + gap * (opts.length - 1);
