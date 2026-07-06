@@ -459,27 +459,16 @@
     }
     return out;
   }
+  // Closed shop → hand off to the "Blacksmith After Hours" Telegram (that bot
+  // works great — we only link to it, never touch it). The morning crew picks
+  // the walk-in up from there. (Beau 2026-07-06)
   function startTomorrowWalkin() {
-    setWizUI(true);
-    var menu = (snap && snap.services && snap.services.barber) || [];
-    if (!menu.length) { bubble('Our menu’s offline for a sec — try again in a bit, or call ' + PHONE + '.', 'bot'); setWizUI(false); return; }
-    twq = { step: 'service' };
-    bubble('We’re closed right now — but I’ll get you on the walk-in list. What are you after?', 'bot');
-    chipRow(menu.map(function (s) { return { label: svcName(s.name) + ' · $' + s.cost, service: s.id, sname: svcName(s.name) }; }), function (o) {
-      bubble(o.label, 'me');
-      twq.service = o.service; twq.sname = o.sname; twq.step = 'date';
-      bubble('Which day?', 'bot');
-      chipRow(wqDateChips(), function (od) {
-        bubble(od.label, 'me');
-        twq.date = od.date; twq.datelabel = od.label; twq.step = 'time';
-        bubble('What time?', 'bot');
-        chipRow(wqTimeChips(twq.date), function (o2) {
-          bubble(o2.label, 'me');
-          twq.time = o2.time; twq.step = 'details';
-          bubble('Last bit — your name and mobile.\nLike: Jack Smith, 0400 123 456', 'bot');
-        }, true);
-      }, true);
-    });
+    setWizUI(false);
+    bubble('We’re closed right now — but you can still get on the list. Leave your walk-in with the Blacksmith After Hours crew on Telegram and they’ll sort you first thing when we open.', 'bot');
+    var a = el('a', 'sc-book', 'Blacksmith After Hours on Telegram →');
+    a.href = AFTERHOURS_TG; a.target = '_blank'; a.rel = 'noopener';
+    body.lastChild.appendChild(document.createElement('br'));
+    body.lastChild.appendChild(a);
   }
 
   function handleWalkinDetails(text) {
