@@ -206,9 +206,11 @@
     var opts = snap.barbers.map(function (b) {
       return { label: b.name.split(' ')[0], barber: b.name, book: b.book || ['barber'] };
     });
+    opts.push({ label: 'Walk-In’s 💈', walk: true }); // Beau 2026-07-07: jump to the join-the-queue flow
     opts.push({ label: 'Anyone', barber: 'any', book: ['barber'] });
     opts.push({ label: '🌹 Blackrose Salon', salon: true });
     chipRow(opts, function (o) {
+      if (o.walk) { bubble('Walk-In’s', 'me'); startWalkin(); return; }
       if (o.salon) { bubble('Blackrose Salon', 'me'); startSalon(); return; }
       bubble(o.label, 'me');
       wiz.barber = o.barber;
@@ -297,7 +299,9 @@
       bubble('We\u2019re closed right now, but you can lock in ' + snap.next_label + '. Who with?', 'bot');
     }
     var opts = names.map(function (n) { return { label: n, barber: n }; });
+    opts.push({ label: 'Walk-In’s 💈', walk: true }); // Beau 2026-07-07: jump to the join-the-queue flow
     chipRow(opts, function (o) {
+      if (o.walk) { bubble('Walk-In’s', 'me'); startWalkin(); return; }
       bubble(o.label, 'me');
       wiz.barber = o.barber;
       wiz.shop = 'bookings';
