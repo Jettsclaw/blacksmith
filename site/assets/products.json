@@ -245,7 +245,7 @@
       "price": 50.0,
       "category": "Gift",
       "description": "The easy win. Redeemable on cuts, salon and product in-shop. $50 value.",
-      "images": [],
+      "images": ["assets/merch/giftcard-placeholder.png"],
       "icon": "giftcard"
     }
   ]
