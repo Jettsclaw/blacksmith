@@ -412,8 +412,17 @@
       if (x >= h.x && x <= h.x + h.w && y >= h.y && y <= h.y + h.h) {
         if (h.host) {
           hostAsk = { until: performance.now() + 9000 };
-          bubbleText = 'Would you like to book in?';
+          bubbleText = 'How can I help?';
           bubbleUntil = performance.now() + 9000;
+          return;
+        }
+        if (h.act) { // host three-way: Join Queue / Book / Shop (Beau 2026-07-06)
+          hostAsk = null; bubbleUntil = 0;
+          if (h.act === 'sh') { window.location.href = 'shop.html?src=livingshop-host'; return; }
+          if (fs.on) fsClose(); // chat is a portrait activity — back to the page first
+          if (h.act === 'q' && window.__scWalkins) { window.__scWalkins(); return; }
+          if (h.act === 'bk' && window.__scBookAhead) { window.__scBookAhead(); return; }
+          if (window.__scBook) window.__scBook();
           return;
         }
         if (h.yes) {
@@ -933,7 +942,7 @@
       if (t < bubbleUntil && bubbleText)
         drawBubble(bubbleText, stroll ? stroll.x : HOST.x, (stroll ? HOST.stroll.y : HOST.y) - HOST.h, false, false);
       if (hostAsk && t >= hostAsk.until) hostAsk = null;
-      if (hostAsk) {
+      if (hostAsk && hostAsk.shop) { // shop cabinet confirm — keep the Yes/No fork
         [['Yes', -52, true], ['No', 52, false]].forEach(function (cfg) {
           var bx2 = HOST.x + cfg[1], by2 = HOST.y + 38, bw2 = 86, bh2 = 40;
           ctx.save();
@@ -950,6 +959,32 @@
           ctx.fillText(cfg[0], bx2, by2 + 8);
           ctx.restore();
           hits.unshift({ x: bx2 - bw2 / 2 - 8, y: by2 - bh2 / 2 - 8, w: bw2 + 16, h: bh2 + 16, yes: cfg[2], no: !cfg[2] });
+        });
+      } else if (hostAsk) { // host tap — three-way: Join Queue / Book / Shop (Beau 2026-07-06)
+        ctx.font = '700 22px Oswald, sans-serif';
+        ctx.textAlign = 'center';
+        var opts = [{ t: 'Join Queue', a: 'q', g: true }, { t: 'Book', a: 'bk', g: false }, { t: 'Shop', a: 'sh', g: false }];
+        var gap = 10, bh2 = 40;
+        var ws = opts.map(function (o) { return Math.max(72, ctx.measureText(o.t).width + 40); });
+        var total = ws.reduce(function (a, b) { return a + b; }, 0) + gap * (opts.length - 1);
+        var x0 = HOST.x - total / 2, by2 = HOST.y + 38;
+        opts.forEach(function (o, i) {
+          var bw2 = ws[i], bx2 = x0 + bw2 / 2;
+          ctx.save();
+          ctx.beginPath();
+          ctx.roundRect(bx2 - bw2 / 2, by2 - bh2 / 2, bw2, bh2, 20);
+          if (o.g) { ctx.fillStyle = '#e3c578'; ctx.fill(); }
+          else {
+            ctx.fillStyle = 'rgba(16,16,19,.9)'; ctx.fill();
+            ctx.strokeStyle = 'rgba(200,164,77,.85)'; ctx.lineWidth = 2; ctx.stroke();
+          }
+          ctx.font = '700 22px Oswald, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = o.g ? '#141417' : '#e3c578';
+          ctx.fillText(o.t, bx2, by2 + 8);
+          ctx.restore();
+          hits.unshift({ x: bx2 - bw2 / 2 - 6, y: by2 - bh2 / 2 - 8, w: bw2 + 12, h: bh2 + 16, act: o.a });
+          x0 += bw2 + gap;
         });
       }
     }
