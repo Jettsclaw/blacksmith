@@ -11,6 +11,9 @@ const FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-fe
 const BOOK_URL = 'https://web.slikr.com.au/shop/421/res';
 const PHONE = '0479 087 782';
 const ADDRESS = '9 Gateway Drive, Biggera Waters — 1 min from Harbour Town';
+// Closed-hours walk-ins hand off to the Blacksmith After Hours crew group —
+// same destination the website chat uses, so both surfaces behave identically.
+const AFTERHOURS_TG = 'https://t.me/+FdP08AnnO3swZmJl';
 const STALE_MS = 8 * 60 * 1000;
 
 // naive per-instance rate limit: 8 msgs / chat / minute
@@ -93,10 +96,12 @@ async function bkStart(token, chat) {
   if (!s.open) {
     const names = Object.keys(s.slots_next || {}).filter(n => (s.slots_next[n] || []).length);
     if (names.length) await setState(chat, { step: 'barber', ahead: true, date: s.next_date });
-    const rows = [[{ text: "🚶 Join tomorrow's walk-in queue", callback_data: 'wq' }]];
+    // Closed → hand the walk-in to the Blacksmith After Hours crew (mirrors the
+    // website chat, Beau 2026-07-06). Book-ahead stays available below.
+    const rows = [[{ text: '🚶 After-hours walk-in · message the crew', url: AFTERHOURS_TG }]];
     names.forEach(n => rows.push([{ text: '📅 Book ahead · ' + n, callback_data: 'bk1:' + n }]));
     const tail = names.length ? ` Or lock a set time ${s.next_label} with a barber below.` : '';
-    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now. Join tomorrow's walk-in queue and we'll confirm your time in the morning.${tail}`,
+    await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now — but you can still get on the list. Leave your walk-in with the Blacksmith After Hours crew and they'll sort you first thing when we open.${tail}`,
       reply_markup: { inline_keyboard: rows } });
     return;
   }
