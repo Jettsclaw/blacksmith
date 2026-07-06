@@ -310,6 +310,7 @@ async function bookStart(token, chat) {
   }
   const rows = order.map(n => [{ text: n.split(' ')[0], callback_data: 'bb:' + n.split(' ')[0] }]);
   if (samiDays.length) rows.push([{ text: 'Sami', callback_data: 'bb:Sami' }]);
+  rows.push([{ text: "Walk-In's 💈", callback_data: 'walk' }]); // Beau 2026-07-06: jump straight to the join-the-queue flow
   await tg(token, 'sendMessage', { chat_id: chat,
     text: s.open ? 'Book ahead — who with?' : "We're closed now — book ahead. Who with?",
     reply_markup: { inline_keyboard: rows } });
