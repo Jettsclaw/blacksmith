@@ -62,7 +62,7 @@ const KEYBOARD = {
 // clean paths that mirror the website chat. Utility taps sit below.
 const MENU_KB = {
   keyboard: [
-    [{ text: '🚶 Walk-in' }, { text: '📅 Book' }],
+    [{ text: '📅 Bookings' }, { text: '💈 Walk-in' }],
     [{ text: '⏱ Wait time' }, { text: '💈 Who\'s on' }],
     [{ text: '🕐 Hours & parking' }, { text: '↩️ Start over' }]
   ],
@@ -235,10 +235,10 @@ async function bkDetails(token, chat, text) {
 // Book (a set time), then continues exactly like the site chat. (Beau 2026-07-06)
 async function sendFork(token, chat, greet) {
   await clearState(chat);
-  await tg(token, 'sendMessage', { chat_id: chat, text: greet || 'What are you after?',
+  await tg(token, 'sendMessage', { chat_id: chat, text: greet || 'Lock a time, or join the walk-in queue?',
     reply_markup: { inline_keyboard: [[
-      { text: '🚶 Walk-in', callback_data: 'walk' },
-      { text: '📅 Book', callback_data: 'book' }
+      { text: '📅 Bookings', callback_data: 'book' },
+      { text: '💈 Walk-in', callback_data: 'walk' }
     ]] } });
 }
 
@@ -636,14 +636,14 @@ export default async function handler(req, res) {
         if (/^\/(start|menu)\b/i.test(raw) || isEscape(raw)) {
           const c0 = await getCustomer(chatId);
           await sendMenu(token, chatId, (c0 && c0.name)
-            ? `G’day ${c0.name.split(' ')[0]}! 👋 Walk-in or Book? Pick below — or tap ⏱ wait, 💈 who’s on, 🕐 hours.`
-            : 'G’day! 👋 Walk-in or Book? Pick below — or tap ⏱ wait, 💈 who’s on, 🕐 hours.');
+            ? `G’day ${c0.name.split(' ')[0]}! 👋 Lock a time, or join the walk-in queue?`
+            : 'G’day! 👋 Lock a time, or join the walk-in queue?');
           return res.status(200).send('ok');
         }
         // Front-door fork buttons (persistent keyboard). Strip the emoji, match label.
         const flbl = raw.replace(/[^\x00-\x7F]/g, '').trim().toLowerCase();
         if (flbl === 'walk-in' || flbl === 'walkin') { await walkinStart(token, chatId); return res.status(200).send('ok'); }
-        if (flbl === 'book') { await bookStart(token, chatId); return res.status(200).send('ok'); }
+        if (flbl === 'book' || flbl === 'bookings') { await bookStart(token, chatId); return res.status(200).send('ok'); }
         const t = raw.toLowerCase();
         const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
         const nm = NAMES.find(n => t.includes(n));
@@ -665,7 +665,7 @@ export default async function handler(req, res) {
         else if (/sunday|monday|tuesday|wednesday|thursday|friday|saturday|weekend|tomorrow|hour|open|close|park|address|where/.test(t)) kind = 'hours';
         else if (/wait|long|busy|queue/.test(t)) kind = 'wait';
         else if (/who|on today|working/.test(t) || nm) kind = 'who';
-        if (kind === 'book') { await sendFork(token, chatId, 'Righto — walk-in, or book a set time?'); return res.status(200).send('ok'); }
+        if (kind === 'book') { await sendMenu(token, chatId, 'Lock a time, or join the walk-in queue?'); return res.status(200).send('ok'); }
         if (kind === 'cancel') { await cancelStart(token, chatId); return res.status(200).send('ok'); }
         let text;
         const s2 = await feed().catch(() => null);

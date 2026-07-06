@@ -52,11 +52,12 @@ function ok(cond, label) { n++; if (!cond) { fails++; console.log('  ✗ ' + lab
 console.log('\n— /start front door —');
 CHAT = 501;
 let o = await fire(msg('/start'));
-ok(JSON.stringify(kbRows(o)) === JSON.stringify(['🚶 Walk-in', '📅 Book', '⏱ Wait time', "💈 Who's on", '🕐 Hours & parking', '↩️ Start over']), 'persistent keyboard leads with Walk-in / Book');
+ok(/Lock a time, or join the walk-in queue\?/.test(texts(o)), 'opening prompt = "Lock a time, or join the walk-in queue?"');
+ok(JSON.stringify(kbRows(o)) === JSON.stringify(['📅 Bookings', '💈 Walk-in', '⏱ Wait time', "💈 Who's on", '🕐 Hours & parking', '↩️ Start over']), 'keyboard leads with Bookings / Walk-in');
 
 console.log('\n— WALK-IN flow —');
 CHAT = 502;
-o = await fire(msg('🚶 Walk-in'));
+o = await fire(msg('💈 Walk-in'));
 ok(/On walk-ins/.test(texts(o)), 'walk-in shows the on-walk-ins line');
 const wbtn = cbs(o);
 ok(wbtn.includes('wb:Bayli') && wbtn.includes('wb:Ben') && wbtn.includes('wb:any'), 'walk-in barbers = Bayli, Ben, Any (' + wbtn.join(',') + ')');
@@ -76,7 +77,7 @@ _store.clear();
 
 console.log('\n— BOOK (set time) flow —');
 CHAT = 503;
-o = await fire(msg('📅 Book'));
+o = await fire(msg('📅 Bookings'));
 ok(/who with/i.test(texts(o)), 'book → who with');
 const bbtn = cbs(o);
 ok(bbtn.includes('bb:Jarred') && bbtn.includes('bb:Locky'), 'book barbers include Jarred + Locky (' + bbtn.join(',') + ')');
@@ -113,7 +114,7 @@ FEED.open = true;
 console.log('\n— typed "book" → fork —');
 CHAT = 505;
 o = await fire(msg('can i book'));
-ok(cbs(o).includes('walk') && cbs(o).includes('book'), 'typed book intent shows the Walk-in/Book fork');
+ok(/Lock a time, or join the walk-in queue\?/.test(texts(o)) && (kbRows(o) || []).includes('📅 Bookings'), 'typed book intent re-shows the fork');
 
 console.log('\n' + (fails ? '❌ ' + fails + '/' + n + ' FAILED' : '✅ ALL ' + n + ' PASSED'));
 process.exit(fails ? 1 : 0);
