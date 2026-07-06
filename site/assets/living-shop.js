@@ -229,7 +229,7 @@
   }
 
   function tick() {
-    fetch(FEED + '?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' })
+    fetch(FEED + '?t=' + Math.floor(Date.now() / 15000), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (s) {
         if (frozen) return;
@@ -1005,11 +1005,11 @@
     ctx.imageSmoothingEnabled = false;
 
     tick();
-    setInterval(tick, 60000);
+    setInterval(tick, 30000);
 
     if (reduced) { // one static frame, no loop
       var once = function () { draw(0); };
-      setTimeout(once, 600); setInterval(once, 60000);
+      setTimeout(once, 600); setInterval(once, 30000);
       return;
     }
     var io = new IntersectionObserver(function (es) {

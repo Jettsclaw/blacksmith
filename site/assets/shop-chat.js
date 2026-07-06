@@ -527,7 +527,7 @@
     b.setAttribute('aria-label', txt + ' — join the walk-in queue');
   }
   function tick() {
-    fetch(FEED + '?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' })
+    fetch(FEED + '?t=' + Math.floor(Date.now() / 15000), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (s) { snap = s; updateHeroLabel(); })
       .catch(function () {});
@@ -976,7 +976,7 @@
     if (!opened) {
       opened = true;
       tick();
-      setInterval(tick, 60000);
+      setInterval(tick, 30000);
       build();
       setTimeout(function () {
         panel.classList.add('open');

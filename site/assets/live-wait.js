@@ -109,7 +109,7 @@
 
   var lastSnap = null;
   function tick() {
-    fetch(FEED + '?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' })
+    fetch(FEED + '?t=' + Math.floor(Date.now() / 15000), { cache: 'no-store' })
       .then(function (r) { return r.json(); })
       .then(function (snap) { lastSnap = snap; render(snap); })
       .catch(function () {
@@ -119,7 +119,7 @@
       });
   }
   tick();
-  setInterval(tick, 60000);
+  setInterval(tick, 30000);
 
   // Card foot: two reveal panels driven by the open/closed button matrix.
   //  • Book Now panel (lw-book) — book-ahead options; revealed by the OPEN
