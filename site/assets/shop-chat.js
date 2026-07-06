@@ -855,8 +855,10 @@
     bubble(snap.open ? 'Who would you like to book with?' : 'We’re closed now — book ahead. Who with?', 'bot');
     var opts = order.map(function (n) { return { label: n.split(' ')[0], barber: n }; });
     if (samiDays.length) opts.push({ label: 'Sami', sami: true });
+    opts.push({ label: 'Walk-In’s 💈', walk: true }); // Beau 2026-07-07: jump to the join-the-queue flow
     chipRow(opts, function (o) {
       bubble(o.label, 'me');
+      if (o.walk) { startWalkin(); return; }
       if (o.sami) { scSamiDays(samiDays); return; }
       scBarberDays(o.barber, byBarber[o.barber]);
     });
