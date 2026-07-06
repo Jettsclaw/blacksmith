@@ -58,10 +58,12 @@ const KEYBOARD = {
 // Persistent docked keyboard — always sits above the text box no matter how deep the
 // chat is, so the customer can never get lost. Taps send the label as a normal message,
 // which the classifier below already routes. "↩️ Start over" clears any half-finished flow.
+// Front door leads with the Walk-in / Book fork (Beau 2026-07-06) — the two
+// clean paths that mirror the website chat. Utility taps sit below.
 const MENU_KB = {
   keyboard: [
+    [{ text: '🚶 Walk-in' }, { text: '📅 Book' }],
     [{ text: '⏱ Wait time' }, { text: '💈 Who\'s on' }],
-    [{ text: '✂️ Book me in' }, { text: '🌹 Blackrose' }],
     [{ text: '🕐 Hours & parking' }, { text: '↩️ Start over' }]
   ],
   resize_keyboard: true, is_persistent: true
@@ -145,6 +147,16 @@ async function bkStep(token, chat, data) {
       reply_markup: { inline_keyboard: menu.map(m => [{ text: `${m.name} · $${m.cost}`, callback_data: 'bk2:' + m.id }]) } });
   } else if (data.startsWith('bk2:')) {
     st.service = parseInt(data.slice(4), 10);
+    // Book-ahead (walk-in/book fork): the chosen day's own times ride in state,
+    // so offer those directly — no slots_next lookup. (Beau 2026-07-06)
+    if (st.times) {
+      if (!st.times.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `No times left ${st.label || 'then'} — pick another day or barber.` }); return clearState(chat); }
+      st.step = 'slot';
+      await setState(chat, st);
+      await tg(token, 'sendMessage', { chat_id: chat, text: `What time ${st.label || 'then'}?`,
+        reply_markup: { inline_keyboard: st.times.map(t => [{ text: fmtT(t), callback_data: 'bk3:' + t }]) } });
+      return;
+    }
     if (st.shop === 'salon') {
       const slots = ((s.salon || {}).slots || {})[st.barber] || [];
       if (!slots.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `No salon times left — call ${PHONE}.` }); return clearState(chat); }
@@ -216,6 +228,127 @@ async function bkDetails(token, chat, text) {
   await clearState(chat);
   await tg(token, 'sendMessage', { chat_id: chat, text: 'Locking it in… you’ll get a confirmation here in a few seconds.' });
   return true;
+}
+
+// ================= Walk-in / Book fork — mirrors the website shop-chat =========
+// The front door: the customer always picks Walk-in (join the live queue) or
+// Book (a set time), then continues exactly like the site chat. (Beau 2026-07-06)
+async function sendFork(token, chat, greet) {
+  await clearState(chat);
+  await tg(token, 'sendMessage', { chat_id: chat, text: greet || 'What are you after?',
+    reply_markup: { inline_keyboard: [[
+      { text: '🚶 Walk-in', callback_data: 'walk' },
+      { text: '📅 Book', callback_data: 'book' }
+    ]] } });
+}
+
+// --- Walk-in: join the live queue with a walk-in barber (open only) ---
+async function walkinStart(token, chat) {
+  await clearState(chat);
+  const s = await feed().catch(() => null);
+  if (!s) return;
+  if (!s.open) {
+    // Closed → hand off to the Blacksmith After Hours crew (mirrors the website).
+    await tg(token, 'sendMessage', { chat_id: chat,
+      text: "We're closed right now — but you can still get on the list. Leave your walk-in with the Blacksmith After Hours crew and they'll sort you first thing when we open.",
+      reply_markup: { inline_keyboard: [[{ text: '🚶 Blacksmith After Hours →', url: AFTERHOURS_TG }]] } });
+    return;
+  }
+  const wb = (s.barbers || []).filter(b => b.walkin === true);
+  if (!wb.length) {
+    await tg(token, 'sendMessage', { chat_id: chat, text: `No barbers on walk-ins right now — tap 📅 Book to lock a time, or call ${PHONE}.` });
+    return;
+  }
+  const rows = wb.map(b => [{ text: b.name.split(' ')[0], callback_data: 'wb:' + b.name.split(' ')[0] }]);
+  rows.push([{ text: 'Any barber', callback_data: 'wb:any' }]);
+  await tg(token, 'sendMessage', { chat_id: chat,
+    text: `On walk-ins ${asOf(s)}: ${wb.map(b => b.name.split(' ')[0]).join(', ')}.\nWho would you like? I'll pop you in the live queue.`,
+    reply_markup: { inline_keyboard: rows } });
+}
+async function walkinBarber(token, chat, first) {
+  const s = await feed().catch(() => null);
+  if (!s) return clearState(chat);
+  const b = s.barbers.find(x => x.name.split(' ')[0] === first);
+  await setState(chat, { flow: 'walk', shop: 'barber', barber: first === 'any' ? 'any' : (b ? b.name : first), slot: 'now', step: 'service' });
+  const menu = (s.services && s.services.barber) || [];
+  await tg(token, 'sendMessage', { chat_id: chat, text: 'What are we doing?',
+    reply_markup: { inline_keyboard: menu.map(m => [{ text: `${m.name} · $${m.cost}`, callback_data: 'bk2:' + m.id }]) } });
+}
+
+// --- Book ahead: pick a barber, then any day they actually work, then time ---
+export function dcode(iso) { return String(iso || '').replace(/-/g, '').slice(4); } // MMDD
+export function bookSchedules(s) {
+  // Invert book_days → each barber's own working days (mirrors the website).
+  const byBarber = {}, order = [];
+  (s.book_days || []).forEach(d => {
+    Object.keys(d.barbers || {}).forEach(n => {
+      if (!(d.barbers[n] || []).length) return;
+      if (!byBarber[n]) { byBarber[n] = []; order.push(n); }
+      byBarber[n].push({ code: dcode(d.date), date: d.date, label: d.label, times: d.barbers[n] });
+    });
+  });
+  // Sami books off the Blackrose schedule but shows as just another barber.
+  const sal = s.salon || {};
+  let samiDays = (sal.days || []).map(d => {
+    const k = Object.keys(d.slots || {}).find(x => /^sam/i.test(x) && (d.slots[x] || []).length);
+    return k ? { code: dcode(d.date), date: d.date, label: d.label, times: d.slots[k], stylist: k } : null;
+  }).filter(Boolean);
+  if (!samiDays.length) {
+    const lk = Object.keys(sal.slots || {}).find(x => /^sam/i.test(x) && (sal.slots[x] || []).length);
+    if (lk) samiDays = [{ code: dcode(sal.date), date: sal.date, label: sal.label, times: sal.slots[lk], stylist: lk }];
+  }
+  return { byBarber, order, samiDays };
+}
+async function bookStart(token, chat) {
+  await clearState(chat);
+  const s = await feed().catch(() => null);
+  if (!s) return;
+  const { order, samiDays } = bookSchedules(s);
+  if (!order.length && !samiDays.length) {
+    await tg(token, 'sendMessage', { chat_id: chat, text: `Tomorrow's book isn't open yet — try again in the morning or call ${PHONE}.` });
+    return;
+  }
+  const rows = order.map(n => [{ text: n.split(' ')[0], callback_data: 'bb:' + n.split(' ')[0] }]);
+  if (samiDays.length) rows.push([{ text: 'Sami', callback_data: 'bb:Sami' }]);
+  await tg(token, 'sendMessage', { chat_id: chat,
+    text: s.open ? 'Book ahead — who with?' : "We're closed now — book ahead. Who with?",
+    reply_markup: { inline_keyboard: rows } });
+}
+async function bookBarber(token, chat, first) {
+  const s = await feed().catch(() => null);
+  if (!s) return clearState(chat);
+  const { byBarber, samiDays } = bookSchedules(s);
+  if (first === 'Sami') {
+    if (!samiDays.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `Sami's book is closed right now — call ${PHONE}.` }); return; }
+    return bookOfferDays(token, chat, { shop: 'salon', barber: samiDays[0].stylist || 'Sami', name: 'Sami', days: samiDays });
+  }
+  const key = Object.keys(byBarber).find(k => k.split(' ')[0] === first);
+  const days = key ? byBarber[key] : [];
+  if (!days.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `${first}'s book isn't open yet — try the morning or call ${PHONE}.` }); return; }
+  return bookOfferDays(token, chat, { shop: 'bookings', barber: key, name: first, days });
+}
+async function bookOfferDays(token, chat, ctx) {
+  if (ctx.days.length === 1) return bookDayPicked(token, chat, ctx, ctx.days[0]);
+  await setState(chat, { flow: 'book', shop: ctx.shop, barber: ctx.barber, name: ctx.name, days: ctx.days });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `${ctx.name.split(' ')[0]}'s schedule — which day?`,
+    reply_markup: { inline_keyboard: ctx.days.map(d => [{ text: d.label, callback_data: 'bd:' + d.code }]) } });
+}
+async function bookDay(token, chat, code) {
+  const st = await getState(chat);
+  if (!st || st.flow !== 'book' || !st.days) return;
+  const day = st.days.find(d => d.code === code) || st.days[0];
+  if (!day) return;
+  return bookDayPicked(token, chat, st, day);
+}
+async function bookDayPicked(token, chat, ctx, day) {
+  const s = await feed().catch(() => null);
+  if (!s) return clearState(chat);
+  await setState(chat, { flow: 'book', step: 'service', shop: ctx.shop, barber: ctx.barber,
+    date: day.date, label: day.label, times: day.times, ahead: true });
+  const menu = ctx.shop === 'salon' ? ((s.salon || {}).services || []) : ((s.services && s.services.bookings) || []);
+  if (!menu.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `Menu's offline for a moment — call ${PHONE}.` }); return clearState(chat); }
+  await tg(token, 'sendMessage', { chat_id: chat, text: 'What are we doing?',
+    reply_markup: { inline_keyboard: menu.map(m => [{ text: `${m.name} · $${m.cost}`, callback_data: 'bk2:' + m.id }]) } });
 }
 
 // ---- "Join tomorrow's walk-in queue" — STATELESS. The chosen service rides
@@ -465,7 +598,12 @@ export default async function handler(req, res) {
       const cq = u.callback_query;
       const chat = cq.message.chat.id;
       if (!limited(chat)) {
-        if (cq.data === 'bk') await bkStart(token, chat);
+        if (cq.data === 'walk') await walkinStart(token, chat);
+        else if (cq.data === 'book') await bookStart(token, chat);
+        else if (cq.data.startsWith('wb:')) await walkinBarber(token, chat, cq.data.slice(3));
+        else if (cq.data.startsWith('bb:')) await bookBarber(token, chat, cq.data.slice(3));
+        else if (cq.data.startsWith('bd:')) await bookDay(token, chat, cq.data.slice(3));
+        else if (cq.data === 'bk') await bkStart(token, chat);
         else if (cq.data === 'bks') await bkSalon(token, chat);
         else if (cq.data === 'wq') await wqStart(token, chat);
         else if (cq.data.startsWith('wqs:')) await wqService(token, chat, cq.data);
@@ -498,10 +636,14 @@ export default async function handler(req, res) {
         if (/^\/(start|menu)\b/i.test(raw) || isEscape(raw)) {
           const c0 = await getCustomer(chatId);
           await sendMenu(token, chatId, (c0 && c0.name)
-            ? `G’day ${c0.name.split(' ')[0]}! 👋 Live wait, who’s on, prices, or a booking — pick below.`
-            : 'Fresh start 👇 Live wait, who’s on, prices, or a booking — pick below.');
+            ? `G’day ${c0.name.split(' ')[0]}! 👋 Walk-in or Book? Pick below — or tap ⏱ wait, 💈 who’s on, 🕐 hours.`
+            : 'G’day! 👋 Walk-in or Book? Pick below — or tap ⏱ wait, 💈 who’s on, 🕐 hours.');
           return res.status(200).send('ok');
         }
+        // Front-door fork buttons (persistent keyboard). Strip the emoji, match label.
+        const flbl = raw.replace(/[^\x00-\x7F]/g, '').trim().toLowerCase();
+        if (flbl === 'walk-in' || flbl === 'walkin') { await walkinStart(token, chatId); return res.status(200).send('ok'); }
+        if (flbl === 'book') { await bookStart(token, chatId); return res.status(200).send('ok'); }
         const t = raw.toLowerCase();
         const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
         const nm = NAMES.find(n => t.includes(n));
@@ -523,7 +665,7 @@ export default async function handler(req, res) {
         else if (/sunday|monday|tuesday|wednesday|thursday|friday|saturday|weekend|tomorrow|hour|open|close|park|address|where/.test(t)) kind = 'hours';
         else if (/wait|long|busy|queue/.test(t)) kind = 'wait';
         else if (/who|on today|working/.test(t) || nm) kind = 'who';
-        if (kind === 'book') { await bkStart(token, chatId); return res.status(200).send('ok'); }
+        if (kind === 'book') { await sendFork(token, chatId, 'Righto — walk-in, or book a set time?'); return res.status(200).send('ok'); }
         if (kind === 'cancel') { await cancelStart(token, chatId); return res.status(200).send('ok'); }
         let text;
         const s2 = await feed().catch(() => null);
