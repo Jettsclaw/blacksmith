@@ -52,6 +52,26 @@ const KEYBOARD = {
     [{ text: '🕐 Hours & parking', callback_data: 'hours' }]
   ]
 };
+// Persistent docked keyboard — always sits above the text box no matter how deep the
+// chat is, so the customer can never get lost. Taps send the label as a normal message,
+// which the classifier below already routes. "↩️ Start over" clears any half-finished flow.
+const MENU_KB = {
+  keyboard: [
+    [{ text: '⏱ Wait time' }, { text: '💈 Who\'s on' }],
+    [{ text: '✂️ Book me in' }, { text: '🌹 Blackrose' }],
+    [{ text: '🕐 Hours & parking' }, { text: '↩️ Start over' }]
+  ],
+  resize_keyboard: true, is_persistent: true
+};
+// One escape phrase set — typing any of these (or tapping Start over) always bails you
+// out of a wizard back to a clean menu, from ANY state (incl. force_reply prompts).
+const ESCAPE_RE = /^\s*\/?(menu|start ?over|restart|home|back to start|nvm|never ?mind|exit|quit|stop)\s*$/i;
+// tolerant test: strips a leading emoji/space (e.g. the "↩️ Start over" button label) then matches
+function isEscape(x) { return ESCAPE_RE.test(String(x || '').replace(/^[^a-zA-Z/]+/, '')); }
+async function sendMenu(token, chat, msg) {
+  await clearState(chat);
+  await tg(token, 'sendMessage', { chat_id: chat, text: msg || menuText(), reply_markup: MENU_KB, disable_web_page_preview: true });
+}
 
 async function getState(chat) {
   try {
@@ -264,6 +284,7 @@ async function wqTime(token, chat, data) {
     reply_markup: { force_reply: true } });
 }
 async function wqSubmit(token, chat, promptText, userText) {
+  if (isEscape(userText)) { await sendMenu(token, chat, 'No worries — back to the start. What do you need?'); return; }
   const menu = await wqMenu();
   // recover the service = the LONGEST menu name that appears in the prompt
   let svc = null;
@@ -304,6 +325,7 @@ async function cancelStart(token, chat) {
     reply_markup: { force_reply: true } });
 }
 async function cancelSubmit(token, chat, userText) {
+  if (isEscape(userText)) { await sendMenu(token, chat, 'All good — nothing cancelled. What do you need?'); return; }
   const m = userText.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
   if (!m) { await tg(token, 'sendMessage', { chat_id: chat, text: `Almost — send the name + mobile you booked with.\nLike: Jack Smith, 0400 123 456\n\n(to ${CANCEL_MARK})`, reply_markup: { force_reply: true } }); return; }
   const name = m[1].trim(), phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
@@ -333,6 +355,19 @@ async function answerFor(kind) {
 
   if (kind === 'hours') {
     return `📍 ${ADDRESS}\n🕐 Today: ${s.hours_today === 'closed today' ? 'closed' : fmtHours(s.hours_today)}\n🅿️ Free parking out front.\n📞 ${PHONE}`;
+  }
+  // Closed + "who's on" → show who's rostered the next open day (mirrors the website).
+  if (kind === 'who' && !s.open) {
+    const wtm = ((s.walkin_next && s.walkin_next.barbers) || []).map(n => n.split(' ')[0]);
+    const bkm = Object.keys(s.slots_next || {}).map(n => n.split(' ')[0]);
+    if (Object.keys((s.salon && s.salon.slots) || {}).some(k => ((s.salon.slots[k]) || []).length)) bkm.push('Sami');
+    if (!wtm.length && !bkm.length)
+      return `Lights are off — back ${s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])}. Book ahead any time: ${BOOK_URL}`;
+    const lbl = (s.walkin_next && s.walkin_next.label) || s.next_label || 'tomorrow';
+    let out = `On ${lbl}:`;
+    if (wtm.length) out += `\n💈 Walk-ins — ${wtm.join(', ')}`;
+    if (bkm.length) out += `\n📅 Booking — ${bkm.join(', ')}`;
+    return out + `\nBook: ${BOOK_URL}`;
   }
   if (!s.open) {
     return `Lights are off — we're back ${s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])}. Book ahead any time: ${BOOK_URL}`;
@@ -435,7 +470,7 @@ export default async function handler(req, res) {
         else if (cq.data.startsWith('qadd:') || cq.data.startsWith('qdis:')) await qAction(token, cq);
         else {
           const text = await answerFor(cq.data);
-          await tg(token, 'sendMessage', { chat_id: chat, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
+          await tg(token, 'sendMessage', { chat_id: chat, text, reply_markup: MENU_KB, disable_web_page_preview: true });
         }
       }
       await tg(token, 'answerCallbackQuery', { callback_query_id: cq.id });
@@ -454,6 +489,14 @@ export default async function handler(req, res) {
           return res.status(200).send('ok');
         }
         if (await bkDetails(token, chatId, raw)) return res.status(200).send('ok');
+        // Always-available reset: "/start", "/menu", "start over", tapping ↩️ Start over, etc.
+        if (/^\/(start|menu)\b/i.test(raw) || isEscape(raw)) {
+          const c0 = await getCustomer(chatId);
+          await sendMenu(token, chatId, (c0 && c0.name)
+            ? `G’day ${c0.name.split(' ')[0]}! 👋 Live wait, who’s on, prices, or a booking — pick below.`
+            : 'Fresh start 👇 Live wait, who’s on, prices, or a booking — pick below.');
+          return res.status(200).send('ok');
+        }
         const t = raw.toLowerCase();
         const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
         const nm = NAMES.find(n => t.includes(n));
@@ -462,7 +505,8 @@ export default async function handler(req, res) {
         else if (/salon|colour|color|women|ladies|blackrose/.test(t)) kind = 'salon';
         else if (/book|appoint|reserve|lock in|get in/.test(t)) kind = 'book';
         else if (/price|cost|how much|\$|charge|service|menu|fade|beard|shave/.test(t)) kind = 'prices';
-        else if (/cancel|reschedule|change my/.test(t)) kind = 'cancel';
+        else if (/how (does|do i|do you|to book|it works|this works)|how'?s it work/.test(t)) kind = 'how';
+        else if (/remotely|from home|hold my spot|save my spot|skip the (queue|wait)|watch my spot/.test(t)) kind = 'remote';
         else if (/pay|card|cash|eftpos/.test(t)) kind = 'pay';
         else if (/app\b|app store/.test(t)) kind = 'app';
         else if (/salon|colour|color|women|ladies|blackrose/.test(t)) kind = 'salon';
@@ -482,7 +526,8 @@ export default async function handler(req, res) {
           const menu = (s2 && s2.services && s2.services.barber) || [];
           text = menu.length ? 'The menu:\n' + menu.map(m => `${m.name} — $${m.cost}`).join('\n') + '\nTap Book me in and I\u2019ll lock one in.' : `Call us for the menu: ${PHONE}`;
         }
-        else if (kind === 'cancel') text = `To change or cancel a booking, call us on ${PHONE} and we'll sort it.`;
+        else if (kind === 'how') text = 'Two ways in: join the live queue (walk-in — I’ll show you the wait) or book a set time with a barber. Tap ✂️ Book me in and I’ll walk you through it.';
+        else if (kind === 'remote') text = 'You never have to stand around — join the queue from right here, watch your spot, and walk in when it’s your turn. Tap ✂️ Book me in and I’ll set you up.';
         else if (kind === 'pay') text = 'You pay at the shop after your cut — card or cash both sweet.';
         else if (kind === 'app') text = 'The Blacksmith app: https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905';
         else if (kind === 'salon') {
@@ -508,7 +553,7 @@ export default async function handler(req, res) {
         }
         else if (kind === 'menu') text = menuText();
         else text = await answerFor(kind);
-        await tg(token, 'sendMessage', { chat_id: chatId, text, reply_markup: KEYBOARD, disable_web_page_preview: true });
+        await tg(token, 'sendMessage', { chat_id: chatId, text, reply_markup: MENU_KB, disable_web_page_preview: true });
       }
     }
   } catch (e) { /* never leak errors to Telegram */ }
