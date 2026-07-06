@@ -210,7 +210,7 @@
     opts.push({ label: 'Anyone', barber: 'any', book: ['barber'] });
     opts.push({ label: '🌹 Blackrose Salon', salon: true });
     chipRow(opts, function (o) {
-      if (o.walk) { bubble('Walk-In’s', 'me'); startWalkin(); return; }
+      if (o.walk) { bubble('Walk-In’s', 'me'); scWaitList(); return; }
       if (o.salon) { bubble('Blackrose Salon', 'me'); startSalon(); return; }
       bubble(o.label, 'me');
       wiz.barber = o.barber;
@@ -301,7 +301,7 @@
     var opts = names.map(function (n) { return { label: n, barber: n }; });
     opts.push({ label: 'Walk-In’s 💈', walk: true }); // Beau 2026-07-07: jump to the join-the-queue flow
     chipRow(opts, function (o) {
-      if (o.walk) { bubble('Walk-In’s', 'me'); startWalkin(); return; }
+      if (o.walk) { bubble('Walk-In’s', 'me'); scWaitList(); return; }
       bubble(o.label, 'me');
       wiz.barber = o.barber;
       wiz.shop = 'bookings';
@@ -858,7 +858,7 @@
     opts.push({ label: 'Walk-In’s 💈', walk: true }); // Beau 2026-07-07: jump to the join-the-queue flow
     chipRow(opts, function (o) {
       bubble(o.label, 'me');
-      if (o.walk) { startWalkin(); return; }
+      if (o.walk) { scWaitList(); return; }
       if (o.sami) { scSamiDays(samiDays); return; }
       scBarberDays(o.barber, byBarber[o.barber]);
     });
