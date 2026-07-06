@@ -377,6 +377,7 @@ section{position:relative}
    zoomed). No transforms beyond translateY — fragile per-frame positioning was
    behaving unpredictably on-device. */
 .book-bar{
+  display:none; /* Beau 2026-07-07: sticky BOOK A CUT bar removed site-wide */
   position:fixed;left:0;right:0;bottom:0;z-index:900;
   padding:12px 14px calc(12px + env(safe-area-inset-bottom));
   background:rgba(11,11,13,.94);backdrop-filter:blur(12px);
