@@ -476,9 +476,17 @@
     chipRow(wqTimeChips(iso).map(function (t) { return { label: t.label, time: t.time }; }), function (o) {
       bubble(o.label, 'me');
       twq.time = o.time;
-      twq.step = 'details';
-      bubble('And your name + mobile?\nLike: Jack Smith, 0400 123 456', 'bot');
+      twq.step = 'service';
+      bubble('What are you after? A word’s fine — Cut, Fade, Beard, etc.', 'bot');
     }, true);
+  }
+
+  function handleWalkinService(text) {
+    var s = text.trim().slice(0, 40);
+    if (!s) { bubble('Just a word’s fine — Cut, Fade, Beard…', 'bot'); return; }
+    twq.request = s;
+    twq.step = 'details';
+    bubble('And your name + mobile?\nLike: Jack Smith, 0400 123 456', 'bot');
   }
 
   function handleWalkinDetails(text) {
@@ -502,7 +510,7 @@
   function submitQueue(name, phone, time, email) {
     bubble('Popping you on tomorrow’s list…', 'bot');
     fetch(QUEUE_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, phone: phone, email: email || '', service: twq.service, barber: 'First available', time: time, date: twq.date || undefined }) })
+      body: JSON.stringify({ name: name, phone: phone, email: email || '', request: twq.request || '', barber: 'First available', time: time, date: twq.date || undefined }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (d && d.ok) bubble('✅ You’re on tomorrow’s walk-in list, ' + name.split(' ')[0] + ' — we’ll text you to confirm your time first thing in the morning. See you then! ✂️', 'bot');
@@ -681,6 +689,7 @@
       if (!t) return;
       input.value = '';
       bubble(t, 'me');
+      if (twq && twq.step === 'service') { handleWalkinService(t); return; }
       if (twq && twq.step === 'details') { handleWalkinDetails(t); return; }
       if (twq && twq.step === 'email') { handleWalkinEmail(t); return; }
       if (cancelMode || (wiz && wiz.step === 'details')) { handleDetails(t); return; }

@@ -41,6 +41,7 @@ export default async function handler(req, res) {
   // adjusts in person.
   const service = SERVICES[parseInt(b.service, 10)] ? parseInt(b.service, 10) : 1391;
   const email = String(b.email || '').trim().slice(0, 80);
+  const request = String(b.request || '').trim().slice(0, 40); // customer's own words for what they want
   const barber = WALKIN.has(b.barber) ? b.barber : 'First available';
   const time = String(b.time || 'First available').trim().slice(0, 20);
   if (!/^[a-zA-Z][a-zA-Z '\-]{1,39}$/.test(name)) return res.status(400).json({ ok: false, err: 'name' });
@@ -54,7 +55,7 @@ export default async function handler(req, res) {
   if (!date) { try { const fr = await fetch('https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json?t=' + Math.floor(Date.now() / 30000), { cache: 'no-store' }); const fs = await fr.json(); date = fs && fs.next_date; } catch {} }
 
   const id = globalThis.crypto.randomUUID().toLowerCase();
-  const rec = { id, name, phone, email: email || undefined, service, service_name: SERVICES[service], barber, time, date: date || undefined, at: new Date().toISOString() };
+  const rec = { id, name, phone, email: email || undefined, request: request || undefined, service, service_name: SERVICES[service], barber, time, date: date || undefined, at: new Date().toISOString() };
 
   try {
     await put(`queue/${id}.json`, JSON.stringify(rec),
@@ -63,7 +64,7 @@ export default async function handler(req, res) {
     const card =
       `🆕 *Tomorrow's walk-in* (via website)\n\n` +
       `👤 ${name}\n📱 ${phone}\n` + (email ? `📧 ${email}\n` : ``) +
-      `💈 ${barber}\n🕐 Preferred: ${time}`;
+      `✂️ ${request || SERVICES[service]}\n💈 ${barber}\n🕐 Preferred: ${time}`;
     await tg(token, 'sendMessage', {
       chat_id: chat, text: card, parse_mode: 'Markdown',
       reply_markup: { inline_keyboard: [[
