@@ -559,7 +559,7 @@
   var fab = document.createElement('button');
   fab.className = 'sc-fab';
   fab.setAttribute('aria-label', 'Book a cut');
-  fab.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="55%" height="55%" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>';
+  fab.innerHTML = '<img src="assets/logo-white.png" alt="Blacksmith" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:84%;height:84%;object-fit:contain">';
   document.body.appendChild(fab);
 
   // Persistent label beside the launcher.
@@ -1055,13 +1055,15 @@
     if (/blackrosesalon/.test(a.href)) window.__scSalon(); else window.__scBook();
   }, true);
 
-  // Launcher opens the in-site chat panel (Telegram hidden until the bot's ready,
-  // Beau 2026-07-07). Shows a greeting on first open.
+  // Launcher opens the in-site chat and RESETS to the book fork every time
+  // (Telegram hidden until the bot's ready, Beau 2026-07-07).
   function openPanel() {
     scCardOpen(function () {
-      if (body && !body.querySelector('.sc-msg')) {
-        bubble('G’day! I can tell you the live wait, who’s on, prices, or book you in — what do you need?', 'bot');
-      }
+      bubble('Lock a time, or join the walk-in queue?', 'bot');
+      chipRow([{ label: '📅 Bookings', cat: 'book' }, { label: '💈 Walk-in', cat: 'walk' }], function (o) {
+        if (o.cat === 'book') { bubble('Bookings', 'me'); scBookNames(); return; }
+        bubble('Walk-in', 'me'); scWaitList();
+      });
     });
   }
   fab.onclick = openPanel;
