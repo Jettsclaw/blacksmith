@@ -471,15 +471,12 @@
           : h.cutting ? ('Cutting now' + (h.cutting_at === 'salon' ? ' (in the salon)' : '') + ' · free in ~' + fi + ' min')
           : fi > 90 ? 'Booked up today — try another barber'
           : 'Booked — free in ~' + fi + ' min';
-        var book = h.book && h.book.length ? h.book : ['barber'];
+        // Book Salon removed from the character cards (Beau 2026-07-07) — filter
+        // salon out so only the barber booking button shows.
+        var book = (h.book && h.book.length ? h.book : ['barber']).filter(function (x) { return x !== 'salon'; });
+        if (!book.length) book = ['barber'];
         var first = safe(h.name.split(' ')[0]);
-        var btns = book[0] === 'salon'
-          ? '<a class="btn btn-gold" href="' + BOOK_URLS.salon + '">Book salon</a>'
-          : '<button class="btn btn-gold ls-book" data-b="' + first + '">Book with ' + first + '</button>';
-        if (book.length > 1)
-          btns += book[1] === 'salon'
-            ? '<a class="btn btn-gold ls-alt" href="' + BOOK_URLS.salon + '">Book salon</a>'
-            : '<button class="btn btn-gold ls-alt ls-book" data-b="' + first + '">Book barber</button>';
+        var btns = '<button class="btn btn-gold ls-book" data-b="' + first + '">Book with ' + first + '</button>';
         card.innerHTML = '<button class="ls-x" aria-label="Close">&times;</button>' +
           '<strong>' + safe(h.name) + '</strong><span>' + status + '</span>' + btns;
         card.querySelector('.ls-x').onclick = function (ev) { ev.stopPropagation(); card.hidden = true; };
