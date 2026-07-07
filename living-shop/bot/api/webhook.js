@@ -251,10 +251,9 @@ async function walkinStart(token, chat) {
   const s = await feed().catch(() => null);
   if (!s) return;
   if (!s.open) {
-    // Closed → hand off to the Blacksmith After Hours crew (mirrors the website).
-    await tg(token, 'sendMessage', { chat_id: chat,
-      text: "We're closed right now — but you can still get on the list. Leave your walk-in with the Blacksmith After Hours crew and they'll sort you first thing when we open.",
-      reply_markup: { inline_keyboard: [[{ text: '🚶 Blacksmith After Hours →', url: AFTERHOURS_TG }]] } });
+    // Closed → capture the walk-in in-chat (service → day → time → name+mobile →
+    // email) and card it to the crew, identical to the web chat. (Beau 2026-07-07)
+    await wqStart(token, chat);
     return;
   }
   const wb = (s.barbers || []).filter(b => b.walkin === true);
@@ -360,6 +359,8 @@ async function bookDayPicked(token, chat, ctx, day) {
 //      with reply_to_message = our prompt), so there is NO server state to read
 //      stale. Posts a card to QUEUE_CHAT for Bayli. (Winston 2026-07-03) ----
 const WQ_MARK = "on tomorrow's walk-in list"; // unique phrase in the prompt = our marker
+const EMAIL_MARK = "walk-in email step"; // unique phrase in the email force_reply prompt
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 async function wqMenu() {
   const s = await feed().catch(() => null);
   return (s && s.services && s.services.barber && s.services.barber.length) ? s.services.barber : [];
@@ -450,13 +451,37 @@ async function wqSubmit(token, chat, promptText, userText) {
   const dayLabel = dt ? dt.label : 'Tomorrow';
   const daySentence = dayLabel === 'Tomorrow' ? 'tomorrow' : dayLabel;
   const id = globalThis.crypto.randomUUID().toLowerCase();
-  await put(`queue/${id}.json`, JSON.stringify({ id, name, phone, service: (svc ? svc.id : 0), service_name: svcName, barber: 'First available', time, date: date || undefined, at: new Date().toISOString() }),
+  // Draft the record, then ask for email (identical to the web chat) — the card
+  // only posts once email is answered/skipped. (Beau 2026-07-07)
+  await put(`queue/${id}.json`, JSON.stringify({ id, name, phone, service: (svc ? svc.id : 0), service_name: svcName, barber: 'First available', time, date: date || undefined, day_label: dayLabel, day_sentence: daySentence, at: new Date().toISOString(), draft: true }),
     { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
-  const card = `🆕 *Walk-in* (via Telegram)\n\n👤 ${name}\n📱 ${phone}\n✂️ ${svcName}\n💈 First available\n🗓 ${dayLabel}\n🕐 Preferred: ${time}`;
+  await tg(token, 'sendMessage', { chat_id: chat,
+    text: `Cheers ${name.split(' ')[0]}! And your email? (so we can send your confirmation) — or reply "skip".\n\n(${EMAIL_MARK} · ref:${id})`,
+    reply_markup: { force_reply: true } });
+}
+async function wqEmail(token, chat, promptText, userText) {
+  const idm = promptText.match(/ref:([a-f0-9-]{36})/i);
+  if (!idm) { await sendMenu(token, chat); return; }
+  const id = idm[1];
+  const e = userText.trim();
+  if (isEscape(e)) { await sendMenu(token, chat, 'No worries — back to the start. What do you need?'); return; }
+  let rec;
+  try { const h = await head(`queue/${id}.json`); rec = await (await fetch(h.downloadUrl)).json(); }
+  catch { await tg(token, 'sendMessage', { chat_id: chat, text: `Hmm, that one timed out — give us a call on ${PHONE} and we'll pop you down.` }); return; }
+  let email = '';
+  if (!/^skip$/i.test(e)) {
+    if (!EMAIL_RE.test(e)) { await tg(token, 'sendMessage', { chat_id: chat, text: `That email doesn't look right — try again, or reply "skip".\n\n(${EMAIL_MARK} · ref:${id})`, reply_markup: { force_reply: true } }); return; }
+    email = e.slice(0, 80);
+  }
+  rec.email = email || undefined; delete rec.draft;
+  await put(`queue/${id}.json`, JSON.stringify(rec),
+    { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
+  const card = `🆕 *Walk-in* (via Telegram)\n\n👤 ${rec.name}\n📱 ${rec.phone}\n` + (email ? `📧 ${email}\n` : ``) +
+    `✂️ ${rec.service_name}\n💈 First available\n🗓 ${rec.day_label}\n🕐 Preferred: ${rec.time}`;
   await tg(token, 'sendMessage', { chat_id: process.env.QUEUE_CHAT, text: card, parse_mode: 'Markdown',
     reply_markup: { inline_keyboard: [[{ text: '✅ Add to SLIKR', callback_data: 'qadd:' + id }, { text: '✕ Dismiss', callback_data: 'qdis:' + id }]] } });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on the walk-in list for ${daySentence}, ${name.split(' ')[0]} — we'll text you to confirm your time. See you then! ✂️` });
-  await saveCustomer(chat, { name, phone, last_service: svcName, last_time: time });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on the walk-in list for ${rec.day_sentence || 'tomorrow'}, ${rec.name.split(' ')[0]} — we'll text you to confirm your time. See you then! ✂️` });
+  await saveCustomer(chat, { name: rec.name, phone: rec.phone, last_service: rec.service_name, last_time: rec.time });
 }
 
 // ---- Cancel via the bot — stateless force_reply → creq for the Mac executor ----
@@ -627,6 +652,10 @@ export default async function handler(req, res) {
         const raw = u.message.text || '';
         // walk-in: reply to our force_reply prompt → post the card (no state read)
         const rtm = u.message.reply_to_message;
+        if (rtm && rtm.text && rtm.text.indexOf(EMAIL_MARK) >= 0) {
+          await wqEmail(token, chatId, rtm.text, raw);
+          return res.status(200).send('ok');
+        }
         if (rtm && rtm.text && rtm.text.indexOf(WQ_MARK) >= 0) {
           await wqSubmit(token, chatId, rtm.text, raw);
           return res.status(200).send('ok');
