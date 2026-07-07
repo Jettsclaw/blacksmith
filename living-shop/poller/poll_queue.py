@@ -106,10 +106,17 @@ def build_snapshot() -> dict:
     # Who is rostered on a seat today: any seat slot that is a real
     # reservation/break (not the full-day "closed" block) names its barber.
     on_today = {}  # barber_id -> first name (from slot performer ids)
+    shift_start = {}  # barber_id -> datetime of earliest rostered (non-closed) slot today
+    walkin_ids = set()  # barbers seated on the WALK-IN shop (421) = the walk-in roster
     for seat in seats.values():
         for slot in seat.get("time_slots", []):
             if slot.get("type") != "closed" and slot.get("performer_barber_id"):
-                on_today[slot["performer_barber_id"]] = None
+                pid = slot["performer_barber_id"]
+                on_today[pid] = None
+                walkin_ids.add(pid)
+                st = parse_t(now, slot["start_time"])
+                if pid not in shift_start or st < shift_start[pid]:
+                    shift_start[pid] = st
 
     # Live activity. Walk-in queue (421) drives BOTH waiting count and cutting;
     # bookings (1121) drive cutting/on-today only — an appointment at 4pm is
@@ -175,6 +182,20 @@ def build_snapshot() -> dict:
     # merge id-keyed (seat roster) and name-keyed (live activity) entries.
     roster = {b["id"]: (b.get("user") or {}).get("first_name", "").strip().title()
               for b in shop.get("barbers", []) if b.get("is_active")}
+    # A barber rostered to start later today isn't "on" until their shift
+    # begins — don't advertise a 12pm starter as free at 9am. Key their shift
+    # start by NAME so it survives the id/name merge below. Someone actually
+    # cutting (started early) overrides this — reality wins.
+    shift_start_name = {}
+    for pid, ss in shift_start.items():
+        nm = roster.get(pid)
+        if nm and (nm not in shift_start_name or ss < shift_start_name[nm]):
+            shift_start_name[nm] = ss
+    # Walk-in roster by name: only these barbers can seat a walk-in, so only
+    # they count toward the walk-in wait. Book-ahead crew (Locky/Jarred) and
+    # the salon (Sami) are excluded — an idle bookings barber must NOT read as
+    # "no wait" on the walk-in queue.
+    walkin_names = {roster.get(pid) for pid in walkin_ids} - {None, ""}
     merged = {}
     for key in on_today:
         name = on_today[key] or roster.get(key)
@@ -185,6 +206,11 @@ def build_snapshot() -> dict:
         at = cutting_at.get(key) or cutting_at.get(name) or "shop"
         seen = seen_shop.get(key, set()) | seen_shop.get(name, set())
         first = name.split(" ")[0]
+        # Dual-shop (Sami) runs the salon — only salon activity counts as them
+        # cutting. A walk-in pinned to their idle 421 seat is NOT them on the
+        # floor, so don't read it as cutting. (Beau 2026-07-07)
+        if first in DUAL_SHOP and at != "salon":
+            cutting = False
         if first in DUAL_SHOP:
             book = ["barber", "salon"]
         elif "bookings" in seen or first in BOOKINGS_DEFAULT:
@@ -197,11 +223,24 @@ def build_snapshot() -> dict:
                         "free_in": max(prev["free_in"], fi),
                         "cutting_at": at if cutting else prev["cutting_at"],
                         "book": book}
+    # Walk-in = rostered on a 421 seat AND actually walk-in crew. A barber whose
+    # day is bookings (Jarred) or salon (Sami, dual-shop) must NOT read as a
+    # walk-in barber even though they hold a 421 seat. book == ["barber"] is the
+    # pure walk-in crew; ["bookings"] and ["barber","salon"] are excluded.
+    # (Beau 2026-07-07)
     barbers = [{"name": n if SHOW_BARBER_NAMES else "Barber",
                 "cutting": v["cutting"], "free_in": v["free_in"],
-                "cutting_at": v["cutting_at"], "book": v["book"]}
-               for n, v in merged.items()]
+                "cutting_at": v["cutting_at"], "book": v["book"],
+                "walkin": n in walkin_names and v["book"] == ["barber"]}
+               for n, v in merged.items()
+               if v["cutting"] or n not in shift_start_name
+               or now >= shift_start_name[n]]
     barbers.sort(key=lambda b: (not b["cutting"], b["name"]))
+
+    # Walk-in wait: soonest a WALK-IN barber can seat a new walk-in (their cut
+    # remaining, chained through anyone already queued — see free_in). 0 = a
+    # walk-in chair is open now. None = no walk-in barber on shift.
+    walkin_wait = min((b["free_in"] for b in barbers if b["walkin"]), default=None)
 
     # Jett's rule (2026-06-11): always advertise the SHORTEST wait — if a
     # chair is free the walk-in wait is now, regardless of SLIKR's shop-wide
@@ -210,7 +249,7 @@ def build_snapshot() -> dict:
 
     # Real bookable times straight from SLIKR's own availability engine
     # (it knows shifts/breaks; our gap-maths didn't). First name -> ["HH:MM"].
-    def fetch_times(path):
+    def fetch_times(path, cap=4):
         out = {}
         try:
             times = fetch(path)
@@ -219,7 +258,7 @@ def build_snapshot() -> dict:
                     continue
                 nm = ((v.get("user") or {}).get("first_name") or "").strip().title()
                 if nm:
-                    out[nm] = [t[:5] for t in (v.get("available_times") or [])][:4]
+                    out[nm] = [t[:5] for t in (v.get("available_times") or [])][:cap]
         except Exception:
             pass  # slots are an enhancement; the scene survives without them
         return out
@@ -228,21 +267,99 @@ def build_snapshot() -> dict:
     for b in barbers:
         b["slots"] = slots_map.get(b["name"].split(" ")[0], []) if is_open else []
 
-    # After-hours (or near close): tomorrow's real availability so the chat
-    # can book ahead instead of dead-ending on "we're closed".
+    # The real week ahead so the chat can always let a customer book ANY
+    # scheduled day — "book Jarred for Saturday" mid-shift, not just after
+    # hours. book_days = every day in the next week (incl. today while there
+    # are hours left) that has bookable slots per barber. slots_next/next_date
+    # keep the FIRST available day for back-compat with older callers.
     next_date = next_label = None
     slots_next = {}
-    closing_soon = bool(close) and is_open and (parse_t(now, close) - now) <= timedelta(minutes=90)
-    if not is_open or closing_soon:
-        nd = now + timedelta(days=1)
+    book_days = []
+    cands = []
+    # Today first whenever the shop still has hours left — open now, or pre-open
+    # (Friday 8am, doors at 9): "book in later today" before rolling forward.
+    if start and now < parse_t(now, close or start):
+        cands.append((now, "today"))
+    # Then scan the whole week so a day with no bookable barbers (e.g. Blacksmith
+    # on a Monday) rolls forward instead of dead-ending the chat. Every day with
+    # slots is offered as its own pick — not just the first one.
+    for i in range(1, 8):
+        cands.append((now + timedelta(days=i), None))
+    for nd, lbl in cands:
         nd_str = nd.strftime("%Y-%m-%d")
-        nxt = fetch_times(f"/shops/{BOOKINGS_SHOP_ID}/seats/times/00:00/{nd_str}?services%5B%5D=5542")
-        if any(nxt.values()):
-            next_date, next_label = nd_str, nd.strftime("%A")
-            slots_next = nxt
+        nxt = fetch_times(f"/shops/{BOOKINGS_SHOP_ID}/seats/times/00:00/{nd_str}?services%5B%5D=5542", cap=8)
+        if lbl == "today":  # belt-and-braces: never offer a time that's passed
+            hm = now.strftime("%H:%M")
+            nxt = {k: [t for t in v if t > hm] for k, v in nxt.items()}
+        nxt = {k: v for k, v in nxt.items() if v}  # drop barbers off that day
+        if nxt:
+            lab = "Today" if lbl == "today" else nd.strftime("%A")
+            book_days.append({"date": nd_str, "label": lab, "barbers": nxt})
+            if not next_date:  # first available day = back-compat single day
+                next_date, next_label, slots_next = nd_str, lab, nxt
+
+    # Walk-in roster for the next open day — powers the bot's "Join tomorrow's
+    # queue" capacity line ("X barbers on walk-ins tomorrow"). Barbers with any
+    # available walk-in time at shop 421 tomorrow = who's rostered. Enhancement
+    # only: wrapped so any failure never breaks the main feed.
+    walkin_next = None
+    try:
+        if next_date:
+            svc421 = next((s["id"] for v in (shop.get("prices") or {}).values()
+                           for s in v if s.get("is_active", 1)), None)
+            if svc421:
+                wt = fetch_times(f"/shops/{SHOP_ID}/seats/times/00:00/{next_date}?services%5B%5D={svc421}")
+                names = sorted(n for n, v in wt.items() if v)
+                if names:
+                    walkin_next = {"date": next_date, "label": next_label,
+                                   "barbers": names, "count": len(names)}
+    except Exception:
+        pass
+
+    # Blackrose salon (shop 422): services + the stylist's real availability so
+    # both chats can book the salon in-flow (Jett 2026-06-12). Enhancement
+    # only — any failure here must never break the main feed.
+    SALON_IDS = [5297, 5301, 5305, 5306, 5308, 5309, 5310, 5316, 5317,
+                 5318, 5319, 5355, 5356, 5357]
+    salon = None
+    try:
+        sshop = fetch(f"/shops/{BLACKROSE_SHOP_ID}")["shop_details"]
+        sstart, sclose = todays_hours(now, sshop.get("timings", []))
+        by_id = {s["id"]: s for v in (sshop.get("prices") or {}).values() for s in v}
+        s_slots, s_label, s_date = {}, None, None
+        cands_s = []
+        if sstart and not sshop.get("suspend") and now < parse_t(now, sclose):
+            cands_s.append((now, "today"))
+        # Full week for Sami so she books like any other barber (Beau 2026-07-05).
+        for i in range(1, 8):
+            cands_s.append((now + timedelta(days=i), None))
+        s_days = []
+        for nd, lbl in cands_s:
+            nd_str = nd.strftime("%Y-%m-%d")
+            stimes = fetch_times(f"/shops/{BLACKROSE_SHOP_ID}/seats/times/00:00/{nd_str}?services%5B%5D=5297", cap=8)
+            if lbl == "today":
+                hm = now.strftime("%H:%M")
+                stimes = {k: [t for t in v if t > hm] for k, v in stimes.items()}
+            stimes = {k: v for k, v in stimes.items() if v}
+            if stimes:
+                lab = "Today" if lbl == "today" else nd.strftime("%A")
+                s_days.append({"date": nd_str, "label": lab, "slots": stimes})
+                if not s_date:
+                    s_slots, s_label, s_date = stimes, lab, nd_str
+        salon = {
+            "services": [{"id": i, "name": by_id[i]["name"], "cost": by_id[i]["cost"],
+                          "mins": by_id[i]["average_time"]}
+                         for i in SALON_IDS if i in by_id],
+            "slots": s_slots, "label": s_label, "date": s_date,
+            "days": s_days or None,
+            "hours_today": f"{sstart[:5]}–{sclose[:5]}" if sstart else "closed today",
+        }
+    except Exception:
+        pass
 
     snap = {
         "as_of": now.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "salon": salon,
         "open": is_open,
         "hours_today": f"{start[:5]}–{close[:5]}" if start else "closed today",
         # Shortest wait across barbers (0 = a chair is free now). Falls back
@@ -255,11 +372,18 @@ def build_snapshot() -> dict:
                        if is_open and shop.get("wait_time") is not None
                        else None),
         "waiting": waiting if is_open else 0,
+        # Walk-in-only wait (drives the "Join the Queue" live view): counts just
+        # walk-in barbers, so an idle book-ahead barber never fakes "no wait".
+        "walkin_wait": walkin_wait if is_open else None,
         "barbers_on": len(barbers) if is_open else 0,
         "barbers": barbers if is_open else [],
+        "week": [{"day": t["day"], "start": t["start"][:5], "close": t["close"][:5]}
+                 for t in shop.get("timings", []) if not t.get("suspend")],
         "next_date": next_date,
         "next_label": next_label,
         "slots_next": slots_next or None,
+        "book_days": book_days or None,
+        "walkin_next": walkin_next,
         # bookable menu (id/name/cost/mins per shop) — no PII, tiny
         "services": {
             "barber": [{"id": s["id"], "name": s["name"], "cost": s["cost"],
