@@ -60,11 +60,14 @@ const KEYBOARD = {
 // which the classifier below already routes. "↩️ Start over" clears any half-finished flow.
 // Front door leads with the Walk-in / Book fork (Beau 2026-07-06) — the two
 // clean paths that mirror the website chat. Utility taps sit below.
+// Mirrors the website web chat's bottom chips exactly: Wait time · Who's on ·
+// Hours & parking · Book. "✂️ Book" opens the Bookings/Walk-in fork, same as the
+// web chat's Book chip. (Beau 2026-07-07)
 const MENU_KB = {
   keyboard: [
-    [{ text: '📅 Bookings' }, { text: '💈 Walk-in' }],
     [{ text: '⏱ Wait time' }, { text: '💈 Who\'s on' }],
-    [{ text: '🕐 Hours & parking' }, { text: '↩️ Start over' }]
+    [{ text: '🕐 Hours & parking' }, { text: '✂️ Book' }],
+    [{ text: '↩️ Start over' }]
   ],
   resize_keyboard: true, is_persistent: true
 };
@@ -636,15 +639,19 @@ export default async function handler(req, res) {
         // Always-available reset: "/start", "/menu", "start over", tapping ↩️ Start over, etc.
         if (/^\/(start|menu)\b/i.test(raw) || isEscape(raw)) {
           const c0 = await getCustomer(chatId);
-          await sendMenu(token, chatId, (c0 && c0.name)
-            ? `G’day ${c0.name.split(' ')[0]}! 👋 Lock a time, or join the walk-in queue?`
-            : 'G’day! 👋 Lock a time, or join the walk-in queue?');
+          await clearState(chatId);
+          // Dock the persistent menu, then open the book-a-cut fork straight away
+          // (Beau 2026-07-07: bot begins on the book flow, mirroring the web chat).
+          await tg(token, 'sendMessage', { chat_id: chatId,
+            text: (c0 && c0.name) ? `G’day ${c0.name.split(' ')[0]}! 👋` : 'G’day! 👋 Welcome to Blacksmith.',
+            reply_markup: MENU_KB, disable_web_page_preview: true });
+          await sendFork(token, chatId, 'Let’s get you booked — lock a time, or join the walk-in queue?');
           return res.status(200).send('ok');
         }
         // Front-door fork buttons (persistent keyboard). Strip the emoji, match label.
         const flbl = raw.replace(/[^\x00-\x7F]/g, '').trim().toLowerCase();
         if (flbl === 'walk-in' || flbl === 'walkin') { await walkinStart(token, chatId); return res.status(200).send('ok'); }
-        if (flbl === 'book' || flbl === 'bookings') { await bookStart(token, chatId); return res.status(200).send('ok'); }
+        if (flbl === 'book' || flbl === 'bookings') { await sendFork(token, chatId, 'Lock a time, or join the walk-in queue?'); return res.status(200).send('ok'); }
         const t = raw.toLowerCase();
         const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
         const nm = NAMES.find(n => t.includes(n));
@@ -666,7 +673,7 @@ export default async function handler(req, res) {
         else if (/sunday|monday|tuesday|wednesday|thursday|friday|saturday|weekend|tomorrow|hour|open|close|park|address|where/.test(t)) kind = 'hours';
         else if (/wait|long|busy|queue/.test(t)) kind = 'wait';
         else if (/who|on today|working/.test(t) || nm) kind = 'who';
-        if (kind === 'book') { await sendMenu(token, chatId, 'Lock a time, or join the walk-in queue?'); return res.status(200).send('ok'); }
+        if (kind === 'book') { await sendFork(token, chatId, 'Lock a time, or join the walk-in queue?'); return res.status(200).send('ok'); }
         if (kind === 'cancel') { await cancelStart(token, chatId); return res.status(200).send('ok'); }
         let text;
         const s2 = await feed().catch(() => null);
