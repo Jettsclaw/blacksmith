@@ -7,11 +7,6 @@
   var LIVING_SHOP_ON = true; // revealed — authorised by Jett 2026-06-11
   var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
   // ref param ignored by SLIKR today; future measurement hook
-  var BOOK_URLS = {
-    barber:   'https://web.slikr.com.au/shop/421/res?ref=livingshop',
-    bookings: 'https://web.slikr.com.au/shop/1121/res?ref=livingshop',
-    salon:    'https://web.slikr.com.au/blackrosesalon?ref=livingshop'
-  };
   var STALE_MS = 8 * 60 * 1000;
   var A = 'assets/living-shop/';
 
@@ -323,7 +318,8 @@
     body.appendChild(stage);
     var foot = document.createElement('a');
     foot.className = 'btn btn-gold ls-fsfoot';
-    foot.href = BOOK_URLS.barber;
+    foot.href = '#book'; // in-chat booking, no SLIKR (Beau 2026-07-07)
+    foot.onclick = function (ev) { ev.preventDefault(); if (fs.on) fsClose(); if (window.__scBook) window.__scBook(); };
     foot.textContent = 'Book a Cut';
     fs.wrap.appendChild(body);
     fs.wrap.appendChild(bar);

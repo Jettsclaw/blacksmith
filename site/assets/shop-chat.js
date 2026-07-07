@@ -3,7 +3,6 @@
    No backend, no LLM, nothing to inject. Same templates as the Telegram bot. */
 (function () {
   var FEED = 'https://raw.githubusercontent.com/automaitions/blacksmith-queue-feed/main/queue.json';
-  var BOOK_URL = 'https://web.slikr.com.au/shop/421/res?ref=shopchat';
   var TG_URL = 'https://t.me/Blacksmithbarbers_bot';
   // After-hours walk-in queue — customers leave their details here for the
   // morning crew to enter into SLIKR. (Beau 2026-07-03)
@@ -1017,6 +1016,7 @@
   }
   window.__scWalkins = function () { scCardOpen(scWaitList); };
   window.__scBookAhead = function () { scCardOpen(scBookNames); };
+  window.__scSalon = function () { scCardOpen(function () { startSalon(); }); };
 
   // Hero "Live Queue" button → same walk-in flow as the card's Join the Queue.
   var heroLQ = document.getElementById('hero-live-queue');
@@ -1041,13 +1041,19 @@
       }
       return;
     }
+    // In-chat booking convention (replaces all SLIKR links, Beau 2026-07-07):
+    // #book → book flow, #book-salon → Blackrose salon flow.
+    var bk = e.target.closest && e.target.closest('a[href$="#book"], a[href$="#book-salon"]');
+    if (bk) {
+      e.preventDefault(); e.stopImmediatePropagation();
+      if (/#book-salon$/.test(bk.getAttribute('href') || '')) window.__scSalon(); else window.__scBook();
+      return;
+    }
+    // Legacy safety net: any stray SLIKR link still opens the in-chat flow, never navigates out.
     var a = e.target.closest && e.target.closest('a[href*="slikr.com.au"]');
     if (!a) return;
-    if (/blackrosesalon/.test(a.href)) return;
-    if (/\/res/.test(a.href) || /shop\/(421|1121)/.test(a.href)) {
-      e.preventDefault();
-      window.__scBook();
-    }
+    e.preventDefault();
+    if (/blackrosesalon/.test(a.href)) window.__scSalon(); else window.__scBook();
   }, true);
 
   // Launcher opens the Telegram booking bot directly (Beau 2026-07-06). The
