@@ -255,10 +255,9 @@ async function bkDetails(token, chat, text) {
 // Book (a set time), then continues exactly like the site chat. (Beau 2026-07-06)
 async function sendFork(token, chat, greet) {
   await clearState(chat);
-  // When closed, skip the fork and go straight to book-ahead (the Walk-In's chip
-  // lives in there for the after-hours capture) — mirrors the web chat. (Beau 2026-07-07)
-  const s = await feed().catch(() => null);
-  if (s && !s.open) { await bookStart(token, chat); return; }
+  // Always show the Bookings/Walk-in fork — it's the bot's front door and the
+  // default opening message when history is cleared. Both paths handle
+  // open/closed themselves. (Beau 2026-07-07)
   await tg(token, 'sendMessage', { chat_id: chat, text: greet || 'Lock a time, or join the walk-in queue?',
     reply_markup: { inline_keyboard: [[
       { text: '📅 Bookings', callback_data: 'book' },
