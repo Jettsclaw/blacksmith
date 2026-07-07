@@ -463,16 +463,22 @@
     }
     return out;
   }
-  // Closed shop → hand off to the "Blacksmith After Hours" Telegram (that bot
-  // works great — we only link to it, never touch it). The morning crew picks
-  // the walk-in up from there. (Beau 2026-07-06)
+  // Closed shop → capture the walk-in right in chat (preferred time → name +
+  // mobile → email) and relay it to the After Hours crew's Telegram via
+  // /api/queue. No making the customer join a group. (Beau 2026-07-07)
   function startTomorrowWalkin() {
     setWizUI(false);
-    bubble('We’re closed right now — but you can still get on the list. Leave your walk-in with the Blacksmith After Hours crew on Telegram and they’ll sort you first thing when we open.', 'bot');
-    var a = el('a', 'sc-book', 'Blacksmith After Hours on Telegram →');
-    a.href = AFTERHOURS_TG; a.target = '_blank'; a.rel = 'noopener';
-    body.lastChild.appendChild(document.createElement('br'));
-    body.lastChild.appendChild(a);
+    if (!snap) { setTimeout(startTomorrowWalkin, 500); return; }
+    var iso = snap.next_date || wqDateChips()[0].date;
+    var lbl = snap.next_label || 'tomorrow';
+    twq = { step: 'time', date: iso };
+    bubble('We’re closed right now — but I can get you on the walk-in list for ' + lbl + ' and the crew will sort you first thing. What time suits?', 'bot');
+    chipRow(wqTimeChips(iso).map(function (t) { return { label: t.label, time: t.time }; }), function (o) {
+      bubble(o.label, 'me');
+      twq.time = o.time;
+      twq.step = 'details';
+      bubble('And your name + mobile?\nLike: Jack Smith, 0400 123 456', 'bot');
+    }, true);
   }
 
   function handleWalkinDetails(text) {
