@@ -554,20 +554,19 @@
       .catch(function () {});
   }
 
-  // Bottom-right launcher now deep-links to the Telegram booking bot (Beau
-  // 2026-07-06). Icon = Telegram mark; a persistent "Book on Telegram" pill
-  // sits beside it so visitors know it opens Telegram before they tap.
+  // Bottom-right launcher opens the in-site chat (Beau 2026-07-07: Telegram
+  // option hidden until the TG bot is fully ready). Icon = scissors, pill = Book.
   var fab = document.createElement('button');
-  fab.className = 'sc-fab sc-fab-tg';
-  fab.setAttribute('aria-label', 'Book on Telegram');
-  fab.innerHTML = '<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true"><circle cx="24" cy="24" r="24" fill="#229ED9"/><path fill="#fff" d="M10.7 23.4l24.6-9.5c1.1-.4 2.1.3 1.8 2l-4.2 19.8c-.3 1.4-1.1 1.7-2.3 1.1l-6.4-4.7-3.1 3c-.3.3-.6.6-1.3.6l.5-6.6 12-10.9c.5-.5-.1-.7-.8-.3l-14.9 9.4-6.4-2c-1.4-.4-1.4-1.4.3-2z"/></svg>';
+  fab.className = 'sc-fab';
+  fab.setAttribute('aria-label', 'Book a cut');
+  fab.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" width="55%" height="55%" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>';
   document.body.appendChild(fab);
 
-  // Persistent label — always visible so people know it's Telegram up front.
+  // Persistent label beside the launcher.
   var pill = document.createElement('button');
   pill.className = 'sc-pill show';
-  pill.textContent = 'Book on Telegram';
-  pill.setAttribute('aria-label', 'Book on Telegram');
+  pill.textContent = 'Book a cut';
+  pill.setAttribute('aria-label', 'Book a cut');
   pill.onclick = function () { fab.onclick(); };
   document.body.appendChild(pill);
 
@@ -789,7 +788,7 @@
     window.visualViewport.addEventListener('resize', fitSheet);
   }
 
-  window.__scOpen = function () { window.open(TG_URL, '_blank', 'noopener'); };
+  window.__scOpen = function () { openPanel(); };
   window.__scClose = function () { if (panel) panel.classList.remove('open'); syncSheet(); };
   // Site-wide "Book a Cut" CTAs (intercepted SLIKR /res links) now mimic the
   // card's "Book Now" button exactly → the in-chat book-ahead names view.
@@ -1030,7 +1029,7 @@
     // live-wait.js): "Book Now" = book-ahead view; "Join the Queue" (open) and
     // "Join tomorrow's queue" (closed) both = the walk-in path (__scWalkins,
     // which branches open/closed itself). (Beau 2026-07-03)
-    var lw = e.target.closest && e.target.closest('#lw-cta, #lw-join');
+    var lw = e.target.closest && e.target.closest('#lw-cta, #lw-join, #lw-queue-go');
     if (lw) {
       var txt = (lw.textContent || '').toLowerCase();
       if (txt.indexOf('book now') >= 0) {
@@ -1056,8 +1055,14 @@
     if (/blackrosesalon/.test(a.href)) window.__scSalon(); else window.__scBook();
   }, true);
 
-  // Launcher opens the Telegram booking bot directly (Beau 2026-07-06). The
-  // in-site chat panel below is retained but unwired — flip this back to the
-  // old open logic to restore it.
-  fab.onclick = function () { window.open(TG_URL, '_blank', 'noopener'); };
+  // Launcher opens the in-site chat panel (Telegram hidden until the bot's ready,
+  // Beau 2026-07-07). Shows a greeting on first open.
+  function openPanel() {
+    scCardOpen(function () {
+      if (body && !body.querySelector('.sc-msg')) {
+        bubble('G’day! I can tell you the live wait, who’s on, prices, or book you in — what do you need?', 'bot');
+      }
+    });
+  }
+  fab.onclick = openPanel;
 })();
