@@ -463,30 +463,49 @@
     }
     return out;
   }
-  // Closed shop → capture the walk-in right in chat (preferred time → name +
-  // mobile → email) and relay it to the After Hours crew's Telegram via
-  // /api/queue. No making the customer join a group. (Beau 2026-07-07)
+  // Closed shop → capture the walk-in right in chat (service → day → time → name
+  // + mobile → email) and relay it to the After Hours crew's Telegram via
+  // /api/queue. Mirrors the Telegram bot exactly. (Beau 2026-07-07)
   function startTomorrowWalkin() {
     setWizUI(false);
     if (!snap) { setTimeout(startTomorrowWalkin, 500); return; }
-    var iso = snap.next_date || wqDateChips()[0].date;
-    var lbl = snap.next_label || 'tomorrow';
-    twq = { step: 'time', date: iso };
-    bubble('We’re closed right now — but I can get you on the walk-in list for ' + lbl + ' and the crew will sort you first thing. What time suits?', 'bot');
-    chipRow(wqTimeChips(iso).map(function (t) { return { label: t.label, time: t.time }; }), function (o) {
+    twq = { step: 'service' };
+    bubble('We’re closed right now — but I can get you on the walk-in list and the crew will sort you first thing. What are you after?', 'bot');
+    var menu = (snap.services && snap.services.barber) || [];
+    if (!menu.length) { bubble('A word’s fine — Cut, Fade, Beard, etc.', 'bot'); return; } // typed → handleWalkinService
+    chipRow(menu.map(function (s) { return { label: svcName(s.name) + ' · $' + s.cost, id: s.id, name: svcName(s.name) }; }), function (o) {
       bubble(o.label, 'me');
-      twq.time = o.time;
-      twq.step = 'service';
-      bubble('What are you after? A word’s fine — Cut, Fade, Beard, etc.', 'bot');
-    }, true);
+      twq.serviceId = o.id; twq.request = o.name;
+      askWalkinDay();
+    });
   }
 
-  function handleWalkinService(text) {
+  function handleWalkinService(text) { // typed instead of tapping a service chip
     var s = text.trim().slice(0, 40);
     if (!s) { bubble('Just a word’s fine — Cut, Fade, Beard…', 'bot'); return; }
     twq.request = s;
-    twq.step = 'details';
-    bubble('And your name + mobile?\nLike: Jack Smith, 0400 123 456', 'bot');
+    askWalkinDay();
+  }
+
+  function askWalkinDay() {
+    twq.step = 'day';
+    bubble('Which day?', 'bot');
+    chipRow(wqDateChips().map(function (d) { return { label: d.label, date: d.date }; }), function (d) {
+      bubble(d.label, 'me');
+      twq.date = d.date;
+      askWalkinTime(d.label);
+    }, true);
+  }
+
+  function askWalkinTime(dayLabel) {
+    twq.step = 'time';
+    bubble('What time ' + (dayLabel === 'Tomorrow' ? 'tomorrow' : dayLabel) + '?', 'bot');
+    chipRow(wqTimeChips(twq.date).map(function (t) { return { label: t.label, time: t.time }; }), function (t) {
+      bubble(t.label, 'me');
+      twq.time = t.time;
+      twq.step = 'details';
+      bubble('And your name + mobile?\nLike: Jack Smith, 0400 123 456', 'bot');
+    }, true);
   }
 
   function handleWalkinDetails(text) {
@@ -510,7 +529,7 @@
   function submitQueue(name, phone, time, email) {
     bubble('Popping you on tomorrow’s list…', 'bot');
     fetch(QUEUE_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, phone: phone, email: email || '', request: twq.request || '', barber: 'First available', time: time, date: twq.date || undefined }) })
+      body: JSON.stringify({ name: name, phone: phone, email: email || '', request: twq.request || '', service: twq.serviceId, barber: 'First available', time: time, date: twq.date || undefined }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (d && d.ok) bubble('✅ You’re on tomorrow’s walk-in list, ' + name.split(' ')[0] + ' — we’ll text you to confirm your time first thing in the morning. See you then! ✂️', 'bot');
