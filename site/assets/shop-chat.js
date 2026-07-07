@@ -577,7 +577,7 @@
   var fab = document.createElement('button');
   fab.className = 'sc-fab';
   fab.setAttribute('aria-label', 'Book a cut');
-  fab.innerHTML = '<img src="assets/bs-logo.png" alt="Blacksmith" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:74%;height:74%;object-fit:contain">';
+  fab.innerHTML = '<img src="assets/bs-logo.png" alt="Blacksmith" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;height:88%;object-fit:contain">';
   document.body.appendChild(fab);
 
   // Persistent label beside the launcher.
