@@ -532,7 +532,7 @@
       body: JSON.stringify({ name: name, phone: phone, email: email || '', request: twq.request || '', service: twq.serviceId, barber: 'First available', time: time, date: twq.date || undefined }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (d && d.ok) bubble('✅ You’re on tomorrow’s walk-in list, ' + name.split(' ')[0] + ' — we’ll text you to confirm your time first thing in the morning. See you then! ✂️', 'bot');
+        if (d && d.ok) bubble('✅ You’re on the walk-in list, ' + name.split(' ')[0] + ' — we’ll text you to confirm your time. See you then! ✂️', 'bot');
         else bubble('Hmm, that didn’t go through — give us a call on ' + PHONE + ' and we’ll pop you down.', 'bot');
         twq = null; setWizUI(false);
       })

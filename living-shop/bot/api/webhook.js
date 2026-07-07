@@ -130,7 +130,7 @@ async function bkSalon(token, chat) {
     return;
   }
   await setState(chat, { step: 'service', shop: 'salon', barber: stylist, date: sal.date, label: sal.label });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `🌹 Blackrose Salon — ${stylist} has times ${sal.label || 'today'}. What are we doing?`,
+  await tg(token, 'sendMessage', { chat_id: chat, text: `🌹 Blackrose Salon — what are we doing?`,
     reply_markup: { inline_keyboard: sal.services.map(m => [{ text: `${m.name} · $${m.cost}`, callback_data: 'bk2:' + m.id }]) } });
 }
 
@@ -165,7 +165,7 @@ async function bkStep(token, chat, data) {
       if (!slots.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `No salon times left — call ${PHONE}.` }); return clearState(chat); }
       st.step = 'slot';
       await setState(chat, st);
-      await tg(token, 'sendMessage', { chat_id: chat, text: `What time ${st.label || 'today'}?`,
+      await tg(token, 'sendMessage', { chat_id: chat, text: `What time ${st.label || 'today'} with ${st.barber}?`,
         reply_markup: { inline_keyboard: slots.map(t => [{ text: t, callback_data: 'bk3:' + t }]) } });
       return;
     }
@@ -192,12 +192,12 @@ async function bkStep(token, chat, data) {
     } else {
       st.slot = 'now'; st.step = 'details';
       await setState(chat, st);
-      await tg(token, 'sendMessage', { chat_id: chat, text: `You'll join the live queue (~${s.wait_mins || 0} min). Last bit — reply with your name and mobile, like:\nJack Smith, 0400 123 456` });
+      await tg(token, 'sendMessage', { chat_id: chat, text: `You'll join the live queue — current wait ~${s.wait_mins || 0} min. Last bit — type your name and mobile.\nLike: Jack Smith, 0400 123 456` });
     }
   } else if (data.startsWith('bk3:')) {
     st.slot = data.slice(4); st.step = 'details';
     await setState(chat, st);
-    await tg(token, 'sendMessage', { chat_id: chat, text: 'Last bit — reply with your name and mobile, like:\nJack Smith, 0400 123 456' });
+    await tg(token, 'sendMessage', { chat_id: chat, text: 'Last bit — type your name and mobile.\nLike: Jack Smith, 0400 123 456' });
   }
 }
 
@@ -246,7 +246,7 @@ async function bkDetails(token, chat, text) {
   const phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
   st.name = m[1].trim(); st.phone = phone; st.step = 'email'; st.tries = 0;
   await setState(chat, st);
-  await tg(token, 'sendMessage', { chat_id: chat, text: 'And your email? (so we can send your booking confirmation)\nOr reply “skip”.' });
+  await tg(token, 'sendMessage', { chat_id: chat, text: 'And your email? (so we can send your booking confirmation)\nOr type “skip”.' });
   return true;
 }
 
@@ -335,7 +335,7 @@ async function bookStart(token, chat) {
   if (samiDays.length) rows.push([{ text: 'Sami', callback_data: 'bb:Sami' }]);
   rows.push([{ text: "Walk-In's 💈", callback_data: 'walk' }]); // Beau 2026-07-06: jump straight to the join-the-queue flow
   await tg(token, 'sendMessage', { chat_id: chat,
-    text: s.open ? 'Book ahead — who with?' : "We're closed now — book ahead. Who with?",
+    text: s.open ? 'Who would you like to book with?' : "We're closed now — book ahead. Who with?",
     reply_markup: { inline_keyboard: rows } });
 }
 async function bookBarber(token, chat, first) {
@@ -389,7 +389,7 @@ async function wqMenu() {
 async function wqStart(token, chat) {
   const menu = await wqMenu();
   if (!menu.length) { await tg(token, 'sendMessage', { chat_id: chat, text: `Our menu's offline for a moment — try again shortly, or call ${PHONE}.` }); return; }
-  await tg(token, 'sendMessage', { chat_id: chat, text: "Tomorrow's walk-in list 🚶 — what are you after?",
+  await tg(token, 'sendMessage', { chat_id: chat, text: "We're closed right now — but I can get you on the walk-in list and the crew will sort you first thing. What are you after?",
     reply_markup: { inline_keyboard: menu.map(m => [{ text: m.cost ? `${m.name} · $${m.cost}` : m.name, callback_data: 'wqs:' + m.id }]) } });
 }
 // Dates offered: Tomorrow + next 6 days (shop's open every day). code = MMDD.
@@ -425,7 +425,7 @@ async function wqService(token, chat, data) {
   const svc = menu.find(x => x.id === id) || { id, name: 'Cut' };
   const dates = wqDates(); const rows = []; let row = [];
   dates.forEach((dt, i) => { row.push({ text: dt.label, callback_data: `wqd:${id}:${dt.code}` }); if (row.length === 2 || i === dates.length - 1) { rows.push(row); row = []; } });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `${svc.name} 🚶 — which day?`, reply_markup: { inline_keyboard: rows } });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `Which day?`, reply_markup: { inline_keyboard: rows } });
 }
 async function wqDate(token, chat, data) {
   const p = data.split(':'); const id = parseInt(p[1], 10), code = p[2];
@@ -434,7 +434,7 @@ async function wqDate(token, chat, data) {
   const dt = wqDates().find(x => x.code === code) || wqDates()[0];
   const times = await wqDayTimes(dt.iso); const rows = []; let row = [];
   times.forEach((t, i) => { row.push({ text: t.label, callback_data: `wqt:${id}:${code}:${t.code}` }); if (row.length === 3 || i === times.length - 1) { rows.push(row); row = []; } });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `${svc.name} · ${dt.label} — what time?`, reply_markup: { inline_keyboard: rows } });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `What time ${dt.label === 'Tomorrow' ? 'tomorrow' : dt.label}?`, reply_markup: { inline_keyboard: rows } });
 }
 async function wqTime(token, chat, data) {
   const p = data.split(':'); const id = parseInt(p[1], 10), dcode = p[2], tcode = p[3];
@@ -444,7 +444,7 @@ async function wqTime(token, chat, data) {
   const t = (await wqDayTimes(dt.iso)).find(x => x.code === tcode) || { label: 'First available' };
   // force_reply carries svc + date + time (recovered from reply_to_message) — stateless
   await tg(token, 'sendMessage', { chat_id: chat,
-    text: `${svc.name} · ${dt.label} · ${t.label} — you're going ${WQ_MARK}.\nLast bit — reply with your name and mobile.\nLike: Jack Smith, 0400 123 456`,
+    text: `And your name + mobile?\nLike: Jack Smith, 0400 123 456\n\n(${svc.name} · ${dt.label} · ${t.label} — you're going ${WQ_MARK})`,
     reply_markup: { force_reply: true } });
 }
 async function wqSubmit(token, chat, promptText, userText) {
@@ -460,7 +460,7 @@ async function wqSubmit(token, chat, promptText, userText) {
   const m = userText.match(/^\s*([a-zA-Z][a-zA-Z '\-]{1,39}?)[,\s]+((?:04|\+?61 ?4)[\d ]{8,12})\s*$/);
   if (!m) {
     await tg(token, 'sendMessage', { chat_id: chat,
-      text: `Almost — reply with your name and mobile.\nLike: Jack Smith, 0400 123 456\n\n${svc ? svc.name : 'Cut'} · ${dt ? dt.label : 'Tomorrow'} · ${time} — you're going ${WQ_MARK}.`,
+      text: `Almost — send it like: Jack Smith, 0400 123 456\n\n(${svc ? svc.name : 'Cut'} · ${dt ? dt.label : 'Tomorrow'} · ${time} — you're going ${WQ_MARK})`,
       reply_markup: { force_reply: true } });
     return;
   }
@@ -477,7 +477,7 @@ async function wqSubmit(token, chat, promptText, userText) {
   await put(`queue/${id}.json`, JSON.stringify({ id, name, phone, service: (svc ? svc.id : 0), service_name: svcName, barber: 'First available', time, date: date || undefined, day_label: dayLabel, day_sentence: daySentence, at: new Date().toISOString(), draft: true }),
     { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
   await tg(token, 'sendMessage', { chat_id: chat,
-    text: `Cheers ${name.split(' ')[0]}! And your email? (so we can send your confirmation) — or reply "skip".\n\n(${EMAIL_MARK} · ref:${id})`,
+    text: `And your email? (so we can send your booking confirmation)\nOr type “skip”.\n\n(${EMAIL_MARK} · ref:${id})`,
     reply_markup: { force_reply: true } });
 }
 async function wqEmail(token, chat, promptText, userText) {
@@ -501,7 +501,7 @@ async function wqEmail(token, chat, promptText, userText) {
     `✂️ ${rec.service_name}\n💈 First available\n🗓 ${rec.day_label}\n🕐 Preferred: ${rec.time}`;
   await tg(token, 'sendMessage', { chat_id: process.env.QUEUE_CHAT, text: card, parse_mode: 'Markdown',
     reply_markup: { inline_keyboard: [[{ text: '✅ Add to SLIKR', callback_data: 'qadd:' + id }, { text: '✕ Dismiss', callback_data: 'qdis:' + id }]] } });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on the walk-in list for ${rec.day_sentence || 'tomorrow'}, ${rec.name.split(' ')[0]} — we'll text you to confirm your time. See you then! ✂️` });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on the walk-in list, ${rec.name.split(' ')[0]} — we'll text you to confirm your time. See you then! ✂️` });
   await saveCustomer(chat, { name: rec.name, phone: rec.phone, last_service: rec.service_name, last_time: rec.time });
 }
 
@@ -729,7 +729,7 @@ export default async function handler(req, res) {
         const s2 = await feed().catch(() => null);
         if (kind === 'prices') {
           const menu = (s2 && s2.services && s2.services.barber) || [];
-          text = menu.length ? 'The menu:\n' + menu.map(m => `${m.name} — $${m.cost}`).join('\n') + '\nTap Book me in and I\u2019ll lock one in.' : `Call us for the menu: ${PHONE}`;
+          text = menu.length ? 'The menu:\n' + menu.map(m => `${m.name} — $${m.cost}`).join('\n') + '\nTap Book and I\u2019ll lock one in.' : `Call us for the menu: ${PHONE}`;
         }
         else if (kind === 'how') text = 'Two ways in: join the live queue (walk-in — I’ll show you the wait) or book a set time with a barber. Tap ✂️ Book me in and I’ll walk you through it.';
         else if (kind === 'remote') text = 'You never have to stand around — join the queue from right here, watch your spot, and walk in when it’s your turn. Tap ✂️ Book me in and I’ll set you up.';
