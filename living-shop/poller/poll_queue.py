@@ -223,18 +223,31 @@ def build_snapshot() -> dict:
                         "free_in": max(prev["free_in"], fi),
                         "cutting_at": at if cutting else prev["cutting_at"],
                         "book": book}
-    # Walk-in = rostered on a 421 seat AND actually walk-in crew. A barber whose
-    # day is bookings (Jarred) or salon (Sami, dual-shop) must NOT read as a
-    # walk-in barber even though they hold a 421 seat. book == ["barber"] is the
-    # pure walk-in crew; ["bookings"] and ["barber","salon"] are excluded.
+    # Sami (dual-shop) is ALWAYS available for walk-ins between her bookings, so
+    # she's always listed — even if she isn't rostered on a 421 seat today. This
+    # keeps advertised walk-in waits low. Inject her if she has no activity yet.
     # (Beau 2026-07-07)
+    for _dn in DUAL_SHOP:
+        _rn = next((nm for nm in roster.values() if nm and nm.split(" ")[0] == _dn), None)
+        if _rn and _rn not in merged:
+            merged[_rn] = {"cutting": False, "free_in": 0, "cutting_at": "salon",
+                           "book": ["barber", "salon"]}
+
+    # Walk-in flag: rostered on a 421 seat AND actual walk-in crew (book ==
+    # ["barber"]) — a bookings barber (Jarred) must NOT read as walk-in even
+    # while holding a 421 seat. EXCEPTION: Sami (dual-shop) is always a walk-in
+    # option regardless of schedule. (Beau 2026-07-07)
+    def _is_walkin(n, v):
+        if n.split(" ")[0] in DUAL_SHOP:
+            return True
+        return n in walkin_names and v["book"] == ["barber"]
     barbers = [{"name": n if SHOW_BARBER_NAMES else "Barber",
                 "cutting": v["cutting"], "free_in": v["free_in"],
                 "cutting_at": v["cutting_at"], "book": v["book"],
-                "walkin": n in walkin_names and v["book"] == ["barber"]}
+                "walkin": _is_walkin(n, v)}
                for n, v in merged.items()
-               if v["cutting"] or n not in shift_start_name
-               or now >= shift_start_name[n]]
+               if v["cutting"] or n.split(" ")[0] in DUAL_SHOP
+               or n not in shift_start_name or now >= shift_start_name[n]]
     barbers.sort(key=lambda b: (not b["cutting"], b["name"]))
 
     # Walk-in wait: soonest a WALK-IN barber can seat a new walk-in (their cut

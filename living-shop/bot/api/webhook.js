@@ -290,6 +290,9 @@ async function walkinStart(token, chat) {
 async function walkinBarber(token, chat, first) {
   const s = await feed().catch(() => null);
   if (!s) return clearState(chat);
+  // Sami's on the walk-in list to keep waits low, but she's bookings — pick her
+  // and we book her, not queue her. (Beau 2026-07-07)
+  if (/^sam/i.test(first)) return bookBarber(token, chat, 'Sami');
   const b = s.barbers.find(x => x.name.split(' ')[0] === first);
   await setState(chat, { flow: 'walk', shop: 'barber', barber: first === 'any' ? 'any' : (b ? b.name : first), slot: 'now', step: 'service' });
   const menu = (s.services && s.services.barber) || [];

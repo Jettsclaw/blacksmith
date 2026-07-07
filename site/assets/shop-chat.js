@@ -248,14 +248,32 @@
     }
     bubble('On walk-ins ' + asOf(snap) + ': ' + wb.map(function (b) { return b.name.split(' ')[0]; }).join(', ') +
       '.\nWho would you like? I’ll pop you in the live queue.', 'bot');
-    var opts = wb.map(function (b) { return { label: b.name.split(' ')[0], barber: b.name }; });
+    var opts = wb.map(function (b) { return { label: b.name.split(' ')[0], barber: b.name, sami: /^sam/i.test(b.name) }; });
     opts.push({ label: 'Any barber', barber: 'any' });
     chipRow(opts, function (o) {
       bubble(o.label, 'me');
+      // Sami's on the walk-in list to keep waits low, but she's bookings — pick
+      // her and we book her, not queue her. (Beau 2026-07-07)
+      if (o.sami) { bookSami(); return; }
       setWizUI(true);
       wiz = { step: 'service', shop: 'barber', barber: o.barber };
       askService();
     });
+  }
+
+  function bookSami() {
+    if (!snap) { setTimeout(bookSami, 500); return; }
+    var sal = snap.salon || {};
+    var samiDays = (sal.days || []).map(function (d) {
+      var k = Object.keys(d.slots || {}).filter(function (x) { return /^sam/i.test(x) && (d.slots[x] || []).length; })[0];
+      return k ? { date: d.date, label: d.label, times: d.slots[k], stylist: k } : null;
+    }).filter(Boolean);
+    if (!samiDays.length) {
+      var lk = Object.keys(sal.slots || {}).filter(function (x) { return /^sam/i.test(x) && (sal.slots[x] || []).length; })[0];
+      if (lk) samiDays = [{ date: sal.date, label: sal.label, times: sal.slots[lk], stylist: lk }];
+    }
+    if (!samiDays.length) { bubble('Sami’s book is closed right now — call ' + PHONE + '.', 'bot'); setWizUI(false); return; }
+    scSamiDays(samiDays);
   }
 
   function startSalon(heading) {
