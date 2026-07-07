@@ -276,7 +276,7 @@
       book:"#book"
     },
     sammi: {
-      name:"Sammi", role:"Blackrose Stylist",
+      name:"Sami", role:"Blackrose Stylist",
       line:"Runs Blackrose next door — a private, secluded salon space away from the busy barber floor. A genuine all-rounder doing colour, fades and scissor work; ideal if you'd rather a quieter chair, and great for couples coming in together.",
       photo:"assets/barbers/sammi.jpg?v=2",
       book:"#book-salon"
@@ -388,7 +388,7 @@
     // advance after a beat so the tick is felt
     var picked = QUESTIONS[qi].options[oi];
     setTimeout(function(){
-      if(picked.force){ finish(); }            // e.g. colour -> straight to Sammi
+      if(picked.force){ finish(); }            // e.g. colour -> straight to Sami
       else if(qi < QUESTIONS.length - 1){ current = qi + 1; showStep(current); }
       else { finish(); }
     }, 280);
@@ -399,7 +399,7 @@
   });
 
   function score(){
-    // Forced result (colour -> Sammi) short-circuits the scoring entirely.
+    // Forced result (colour -> Sami) short-circuits the scoring entirely.
     var q1 = answers[0] !== null ? QUESTIONS[0].options[answers[0]] : null;
     if(q1 && q1.force){ return {winner:q1.force, service:q1.service || "Colour & Style"}; }
     var totals = {bayli:0, jarred:0, ben:0, sammi:0, mubarak:0, locky:0, jayden:0};
@@ -433,7 +433,7 @@
       case 'mubarak':return "Fades or curly hair done fast and sharp — that's Mubarak. Skilled and time-efficient, with an easy, friendly chair the younger crowd loves.";
       case 'locky':  return "Sharp fades and custom work, clean lines every time — Locky's lane. Skilled across the board.";
       case 'jayden': return "Someone who won't rush, actually listens, and gets it done right — that's Jayden. Trained by Jarred, no ego, perfect for walk-ins and school cuts.";
-      case 'sammi':  return "A true all-rounder who keeps it straightforward and gets it right — that's Sammi at Blackrose, a private, secluded salon space next door, away from the busy barber floor. Colour, a clean fade or a classic scissor cut, and great for couples coming in together.";
+      case 'sammi':  return "A true all-rounder who keeps it straightforward and gets it right — that's Sami at Blackrose, a private, secluded salon space next door, away from the busy barber floor. Colour, a clean fade or a classic scissor cut, and great for couples coming in together.";
       default:       return "";
     }
   }

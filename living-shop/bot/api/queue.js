@@ -10,7 +10,7 @@ const SERVICES = {
   4911: "Zero/Skin Fade + Beard", 1435: "Pensioner's Cut", 5499: "Scissor / Long Hair",
   2113: "Buzz cut", 5041: "Apprentice/Student Cut", 1517: "Beard trim"
 };
-// walk-in four (default Bayli); Sami always displays "Sammi"
+// walk-in four (default Bayli); Sami always displays "Sami"
 const WALKIN = new Set(["First available", "Bayli", "Ben", "Mubarak", "Jayden"]);
 
 function cors(res) {
