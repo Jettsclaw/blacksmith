@@ -203,7 +203,29 @@ async function bkStep(token, chat, data) {
 
 async function bkDetails(token, chat, text) {
   const st = await getState(chat);
-  if (!st || st.step !== 'details') return false;
+  if (!st || (st.step !== 'details' && st.step !== 'email')) return false;
+
+  // Email step — mirrors the web chat: after name+mobile we ask for an email
+  // (or "skip") on every booking path, then submit. (Beau 2026-07-07)
+  if (st.step === 'email') {
+    if (isEscape(text)) { await clearState(chat); return false; }
+    const e = text.trim();
+    let email = '';
+    if (!/^skip$/i.test(e)) {
+      if (!EMAIL_RE.test(e)) { await tg(token, 'sendMessage', { chat_id: chat, text: 'That email doesn’t look right — try again, or reply “skip”.' }); return true; }
+      email = e.slice(0, 80);
+    }
+    const id = globalThis.crypto.randomUUID().toLowerCase();
+    await put(`req/${id}.json`, JSON.stringify({
+      service_id: st.service, shop: st.shop, barber: st.barber, slot: st.slot,
+      date: st.date || undefined,
+      name: st.name, phone: st.phone, email: email || undefined, tg_chat: chat, at: new Date().toISOString()
+    }), { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
+    await clearState(chat);
+    await tg(token, 'sendMessage', { chat_id: chat, text: 'Locking it in… you’ll get a confirmation here in a few seconds.' });
+    return true;
+  }
+
   // escape hatch: commands/greetings break out of the details trap instead of looping
   if (text.trim().startsWith('/') || /\b(cancel|stop|restart|start over|menu|nvm|never ?mind|exit|quit|book|hi|hey|hello|help)\b/i.test(text)) {
     await clearState(chat);
@@ -222,14 +244,9 @@ async function bkDetails(token, chat, text) {
     return true;
   }
   const phone = m[2].replace(/\D/g, '').replace(/^61/, '0');
-  const id = globalThis.crypto.randomUUID().toLowerCase();
-  await put(`req/${id}.json`, JSON.stringify({
-    service_id: st.service, shop: st.shop, barber: st.barber, slot: st.slot,
-    date: st.date || undefined,
-    name: m[1].trim(), phone, tg_chat: chat, at: new Date().toISOString()
-  }), { access: 'public', addRandomSuffix: false, contentType: 'application/json' });
-  await clearState(chat);
-  await tg(token, 'sendMessage', { chat_id: chat, text: 'Locking it in… you’ll get a confirmation here in a few seconds.' });
+  st.name = m[1].trim(); st.phone = phone; st.step = 'email'; st.tries = 0;
+  await setState(chat, st);
+  await tg(token, 'sendMessage', { chat_id: chat, text: 'And your email? (so we can send your booking confirmation)\nOr reply “skip”.' });
   return true;
 }
 
@@ -238,6 +255,10 @@ async function bkDetails(token, chat, text) {
 // Book (a set time), then continues exactly like the site chat. (Beau 2026-07-06)
 async function sendFork(token, chat, greet) {
   await clearState(chat);
+  // When closed, skip the fork and go straight to book-ahead (the Walk-In's chip
+  // lives in there for the after-hours capture) — mirrors the web chat. (Beau 2026-07-07)
+  const s = await feed().catch(() => null);
+  if (s && !s.open) { await bookStart(token, chat); return; }
   await tg(token, 'sendMessage', { chat_id: chat, text: greet || 'Lock a time, or join the walk-in queue?',
     reply_markup: { inline_keyboard: [[
       { text: '📅 Bookings', callback_data: 'book' },
