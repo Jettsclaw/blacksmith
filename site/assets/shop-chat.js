@@ -565,8 +565,8 @@
   // Persistent label beside the launcher.
   var pill = document.createElement('button');
   pill.className = 'sc-pill show';
-  pill.textContent = 'Book a cut';
-  pill.setAttribute('aria-label', 'Book a cut');
+  pill.textContent = 'Book or Walk-In';
+  pill.setAttribute('aria-label', 'Book or Walk-In');
   pill.onclick = function () { fab.onclick(); };
   document.body.appendChild(pill);
 
