@@ -577,16 +577,25 @@
   var fab = document.createElement('button');
   fab.className = 'sc-fab';
   fab.setAttribute('aria-label', 'Book a cut');
-  fab.innerHTML = '<img src="assets/bs-logo.png" alt="Blacksmith" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;height:88%;object-fit:contain">';
+  fab.innerHTML = '<img src="assets/bs-logo.png" alt="Blacksmith" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:50%;height:50%;object-fit:contain">';
   document.body.appendChild(fab);
 
   // Persistent label beside the launcher.
   var pill = document.createElement('button');
   pill.className = 'sc-pill show';
-  pill.textContent = 'Live Chat';
-  pill.setAttribute('aria-label', 'Live Chat');
+  pill.textContent = 'Click Here';
+  pill.setAttribute('aria-label', 'Click Here');
   pill.onclick = function () { fab.onclick(); };
   document.body.appendChild(pill);
+
+  // Pill shows when scrolling up, hides when scrolling down (Beau 2026-07-07).
+  var _lastY = window.scrollY || 0;
+  window.addEventListener('scroll', function () {
+    var y = window.scrollY || 0;
+    if (y > _lastY && y > 40) pill.classList.remove('show');
+    else pill.classList.add('show');
+    _lastY = y;
+  }, { passive: true });
 
   var panel = null, body = null, opened = false, chipsEl = null, ctxEl = null;
 
