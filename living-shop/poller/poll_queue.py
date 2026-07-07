@@ -218,35 +218,27 @@ def build_snapshot() -> dict:
         else:
             book = ["barber"]
         prev = merged.get(name, {"cutting": False, "free_in": 0,
-                                 "cutting_at": "shop", "book": book})
+                                 "cutting_at": "shop", "book": book, "salon_sched": False})
         merged[name] = {"cutting": prev["cutting"] or cutting,
                         "free_in": max(prev["free_in"], fi),
                         "cutting_at": at if cutting else prev["cutting_at"],
-                        "book": book}
-    # Sami (dual-shop) is ALWAYS available for walk-ins between her bookings, so
-    # she's always listed — even if she isn't rostered on a 421 seat today. This
-    # keeps advertised walk-in waits low. Inject her if she has no activity yet.
-    # (Beau 2026-07-07)
-    for _dn in DUAL_SHOP:
-        _rn = next((nm for nm in roster.values() if nm and nm.split(" ")[0] == _dn), None)
-        if _rn and _rn not in merged:
-            merged[_rn] = {"cutting": False, "free_in": 0, "cutting_at": "salon",
-                           "book": ["barber", "salon"]}
-
+                        "book": book,
+                        "salon_sched": prev.get("salon_sched", False) or ("salon" in seen)}
     # Walk-in flag: rostered on a 421 seat AND actual walk-in crew (book ==
     # ["barber"]) — a bookings barber (Jarred) must NOT read as walk-in even
     # while holding a 421 seat. EXCEPTION: Sami (dual-shop) is always a walk-in
-    # option regardless of schedule. (Beau 2026-07-07)
+    # option WHENEVER she's scheduled in the salon that day — she floats to
+    # walk-ins between her salon bookings. (Beau 2026-07-07)
     def _is_walkin(n, v):
         if n.split(" ")[0] in DUAL_SHOP:
-            return True
+            return v.get("salon_sched", False)
         return n in walkin_names and v["book"] == ["barber"]
     barbers = [{"name": n if SHOW_BARBER_NAMES else "Barber",
                 "cutting": v["cutting"], "free_in": v["free_in"],
                 "cutting_at": v["cutting_at"], "book": v["book"],
                 "walkin": _is_walkin(n, v)}
                for n, v in merged.items()
-               if v["cutting"] or n.split(" ")[0] in DUAL_SHOP
+               if v["cutting"] or (n.split(" ")[0] in DUAL_SHOP and v.get("salon_sched"))
                or n not in shift_start_name or now >= shift_start_name[n]]
     barbers.sort(key=lambda b: (not b["cutting"], b["name"]))
 
