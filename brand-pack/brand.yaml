@@ -1,0 +1,103 @@
+# Blacksmith Barbers — machine-readable brand tokens. Scripts read THIS; humans read 00-HARD-RULES.md.
+# Source of truth mined from BRAND-CONTEXT.md + brand-foundation/blacksmith/brand-dna.md (verbatim).
+# Fonts + palette LOCKED by Jett 2026-06-02. Cormorant Garamond / Playfair were UNAPPROVED guesses — never use.
+brand: blacksmith
+business: "Blacksmith Barbers & Academy — Biggera Waters, Gold Coast (est. 2015, 1 min from Harbour Town)"
+arms: ["Blacksmith Barbers (in-chat + Telegram booking)", "Blacksmith Circle (membership)", "Blackrose Salon Co.", "Blacksmith Academy"]
+
+type:
+  wordmark_only: "Scotland"          # blackletter @font-face — logo/wordmark treatments ONLY, never body/headline text
+  display: "Oswald"                  # headlines; weights 400/500/600/700; uppercase big headlines, letter-spacing ~0.01em
+  body: "Inter"                      # body/UI; weights 400-700
+  google_fonts: "family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+  banned_families: ["Cormorant Garamond", "Playfair Display", "EB Garamond", "DM Serif", "DM Sans"]  # unapproved serif guesses from old builds
+
+color:
+  # ONLY these hexes may appear as design tokens. Verify gate asserts against this list.
+  # Two locked generations exist across shipped builds — both whitelisted.
+  # brand-dna.md generation (as-locked 2026-06-02):
+  ink: "#0b0b0d"          # primary background (near-black) — the live site uses this
+  panel: "#121214"        # card/section background
+  line: "#23232a"         # borders, dividers
+  paper: "#f5f3ee"        # primary text (warm off-white)
+  muted: "#9a9aa2"        # secondary text, captions
+  gold: "#c8a44d"         # primary accent — CTAs, eyebrows, highlights. Accent ONLY, never a section background.
+  gold_2: "#e6c879"       # hover/secondary gold
+  cta_text: "#1a1407"     # button text on gold (dark warm brown, not pure black)
+  body_grey: "#c9c9d0"    # paragraph grey
+  body_grey_2: "#d2d2d8"
+  # BRAND-CONTEXT.md as-built generation (blacksmithbarbers.com.au-style site):
+  ink_alt: "#0d0d0f"
+  panel_alt: "#141417"
+  line_alt: "#26262c"
+  paper_alt: "#f3f1ea"
+  muted_alt: "#a2a2aa"
+  gold_light_alt: "#e3c578"
+  white: "#ffffff"
+  black: "#000000"
+  # Shipped page extensions (documented, arm-scoped — judge enforces scope):
+  site_css_neutrals:  # live site/assets/site.css tokens (panels, chat widget, live-wait card, badge greys) — re-surveyed 2026-07-07 on the current tree
+    ["#0e0e11", "#141416", "#16161a", "#1b1b20", "#cfcfcf",
+     "#070608", "#0a0a0c", "#101013", "#1a1a1f", "#2c2c33", "#3a3a42", "#55555f",
+     "#5ddb7a", "#777777", "#b9b3a6", "#c9c3b6", "#e7e5de"]  # #5ddb7a = live/open green status; #777 short-form grey
+  motion_warm: ["#15110b", "#3a2f1d", "#fff7e0"]     # site/motion.html warm-gold immersion family
+  shop_ext: ["#15151a", "#2f4136"]                    # site/shop.html
+  blackrose:  # Blackrose Salon Co. sub-brand ONLY (shipped light salon theme, 2026-06-04) — never on Barbers/Circle surfaces
+    ["#f7f2ec", "#fffdfa", "#fff8f5", "#f2e8e2", "#e6dcd2", "#d99aa1", "#a05862", "#8c8178", "#6b6258", "#4d4640", "#1d1815"]
+
+logo:
+  dark_surface: assets/logo-white.png    # the standard — brand lives dark
+  light_surface: assets/logo-black.png   # Blackrose light theme + print on light stock
+  blackrose_mark: site/assets/blackrose-clean-black.png
+  rule: "composite the real PNG/SVG — never typeset 'Blacksmith' (or any arm name) in a font as a logo substitute"
+
+voice:
+  register: "confident, plain-spoken, craft-trade. Short sentences. Physical language (chair, room, wall, number, name). No exclamation marks. Confidence is quiet."
+  signature_lines:
+    - "Your chair. Your barber. Every time."
+    - "The club, not the coupon."
+    - "You're not a ticket number. You're a member."
+    - "More than a barbershop. We're family."
+  tier_names: ["The Cut", "The Club", "The Empire"]   # always with "The" prefix
+  banned_strings:
+    # [MACHINE] — verify.sh greps for these (case-insensitive) in visible copy
+    - "—"                 # em-dash: banned in NEW customer-facing copy (sound human). Legacy pages flag = rewrite on next touch.
+    - "unlock"            # universal AI-tells
+    - "elevate your"
+    - "seamless"
+    - "game-changer"
+    - "only 3 left"       # fake urgency / invented countdowns
+    - "limited stock"
+    - "unlimited"         # brand-dna NEVER: nothing is unlimited, specificity = trust (negation-aware: "not unlimited" is an approved contrast)
+    - "save $"            # discount/coupon framing banned — lead with belonging, never savings
+    - "value pack"
+    - "cheap cuts"
+    - "grooming solutions" # corporate register banned — it's barber, chair, cut
+    - "hair services"
+    - "best haircut"      # outcome guarantees banned (AU consumer law)
+    - "tier 1"            # gym-tier language — tiers are The Cut / The Club / The Empire
+    - "premium tier"
+    - "Sammi"             # display spelling is "Sami" (Beau, 2026-07-06); asset filenames (sammi.jpg) exempt — gate checks visible copy only
+    - "SLIKR"             # backend-only since 2026-07-06 — never a customer-facing link or name; customers see "the app" / in-chat booking
+  judge_only_rules:
+    - "never imply staff are employees (chair-rental contractors)"
+    - "never badmouth a competitor shop BY NAME — contrast the MODEL (walk-in vs membership)"
+    - "no hype, no exclamation walls, no emoji hype"
+
+proof:
+  # ONLY these are real. Anything beyond this list = fabrication.
+  reviews: "Google 4.7 stars (202 reviews) · Facebook 94% recommend (258) · App Store 4.5"
+  named_barbers: ["Locky B", "Zayn", "Lachlan", "Korey", "Justin", "Cam"]   # named in real reviews
+  facts: "Est. 2015 · family-owned (Cam + Beau) · 14 chair operators · 15,191 clients in database · 973 VIPs · 9 Gateway Drive, Biggera Waters"
+  circle_pricing:   # from offer.md — verbatim, never rounded or invented
+    the_cut: "$59/mo standard · founding $69/mo 12mo lock, first 100 (per offer.md founding table)"
+    the_club: "$129/mo · founding first 75 · annual $1,499/yr"
+    the_empire: "$249/mo standard · founding $229/mo 24mo lifetime lock, first 30 · annual $2,490/yr"
+  service_prices: "pull live from the SLIKR feed (backend poller) before quoting — never invent or reuse a stale price"
+
+booking:
+  # Reality as of 2026-07-06 (Beau): ALL customer-facing SLIKR links removed site-wide.
+  # SLIKR stays as the backend (poller feeds prices/slots/queue); customers book via in-site chat + Telegram wait-bot.
+  system: "in-site chat widget (#book, shop-chat.js) + Telegram wait-bot — SLIKR is backend-only, never linked or named to customers"
+  cta: "Book a Cut → #book (gold main CTA, hero + nav); Walk-In → live queue flow. Sticky bottom Book-a-Cut bar REMOVED site-wide (Beau 2026-07-07) — do not re-add."
+  circle_close: "human-closed (call is the conversion event) — pages build desire + pre-qualify, they do not self-serve close Empire"

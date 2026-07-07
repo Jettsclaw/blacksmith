@@ -4,6 +4,7 @@ This repo builds the Blacksmith website, funnels and content. Follow this contra
 
 ## The gate (non-negotiable, in order)
 
+0. **`brand-pack/SKILL.md` gates ANY customer-facing asset** (site pages, Circle pages/PDFs, posters, bot copy, ads, email). Its flow is mandatory: pre-plan file first (**no pre-plan file = no build**), foundation language verbatim, then `bash brand-pack/40-gates/verify.sh` must PASS **and** a blind judge (separate agent, artifact + `brand-pack/00-HARD-RULES.md` + pre-plan only) must sign off before anything ships.
 1. **READ `BRAND-CONTEXT.md` first** — locked fonts (Oswald (headlines) + Inter (body); wordmark Scotland), near-black `#0d0d0f`, gold `#c8a44d`, paper `#f3f1ea`, and the "more than a barbershop, we're family" voice. Use verbatim. Never guess generic defaults.
 2. **Run the skill in this repo** — `skills/creator-army-x-automaitions/references/00-WINSTON-UNBREAKABLE-FLOW.md` is the gated step-by-step (context scan → strategy → mechanism + offer → build). Build markup with `skills/automaitions-html-builder/` (read its cheat-sheet first).
 3. **Build off real strategy, not vibes.** Blacksmith is a local service business — the mechanism is the room, the craft and "we're family"; the offer paths are book-a-chair (barbering / Blackrose) and the Academy. A page with no clear offer behind it is a fail.
