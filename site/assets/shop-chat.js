@@ -91,7 +91,7 @@
     if (kind === 'pay') return 'You pay at the shop after your cut — card or cash both sweet.';
     if (kind === 'how') return 'Two ways in: join the live queue (walk-in, I’ll show you the wait) or book a time with Jarred or Locky. Tap Book and I’ll walk you through it.';
     if (kind === 'app') return 'The Blacksmith app has booking + queue too: https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905';
-    if (kind === 'salon') return 'Blackrose Salon Co. is our salon side — colour, styling, the lot. Book it here: https://web.slikr.com.au/blackrosesalon';
+    if (kind === 'salon') return 'Blackrose Salon Co. is our salon side — colour, styling, the lot. Tap Book and I’ll set you up.';
     if (kind === 'jobs') return 'Keen to join the trade? Call the shop on ' + PHONE + ' or drop in and have a yarn — we also run the Blacksmith Academy.';
     if (kind === 'gift') return 'Ask at the counter or call ' + PHONE + ' — they’ll sort you out.';
     if (kind === 'human') return 'Easy — call the shop: ' + PHONE + '. Open ' + fmtHours(s.hours_today) + ' today.';
@@ -268,11 +268,7 @@
       if (!stylist && (sal.slots[k] || []).length) { stylist = k; slots = sal.slots[k]; }
     });
     if (!(sal.services || []).length || !stylist) {
-      bubble('Blackrose’s book is closed right now — call 0479 087 782, or book online:', 'bot');
-      var a = el('a', 'sc-book', 'Book Blackrose →');
-      a.href = 'https://web.slikr.com.au/blackrosesalon'; a.target = '_blank'; a.rel = 'noopener';
-      body.lastChild.appendChild(document.createElement('br'));
-      body.lastChild.appendChild(a);
+      bubble('Blackrose’s book is closed right now — call 0479 087 782 and we’ll sort you out.', 'bot');
       setWizUI(false); return;
     }
     wiz = { step: 'service', shop: 'salon', barber: stylist, salonSlots: slots, date: sal.date, salonLabel: sal.label };

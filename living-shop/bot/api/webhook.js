@@ -126,7 +126,7 @@ async function bkSalon(token, chat) {
     if ((sal.slots[k] || []).length) { stylist = k; slots = sal.slots[k]; break; }
   }
   if (!(sal.services || []).length || !stylist) {
-    await tg(token, 'sendMessage', { chat_id: chat, text: `Blackrose's book is closed right now — call ${PHONE}, or book online: https://web.slikr.com.au/blackrosesalon` });
+    await tg(token, 'sendMessage', { chat_id: chat, text: `Blackrose's book is closed right now — call ${PHONE} and we'll sort you out.` });
     return;
   }
   await setState(chat, { step: 'service', shop: 'salon', barber: stylist, date: sal.date, label: sal.label });
@@ -550,23 +550,23 @@ async function answerFor(kind) {
     const bkm = Object.keys(s.slots_next || {}).map(n => n.split(' ')[0]);
     if (Object.keys((s.salon && s.salon.slots) || {}).some(k => ((s.salon.slots[k]) || []).length)) bkm.push('Sami');
     if (!wtm.length && !bkm.length)
-      return `Lights are off — back ${s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])}. Book ahead any time: ${BOOK_URL}`;
+      return `Lights are off — back ${s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])}. Tap ✂️ Book to lock your next cut.`;
     const lbl = (s.walkin_next && s.walkin_next.label) || s.next_label || 'tomorrow';
     let out = `On ${lbl}:`;
     if (wtm.length) out += `\n💈 Walk-ins — ${wtm.join(', ')}`;
     if (bkm.length) out += `\n📅 Booking — ${bkm.join(', ')}`;
-    return out + `\nBook: ${BOOK_URL}`;
+    return out + `\nTap ✂️ Book to lock a chair.`;
   }
   if (!s.open) {
-    return `Lights are off — we're back ${s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])}. Book ahead any time: ${BOOK_URL}`;
+    return `Lights are off — we're back ${s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])}. Tap ✂️ Book to lock your next cut.`;
   }
   if (kind === 'wait') {
     if (stale || s.wait_mins == null) return `Live feed's catching its breath — call us for the wait: ${PHONE}`;
-    if (s.wait_mins === 0) return `🟢 No wait right now — ${s.barbers_on} barbers on, walk straight in (${asOf(s)})\nOr lock a chair: ${BOOK_URL}`;
-    return `⏱ ~${s.wait_mins} min wait · ${s.waiting} waiting · ${s.barbers_on} barbers on (${asOf(s)})\nJump in: ${BOOK_URL}`;
+    if (s.wait_mins === 0) return `🟢 No wait right now — ${s.barbers_on} barbers on, walk straight in (${asOf(s)})`;
+    return `⏱ ~${s.wait_mins} min wait · ${s.waiting} waiting · ${s.barbers_on} barbers on (${asOf(s)})`;
   }
   if (kind === 'book') {
-    return `Lock your chair: ${BOOK_URL}` + (s.open ? '' : `\n(We're closed right now — book ahead for ${fmtT(s.hours_today.split('–')[0])}.)`);
+    return `Tap ✂️ Book and I'll lock you in.` + (s.open ? '' : `\n(We're closed right now — book ahead for ${fmtT(s.hours_today.split('–')[0])}.)`);
   }
   if (kind === 'who') {
     if (stale || !s.barbers.length) return `Can't see the floor right now — call us: ${PHONE}`;
@@ -575,7 +575,7 @@ async function answerFor(kind) {
       const st = fi === 0 ? 'free now' : b.cutting ? `cutting${b.cutting_at === 'salon' ? ' (in the salon)' : ''}, free in ~${fi} min` : fi > 90 ? 'booked up today' : `booked, free in ~${fi} min`;
       return `${b.cutting ? '✂️' : fi === 0 ? '🟢' : '📅'} ${b.name} — ${st}`;
     });
-    return `On the floor ${asOf(s)}:\n` + lines.join('\n') + `\nBook: ${BOOK_URL}`;
+    return `On the floor ${asOf(s)}:\n` + lines.join('\n') + `\nTap ✂️ Book to lock a chair.`;
   }
   return menuText();
 }
