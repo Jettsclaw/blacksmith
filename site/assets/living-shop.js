@@ -48,7 +48,7 @@
     landscape: ROOM_V5 ? {
       // measured off a labelled grid of room-v5.webp (couch x40-230, clear bench x240-1090, cabinet x1100+)
       room: 'room-v5', W: 1584, H: 672,
-      CHAIR_SPAN: { x0: 345, x1: 1150, y: 545, h: 150 }, // widened span (was 355–1012) so 6 barbers spread with clear gaps between chairs (Beau 2026-07-11); x0 still clears the couch, x1 clears the cabinet/till
+      CHAIR_SPAN: { x0: 330, x1: 1060, y: 545, h: 150 }, // widened within bounds (was 355–1012) so 6 barbers get clearer gaps; x1 kept so the rightmost barber (row shifts 55px left, +barber offset) still clears the cabinet (Beau 2026-07-11)
       SOFTFIT: true, // gently shrink barbers+chairs at 5/6 so real gaps open (no shoulder overlap), full size at <=4
       BARBER_OFF: { x: 46, y: 12 }, CAPE_OFF: { x: 0, y: -6 }, // tighter X offset (was 72) so a 6th barber never leans into the next chair
       COUCH: [{ x: 95, y: 556 }, { x: 145, y: 552 }, { x: 195, y: 548 }], // waiting clients on the baked left-corner chesterfield (kept left so they don't reach the bench)
@@ -649,7 +649,7 @@
       if (LAY.FIT) chairN = Math.min(cap, Math.max(chairN, Math.min(cap, stable.length)));
       var depth = LAY.CHAIR_SPAN && LAY.CHAIR_SPAN.y1 != null;
       var fit = (LAY.FIT && !depth) ? Math.min(1, 3.6 / chairN)
-        : (LAY.SOFTFIT ? (chairN >= 6 ? 0.84 : chairN === 5 ? 0.92 : 1) : 1);
+        : (LAY.SOFTFIT ? (chairN >= 6 ? 0.80 : chairN === 5 ? 0.88 : 1) : 1);
       var CHAIRS = [];
       if (LAY.CHAIR_SPAN) {
         var sp = LAY.CHAIR_SPAN;
