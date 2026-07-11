@@ -48,7 +48,7 @@
     landscape: ROOM_V5 ? {
       // measured off a labelled grid of room-v5.webp (couch x40-230, clear bench x240-1090, cabinet x1100+)
       room: 'room-v5', W: 1584, H: 672,
-      CHAIR_SPAN: { x0: 355, x1: 1012, y: 545, h: 150 }, // x0 pinned WELL right of the couch keep-out so the leftmost chair/cape/barber can NEVER overlap the couch at any count or fit
+      CHAIR_SPAN: { x0: 345, x1: 1150, y: 545, h: 150 }, // widened span (was 355–1012) so 6 barbers spread with clear gaps between chairs (Beau 2026-07-11); x0 still clears the couch, x1 clears the cabinet/till
       SOFTFIT: true, // gently shrink barbers+chairs at 5/6 so real gaps open (no shoulder overlap), full size at <=4
       BARBER_OFF: { x: 46, y: 12 }, CAPE_OFF: { x: 0, y: -6 }, // tighter X offset (was 72) so a 6th barber never leans into the next chair
       COUCH: [{ x: 95, y: 556 }, { x: 145, y: 552 }, { x: 195, y: 548 }], // waiting clients on the baked left-corner chesterfield (kept left so they don't reach the bench)
