@@ -148,10 +148,13 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=23';
+    im.src = A + n + '.webp?v=40';
     IMGS[n] = im;
   });
 
+  // Display-only: SLIKR spells him "Jarred"; show customers "Jarrod".
+  // Never use for spriteKey / data-b / booking — those keep the real feed name.
+  function dn(s) { return String(s == null ? '' : s).replace(/Jarred/gi, 'Jarrod'); }
   // Map a feed name ("Jayden (Apprentice)") to a sprite key.
   function spriteKey(name) {
     var k = name.toLowerCase();
@@ -472,9 +475,9 @@
         var book = (h.book && h.book.length ? h.book : ['barber']).filter(function (x) { return x !== 'salon'; });
         if (!book.length) book = ['barber'];
         var first = safe(h.name.split(' ')[0]);
-        var btns = '<button class="btn btn-gold ls-book" data-b="' + first + '">Book with ' + first + '</button>';
+        var btns = '<button class="btn btn-gold ls-book" data-b="' + first + '">Book with ' + dn(first) + '</button>';
         card.innerHTML = '<button class="ls-x" aria-label="Close">&times;</button>' +
-          '<strong>' + safe(h.name) + '</strong><span>' + status + '</span>' + btns;
+          '<strong>' + dn(safe(h.name)) + '</strong><span>' + status + '</span>' + btns;
         card.querySelector('.ls-x').onclick = function (ev) { ev.stopPropagation(); card.hidden = true; };
         card.querySelectorAll('.ls-book').forEach(function (btn) {
           btn.onclick = function (ev) {
@@ -780,7 +783,7 @@
         var mkey = occupied ? 'massage-lay' : 'massage-up';
         if (lounger) { // each barber has his OWN reclined art, lazy-loaded on first need
           var lk = 'lay-' + (spriteKey(lounger.name) || 'ben');
-          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=23'; IMGS[lk] = lim; }
+          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=40'; IMGS[lk] = lim; }
           if (IMGS[lk].naturalWidth) mkey = lk; // generic until his art arrives
         }
         var mb = drawSprite(mkey,
