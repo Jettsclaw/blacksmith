@@ -457,10 +457,20 @@
   var WQ_MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   function wqDateChips() {
     var out = [];
-    for (var i = 1; i <= 7; i++) {
+    // Past midnight the next walk-in day is TODAY, not tomorrow — offer it
+    // while today's close hasn't passed yet (Beau 2026-07-23).
+    var now = new Date();
+    var todayClose = '17:30';
+    if (snap && snap.week) {
+      var tdow = WQ_DOW[now.getDay()];
+      for (var k = 0; k < snap.week.length; k++) if (snap.week[k].day.split(',').indexOf(tdow) >= 0) todayClose = snap.week[k].close;
+    }
+    var nowHM = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    var first = nowHM < todayClose ? 0 : 1;
+    for (var i = first; i <= 7; i++) {
       var d = new Date(Date.now() + i * 86400000);
       var iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-      out.push({ label: i === 1 ? 'Tomorrow' : WQ_DOW[d.getDay()] + ' ' + d.getDate() + ' ' + WQ_MON[d.getMonth()], date: iso });
+      out.push({ label: i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : WQ_DOW[d.getDay()] + ' ' + d.getDate() + ' ' + WQ_MON[d.getMonth()], date: iso });
     }
     return out;
   }
@@ -471,6 +481,10 @@
       for (var k = 0; k < snap.week.length; k++) if (snap.week[k].day.split(',').indexOf(dow) >= 0) { start = snap.week[k].start; close = snap.week[k].close; }
     }
     var sMin = (+start.slice(0, 2)) * 60 + (+start.slice(3, 5)), eMin = (+close.slice(0, 2)) * 60 + (+close.slice(3, 5));
+    // If the picked day is today, drop times that have already passed.
+    var nowD = new Date();
+    var todayIso = nowD.getFullYear() + '-' + String(nowD.getMonth() + 1).padStart(2, '0') + '-' + String(nowD.getDate()).padStart(2, '0');
+    if (iso === todayIso) sMin = Math.max(sMin, Math.ceil((nowD.getHours() * 60 + nowD.getMinutes() + 30) / 30) * 30);
     var out = [{ label: 'First available', time: 'First available' }];
     for (var m = sMin; m <= eMin - 30; m += 30) {
       var h = Math.floor(m / 60), mn = m % 60, ap = h >= 12 ? 'pm' : 'am', hh = (h % 12) || 12;
