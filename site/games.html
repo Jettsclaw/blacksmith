@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spin the Wheel | Blacksmith Barbers</title>
+<meta name="description" content="Spin the wheel, screenshot your prize, show it at the counter. Blacksmith Barbers, Gold Coast.">
+<meta name="theme-color" content="#0b0b0d">
+<meta name="robots" content="noindex">
+<link rel="apple-touch-icon" href="assets/logo-white.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=53">
+<style>
+/* ============ SPIN THE WHEEL — kiosk / shop-screen build ============ */
+html,body{height:100%}
+body.wheel-screen{
+  min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(20px,4vw,34px);padding:24px 16px;overflow-x:hidden;
+  background:radial-gradient(120% 100% at 50% -10%,#17171b 0%,#0b0b0d 62%);
+}
+
+/* wheel — roulette ring (smaller) */
+.wheel-shell{position:relative;width:min(82vw,340px);aspect-ratio:1;filter:drop-shadow(0 22px 52px rgba(0,0,0,.6))}
+.wheel-pointer{position:absolute;top:-2px;left:50%;transform:translateX(-50%);z-index:6;width:0;height:0;
+  border-left:13px solid transparent;border-right:13px solid transparent;border-top:24px solid var(--gold);
+  filter:drop-shadow(0 3px 4px rgba(0,0,0,.55))}
+.wheel-ring{position:absolute;inset:0;border-radius:50%;padding:12px;background:
+  repeating-conic-gradient(from 0deg,#c8a44d 0deg 6deg,#0b0b0d 6deg 12deg);
+  box-shadow:inset 0 0 0 3px rgba(200,164,77,.5),0 0 0 1px rgba(0,0,0,.6),inset 0 0 40px rgba(0,0,0,.65)}
+.wheel{position:absolute;inset:12px;border-radius:50%;overflow:hidden;
+  transition:transform 5.4s cubic-bezier(0.12,0.86,0.16,1);transform:rotate(0deg)}
+.wheel::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 2px rgba(0,0,0,.35);pointer-events:none}
+.wheel .seg-label{position:absolute;top:0;left:50%;width:50%;height:50%;transform-origin:0% 100%;
+  display:flex;align-items:center;justify-content:flex-end;padding-right:16px;pointer-events:none}
+.wheel .seg-label span{transform:rotate(90deg);white-space:nowrap;font-family:'Oswald',sans-serif;
+  font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+  font-size:clamp(.82rem,2.9vw,1.02rem)}
+.wheel .seg-label.on-gold span{color:#120d02}
+.wheel .seg-label.on-dark span{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+
+/* SPIN hub (this IS the button) */
+.wheel-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5;
+  width:30%;aspect-ratio:1;border-radius:50%;border:3px solid var(--gold);cursor:pointer;
+  background:radial-gradient(circle at 35% 30%,#20201f,#08080a);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.4);
+  transition:transform .15s var(--ease),box-shadow .2s var(--ease)}
+.wheel-hub:hover{transform:translate(-50%,-50%) scale(1.04)}
+.wheel-hub:active{transform:translate(-50%,-50%) scale(.97)}
+.wheel-hub:disabled{cursor:default}
+.wheel-hub .spin-word{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--gold);font-size:clamp(1rem,4.2vw,1.35rem);line-height:1}
+.wheel-hub.is-spinning .spin-word{opacity:.5}
+
+.spin-note{color:var(--muted);font-size:.9rem;min-height:1.2em;text-align:center;font-weight:500}
+
+/* win card */
+.prize{width:min(90vw,420px);border:1px solid var(--line);border-radius:18px;background:var(--panel);
+  overflow:hidden;opacity:0;max-height:0;transform:translateY(6px);transition:.5s var(--ease)}
+.prize.show{opacity:1;max-height:600px;transform:none}
+.prize-top{padding:24px 22px 20px;text-align:center;background:
+  radial-gradient(120% 120% at 50% 0%,rgba(200,164,77,.16),transparent 60%)}
+.prize-top .eyebrow{margin-bottom:8px}
+.prize-name{font-family:'Oswald',sans-serif;font-weight:700;text-transform:uppercase;color:var(--gold);
+  font-size:clamp(1.7rem,7vw,2.3rem);line-height:1}
+.prize-sub{color:var(--body);margin:10px auto 0;font-size:.95rem;max-width:34ch}
+.prize-code{margin:16px 20px 4px;padding:16px;text-align:center;background:var(--panel-2);
+  border:1px dashed var(--gold);border-radius:12px}
+.prize-code .eyebrow{margin-bottom:6px}
+.prize-code .code{font-family:'Oswald',sans-serif;font-size:clamp(1.6rem,6vw,2.1rem);
+  letter-spacing:.16em;color:var(--gold);font-weight:700}
+.prize-body{padding:8px 22px 22px;text-align:center}
+.prize-body .tc{color:var(--muted);font-size:.78rem;margin:10px auto 0;max-width:40ch}
+</style>
+</head>
+<body class="wheel-screen">
+
+<div class="wheel-shell">
+  <div class="wheel-pointer" aria-hidden="true"></div>
+  <div class="wheel-ring" aria-hidden="true"></div>
+  <div class="wheel" id="wheel" role="img" aria-label="Prize wheel"></div>
+  <button class="wheel-hub" id="spinBtn" aria-label="Spin the wheel"><span class="spin-word">Spin</span></button>
+</div>
+
+<p class="spin-note" id="spinNote">Tap SPIN · screenshot your prize · show it at the counter</p>
+
+<div class="prize" id="prize" aria-hidden="true" aria-live="polite">
+  <div class="prize-top">
+    <span class="eyebrow">You won</span>
+    <div class="prize-name" id="prizeName">—</div>
+    <p class="prize-sub" id="prizeSub"></p>
+  </div>
+  <div class="prize-code" id="prizeCodeWrap">
+    <span class="eyebrow">Screenshot this · show at the counter</span>
+    <div class="code" id="prizeCode">—</div>
+  </div>
+  <div class="prize-body">
+    <p class="tc">One prize per customer. Valid on your next visit only. Show the screenshot in store to redeem.</p>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   SPIN-THE-WHEEL — kiosk build
+   Wheel FACE shows the full prize set; the OUTCOME is rigged to
+   only ever land on the four Beau approved:
+     Free Drink · 15 Min Massage · Free Spin · No Win.
+   Win = a code the customer screenshots and shows at the counter.
+   ============================================================ */
+(function(){
+  var SEGMENTS = [
+    {key:'drink',    label:'Free Drink'  },
+    {key:'off10',    label:'10% Off'     },
+    {key:'massage',  label:'Massage'     },
+    {key:'product',  label:'Free Product'},
+    {key:'spin',     label:'Free Spin'   },
+    {key:'off20',    label:'20% Off'     },
+    {key:'nowin',    label:'No Win'      },
+    {key:'haircut',  label:'Free Haircut'}
+  ];
+  var N = SEGMENTS.length, SEG = 360 / N;
+  var RIGGED = ['drink','massage','spin','nowin'];
+
+  var COPY = {
+    drink:   { name:'Free Drink',       sub:'A can on the house with your cut — grab it in store.' },
+    massage: { name:'15 Min Massage',   sub:'15 minutes in the massage chair while you wait. Bliss.' },
+    spin:    { name:'Free Spin',        sub:'Lucky one — tap SPIN and go again.' },
+    nowin:   { name:'No Win This Time', sub:'Not your spin. Come in for a cut and try again next visit.' }
+  };
+
+  var wheel   = document.getElementById('wheel');
+  var spinBtn = document.getElementById('spinBtn');
+  var spinNote= document.getElementById('spinNote');
+  var prize   = document.getElementById('prize');
+  var prizeName = document.getElementById('prizeName');
+  var prizeSub  = document.getElementById('prizeSub');
+  var prizeCode = document.getElementById('prizeCode');
+  var prizeCodeWrap = document.getElementById('prizeCodeWrap');
+  var rotation = 0, spinning = false;
+
+  function buildWheel(){
+    var stops = [];
+    for(var i=0;i<N;i++){
+      var c = (i % 2 === 0) ? '#c8a44d' : '#141418';
+      stops.push(c + ' ' + (i*SEG) + 'deg ' + ((i+1)*SEG) + 'deg');
+    }
+    wheel.style.background = 'conic-gradient(' + stops.join(',') + ')';
+    for(var j=0;j<N;j++){
+      var d = document.createElement('div');
+      d.className = 'seg-label ' + ((j % 2 === 0) ? 'on-gold' : 'on-dark');
+      d.style.transform = 'rotate(' + (j*SEG + SEG/2) + 'deg)';
+      var s = document.createElement('span');
+      s.textContent = SEGMENTS[j].label;
+      d.appendChild(s);
+      wheel.appendChild(d);
+    }
+  }
+
+  function pickOutcome(){
+    var key = RIGGED[Math.floor(Math.random()*RIGGED.length)];
+    for(var i=0;i<N;i++){ if(SEGMENTS[i].key === key) return {key:key, seg:i}; }
+    return {key:key, seg:0};
+  }
+
+  function rotateTo(segIndex){
+    var jitter = (Math.random()*0.5 - 0.25) * SEG;
+    var target = segIndex*SEG + SEG/2 + jitter;
+    var base = rotation - (rotation % 360);
+    rotation = base + 360*6 - target;
+    wheel.style.transform = 'rotate(' + rotation + 'deg)';
+  }
+
+  function makeCode(){
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = '';
+    for(var i=0;i<4;i++){ s += chars.charAt(Math.floor(Math.random()*chars.length)); }
+    return 'BLK-' + s;
+  }
+
+  function reveal(o){
+    var c = COPY[o.key];
+    prizeName.textContent = c.name;
+    prizeSub.textContent  = c.sub;
+    if(o.key === 'spin' || o.key === 'nowin'){
+      prizeCodeWrap.style.display = 'none';
+    } else {
+      prizeCodeWrap.style.display = '';
+      prizeCode.textContent = makeCode();
+    }
+    prize.classList.add('show');
+    prize.setAttribute('aria-hidden','false');
+  }
+
+  function spin(){
+    if(spinning) return;
+    spinning = true;
+    spinBtn.disabled = true;
+    spinBtn.classList.add('is-spinning');
+    prize.classList.remove('show');
+    prize.setAttribute('aria-hidden','true');
+    var o = pickOutcome();
+    rotateTo(o.seg);
+    setTimeout(function(){
+      spinning = false;
+      spinBtn.disabled = false;
+      spinBtn.classList.remove('is-spinning');
+      reveal(o);
+      spinNote.textContent = (o.key === 'spin')
+        ? 'Free spin — tap SPIN to go again.'
+        : 'One prize per customer — see terms below.';
+    }, 5500);
+  }
+
+  buildWheel();
+  spinBtn.addEventListener('click', spin);
+})();
+</script>
+</body>
+</html>

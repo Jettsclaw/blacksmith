@@ -15,6 +15,9 @@ const ADDRESS = '9 Gateway Drive, Biggera Waters — 1 min from Harbour Town';
 // same destination the website chat uses, so both surfaces behave identically.
 const AFTERHOURS_TG = 'https://t.me/+FdP08AnnO3swZmJl';
 const STALE_MS = 8 * 60 * 1000;
+// Display-only: SLIKR spells him "Jarred"; customers should see "Jarrod".
+// Never use for callback_data / matching / booking payloads — those keep the feed name.
+const dn = s => String(s == null ? '' : s).replace(/Jarred/gi, 'Jarrod');
 
 // naive per-instance rate limit: 8 msgs / chat / minute
 const hits = new Map();
@@ -104,14 +107,14 @@ async function bkStart(token, chat) {
     // Closed → hand the walk-in to the Blacksmith After Hours crew (mirrors the
     // website chat, Beau 2026-07-06). Book-ahead stays available below.
     const rows = [[{ text: '🚶 After-hours walk-in · message the crew', url: AFTERHOURS_TG }]];
-    names.forEach(n => rows.push([{ text: '📅 Book ahead · ' + n, callback_data: 'bk1:' + n }]));
+    names.forEach(n => rows.push([{ text: '📅 Book ahead · ' + dn(n), callback_data: 'bk1:' + n }]));
     const tail = names.length ? ` Or lock a set time ${s.next_label} with a barber below.` : '';
     await tg(token, 'sendMessage', { chat_id: chat, text: `We're closed right now — but you can still get on the list. Leave your walk-in with the Blacksmith After Hours crew and they'll sort you first thing when we open.${tail}`,
       reply_markup: { inline_keyboard: rows } });
     return;
   }
   await setState(chat, { step: 'barber' });
-  const rows = s.barbers.map(b => [{ text: b.name.split(' ')[0], callback_data: 'bk1:' + b.name.split(' ')[0] }]);
+  const rows = s.barbers.map(b => [{ text: dn(b.name.split(' ')[0]), callback_data: 'bk1:' + b.name.split(' ')[0] }]);
   rows.push([{ text: 'Anyone', callback_data: 'bk1:any' }]);
   rows.push([{ text: '🌹 Blackrose Salon', callback_data: 'bks' }]);
   await tg(token, 'sendMessage', { chat_id: chat, text: 'Let’s get you booked. Who with?', reply_markup: { inline_keyboard: rows } });
@@ -281,10 +284,10 @@ async function walkinStart(token, chat) {
     await tg(token, 'sendMessage', { chat_id: chat, text: `No barbers on walk-ins right now — tap 📅 Book to lock a time, or call ${PHONE}.` });
     return;
   }
-  const rows = wb.map(b => [{ text: b.name.split(' ')[0], callback_data: 'wb:' + b.name.split(' ')[0] }]);
+  const rows = wb.map(b => [{ text: dn(b.name.split(' ')[0]), callback_data: 'wb:' + b.name.split(' ')[0] }]);
   rows.push([{ text: 'Any barber', callback_data: 'wb:any' }]);
   await tg(token, 'sendMessage', { chat_id: chat,
-    text: `On walk-ins ${asOf(s)}: ${wb.map(b => b.name.split(' ')[0]).join(', ')}.\nWho would you like? I'll pop you in the live queue.`,
+    text: `On walk-ins ${asOf(s)}: ${wb.map(b => dn(b.name.split(' ')[0])).join(', ')}.\nWho would you like? I'll pop you in the live queue.`,
     reply_markup: { inline_keyboard: rows } });
 }
 async function walkinBarber(token, chat, first) {
@@ -333,7 +336,7 @@ async function bookStart(token, chat) {
     await tg(token, 'sendMessage', { chat_id: chat, text: `Tomorrow's book isn't open yet — try again in the morning or call ${PHONE}.` });
     return;
   }
-  const rows = order.map(n => [{ text: n.split(' ')[0], callback_data: 'bb:' + n.split(' ')[0] }]);
+  const rows = order.map(n => [{ text: dn(n.split(' ')[0]), callback_data: 'bb:' + n.split(' ')[0] }]);
   if (samiDays.length) rows.push([{ text: 'Sami', callback_data: 'bb:Sami' }]);
   rows.push([{ text: "Walk-In's 💈", callback_data: 'walk' }]); // Beau 2026-07-06: jump straight to the join-the-queue flow
   await tg(token, 'sendMessage', { chat_id: chat,
@@ -356,7 +359,7 @@ async function bookBarber(token, chat, first) {
 async function bookOfferDays(token, chat, ctx) {
   if (ctx.days.length === 1) return bookDayPicked(token, chat, ctx, ctx.days[0]);
   await setState(chat, { flow: 'book', shop: ctx.shop, barber: ctx.barber, name: ctx.name, days: ctx.days });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `${ctx.name.split(' ')[0]}'s schedule — which day?`,
+  await tg(token, 'sendMessage', { chat_id: chat, text: `${dn(ctx.name.split(' ')[0])}'s schedule — which day?`,
     reply_markup: { inline_keyboard: ctx.days.map(d => [{ text: d.label, callback_data: 'bd:' + d.code }]) } });
 }
 async function bookDay(token, chat, code) {
@@ -503,7 +506,7 @@ async function wqEmail(token, chat, promptText, userText) {
     `✂️ ${rec.service_name}\n💈 First available\n🗓 ${rec.day_label}\n🕐 Preferred: ${rec.time}`;
   await tg(token, 'sendMessage', { chat_id: process.env.QUEUE_CHAT, text: card, parse_mode: 'Markdown',
     reply_markup: { inline_keyboard: [[{ text: '✅ Add to SLIKR', callback_data: 'qadd:' + id }, { text: '✕ Dismiss', callback_data: 'qdis:' + id }]] } });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on the walk-in list, ${rec.name.split(' ')[0]} — we'll text you to confirm your time. See you then! ✂️` });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `✅ You're on the walk-in list, ${dn(rec.name.split(' ')[0])} — we'll text you to confirm your time. See you then! ✂️` });
   await saveCustomer(chat, { name: rec.name, phone: rec.phone, last_service: rec.service_name, last_time: rec.time });
 }
 
@@ -522,7 +525,7 @@ async function cancelSubmit(token, chat, userText) {
   const id = globalThis.crypto.randomUUID().toLowerCase();
   await put(`creq/${id}.json`, JSON.stringify({ name, phone, tg_chat: chat, ts: Date.now() }),
     { access: 'public', addRandomSuffix: false, allowOverwrite: true, contentType: 'application/json' });
-  await tg(token, 'sendMessage', { chat_id: chat, text: `Done ${name.split(' ')[0]} — I've sent your cancellation to the shop and you won't be marked a no-show. ✂️` });
+  await tg(token, 'sendMessage', { chat_id: chat, text: `Done ${dn(name.split(' ')[0])} — I've sent your cancellation to the shop and you won't be marked a no-show. ✂️` });
 }
 // ---- Customer memory: remember returning customers. Written on booking, read on a
 //      later visit (always days apart) so head() is fully consistent here. ----
@@ -548,8 +551,8 @@ async function answerFor(kind) {
   }
   // Closed + "who's on" → show who's rostered the next open day (mirrors the website).
   if (kind === 'who' && !s.open) {
-    const wtm = ((s.walkin_next && s.walkin_next.barbers) || []).map(n => n.split(' ')[0]);
-    const bkm = Object.keys(s.slots_next || {}).map(n => n.split(' ')[0]);
+    const wtm = ((s.walkin_next && s.walkin_next.barbers) || []).map(n => dn(n.split(' ')[0]));
+    const bkm = Object.keys(s.slots_next || {}).map(n => dn(n.split(' ')[0]));
     if (Object.keys((s.salon && s.salon.slots) || {}).some(k => ((s.salon.slots[k]) || []).length)) bkm.push('Sami');
     if (!wtm.length && !bkm.length)
       return `Lights are off — back ${s.hours_today === 'closed today' ? 'tomorrow' : fmtT(s.hours_today.split('–')[0])}. Tap ✂️ Book to lock your next cut.`;

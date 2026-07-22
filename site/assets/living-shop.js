@@ -148,7 +148,7 @@
     var im = new Image();
     im.onload = function () { if (++loaded === toLoad.length) start(); };
     im.onerror = function () { failed = true; };
-    im.src = A + n + '.webp?v=40';
+    im.src = A + n + '.webp?v=42';
     IMGS[n] = im;
   });
 
@@ -323,7 +323,7 @@
     foot.className = 'btn btn-gold ls-fsfoot';
     foot.href = '#book'; // in-chat booking, no SLIKR (Beau 2026-07-07)
     foot.onclick = function (ev) { ev.preventDefault(); if (fs.on) fsClose(); if (window.__scBook) window.__scBook(); };
-    foot.textContent = 'Book a Cut';
+    foot.textContent = 'Book Your Cut →';
     fs.wrap.appendChild(body);
     fs.wrap.appendChild(bar);
     fs.wrap.appendChild(foot);
@@ -783,7 +783,7 @@
         var mkey = occupied ? 'massage-lay' : 'massage-up';
         if (lounger) { // each barber has his OWN reclined art, lazy-loaded on first need
           var lk = 'lay-' + (spriteKey(lounger.name) || 'ben');
-          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=40'; IMGS[lk] = lim; }
+          if (!IMGS[lk]) { var lim = new Image(); lim.src = A + lk + '.webp?v=42'; IMGS[lk] = lim; }
           if (IMGS[lk].naturalWidth) mkey = lk; // generic until his art arrives
         }
         var mb = drawSprite(mkey,

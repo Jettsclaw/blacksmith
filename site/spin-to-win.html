@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blacksmith Barbers — Spin the Chair</title>
+<meta name="description" content="Spin for a first-visit perk at Blacksmith Barbers, Biggera Waters.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brass:#c8a44d;--brass-lo:#e3c578;--ink:#0b0b0d;--char:#141417;--char2:#26262c;
+    --paper:#f3f1ea;--grey:#a2a2aa;--white:#fff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Inter",-apple-system,sans-serif;color:var(--paper);-webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1200px 600px at 50% -10%,rgba(200,164,77,.12),transparent 60%),
+      linear-gradient(160deg,#0e0e11,#000);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .head{font-family:"Oswald",sans-serif;text-transform:uppercase}
+
+  .pop{position:relative;width:min(920px,100%);background:var(--char);border:1px solid #2c2c33;
+    border-radius:20px;overflow:hidden;display:grid;grid-template-columns:1.05fr .95fr;
+    box-shadow:0 40px 130px rgba(0,0,0,.75);animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(26px) scale(.98)}to{opacity:1;transform:none}}
+  .close{position:absolute;top:14px;right:16px;z-index:5;width:34px;height:34px;border:0;border-radius:50%;
+    background:rgba(255,255,255,.07);color:#cfcfcf;font-size:18px;cursor:pointer;line-height:34px}
+  .close:hover{background:rgba(255,255,255,.14)}
+
+  .stage{background:radial-gradient(circle at 50% 42%,#1b1b1f,#0a0a0c 70%);position:relative;
+    display:flex;align-items:center;justify-content:center;padding:34px;overflow:hidden}
+  .stage::before{content:"";position:absolute;inset:-40%;
+    background:radial-gradient(circle at 50% 45%,rgba(200,164,77,.16),transparent 62%)}
+  .wheelwrap{position:relative;width:min(360px,74vw);aspect-ratio:1}
+  canvas{width:100%;height:100%;display:block;border-radius:50%;
+    box-shadow:0 0 0 7px #0c0c0e,0 0 0 10px var(--brass),0 24px 60px rgba(0,0,0,.7)}
+  .pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);z-index:4;width:0;height:0;
+    border-left:15px solid transparent;border-right:15px solid transparent;border-top:26px solid var(--brass-lo);
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.6))}
+  .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;width:78px;height:78px;
+    border-radius:50%;background:#0c0c0e;border:3px solid var(--brass);display:flex;align-items:center;justify-content:center;
+    box-shadow:0 6px 20px rgba(0,0,0,.6)}
+  .hub img{width:66%;height:66%;object-fit:contain}
+
+  .panel{padding:44px 40px;display:flex;flex-direction:column;justify-content:center;gap:15px}
+  .wordmark{height:34px;width:auto;object-fit:contain;object-position:left;margin-bottom:2px;filter:brightness(1.05)}
+  .eyebrow{font-size:11.5px;letter-spacing:.26em;color:var(--brass);font-weight:600}
+  h1{font-family:"Oswald",sans-serif;font-weight:700;font-size:clamp(28px,3.6vw,42px);letter-spacing:.01em;line-height:1;text-transform:uppercase}
+  h1 span{color:var(--brass)}
+  .sub{color:#c9c7c0;font-size:14px;max-width:36ch;line-height:1.55}
+  form{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+  .row{display:flex;gap:10px}
+  input{padding:14px 15px;border:1.5px solid #3a3a42;border-radius:10px;font-size:14.5px;font-family:inherit;
+    background:#0e0e11;color:var(--paper);transition:.2s;width:100%}
+  input::placeholder{color:#6f6f78}
+  input:focus{outline:0;border-color:var(--brass);box-shadow:0 0 0 3px rgba(200,164,77,.16)}
+  .btn{padding:16px;border:0;border-radius:10px;background:linear-gradient(180deg,var(--brass-lo),var(--brass));
+    color:#1a1408;font-weight:700;font-size:15px;font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.06em;
+    cursor:pointer;transition:.2s;display:flex;gap:9px;align-items:center;justify-content:center}
+  .btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .err{color:#e2795f;font-size:12px;min-height:13px}
+  .fine{font-size:10.5px;color:#7c7c85;line-height:1.5}
+  .fine a{color:var(--brass)}
+
+  .win{display:none;flex-direction:column;gap:14px}
+  .win.show{display:flex}
+  .win .prize{font-family:"Oswald",sans-serif;font-size:clamp(26px,4.2vw,42px);font-weight:700;color:var(--brass);
+    text-transform:uppercase;line-height:1.02;letter-spacing:.01em}
+  .code{display:flex;align-items:center;gap:10px;background:#0e0e11;border:1.5px dashed var(--brass);border-radius:11px;padding:13px 15px}
+  .code b{font-family:"Oswald",sans-serif;font-weight:600;font-size:18px;letter-spacing:.16em;color:var(--paper);flex:1}
+  .code button{border:0;background:var(--brass);color:#1a1408;font-weight:700;font-size:11px;padding:9px 12px;border-radius:7px;cursor:pointer;font-family:"Oswald",sans-serif;letter-spacing:.06em}
+  .demoflag{position:absolute;bottom:12px;left:16px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35);z-index:5}
+
+  @media(max-width:760px){
+    .pop{grid-template-columns:1fr;max-width:420px}
+    .stage{padding:28px 30px 24px;order:-1}
+    .panel{padding:26px 24px 32px;text-align:center;align-items:center}
+    .sub{margin:0 auto}.wordmark{object-position:center}
+    .win{text-align:center;align-items:center}.row{flex-direction:column}
+  }
+</style>
+</head>
+<body>
+  <div class="pop">
+    <button class="close" aria-label="Close" onclick="this.closest('.pop').style.opacity=.15">&times;</button>
+
+    <div class="stage">
+      <div class="wheelwrap">
+        <div class="pointer"></div>
+        <canvas id="wheel" width="720" height="720"></canvas>
+        <div class="hub"><img src="./assets/bs-logo.png" alt="Blacksmith"></div>
+      </div>
+      <span class="demoflag">Preview — demo</span>
+    </div>
+
+    <div class="panel">
+      <img class="wordmark" src="./assets/logo-topbar.png" alt="Blacksmith Barbers">
+      <div id="entry" style="display:flex;flex-direction:column;gap:13px">
+        <div class="eyebrow">FIRST VISIT · ONE SPIN</div>
+        <h1>Spin the <span>chair</span></h1>
+        <p class="sub">New to the shop? Drop your details and spin for a first-visit perk on the house — beard work, hot-towel, product, or a jump up the booking list.</p>
+        <form id="f" novalidate>
+          <div class="row">
+            <input type="text" id="name" placeholder="First name" autocomplete="given-name" required>
+            <input type="tel" id="mobile" placeholder="Mobile" autocomplete="tel" required>
+          </div>
+          <div class="err" id="err"></div>
+          <button class="btn" id="spinBtn" type="submit">Spin the chair</button>
+        </form>
+        <p class="fine">We'll text your perk + a booking link. Blacksmith Barbers, Biggera Waters. One spin per new client, valid 14 days. No spam — reply STOP anytime.</p>
+      </div>
+
+      <div class="win" id="winView">
+        <div class="eyebrow" id="winEyebrow">🪒 THAT'S YOURS.</div>
+        <div class="prize" id="prizeText">Free beard trim</div>
+        <p class="sub" id="winSub">Show this code on your first visit. We've texted it to you with a link to book your chair.</p>
+        <div class="code"><b id="codeText">BSBEARD</b><button onclick="copyCode(this)">COPY</button></div>
+        <a class="btn" id="bookBtn" href="https://blacksmithbarbers.com.au" target="_blank" rel="noopener">Book your chair →</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+const PRIZES=[
+  {label:"Free beard trim", code:"BSBEARD",  color:"#0f0f12", text:"#e3c578", w:22},
+  {label:"Free hot-towel finish", code:"BSTOWEL", color:"#c8a44d", text:"#1a1408", w:20},
+  {label:"Free styling product", code:"BSPRODUCT", color:"#0f0f12", text:"#e3c578", w:14},
+  {label:"$15 off first visit", code:"BSWELCOME15", color:"#c8a44d", text:"#1a1408", w:16},
+  {label:"Free neck line-up", code:"BSLINEUP", color:"#0f0f12", text:"#e3c578", w:13},
+  {label:"Priority booking", code:"BSPRIORITY", color:"#c8a44d", text:"#1a1408", w:8},
+  {label:"NEXT TIME", code:"", color:"#0f0f12", text:"#8a8a90", w:4, none:true},
+  {label:"Free cut", code:"BSFREECUT", color:"#c8a44d", text:"#1a1408", w:3},
+];
+const N=PRIZES.length, SEG=2*Math.PI/N;
+const cv=document.getElementById('wheel'), ctx=cv.getContext('2d'), R=cv.width/2;
+function draw(rot){
+  ctx.clearRect(0,0,cv.width,cv.height);ctx.save();ctx.translate(R,R);ctx.rotate(rot);
+  for(let i=0;i<N;i++){
+    const a0=i*SEG,a1=a0+SEG;
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,R-6,a0,a1);ctx.closePath();
+    ctx.fillStyle=PRIZES[i].color;ctx.fill();
+    ctx.strokeStyle="rgba(200,164,77,.28)";ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.rotate(a0+SEG/2);ctx.textAlign="right";ctx.fillStyle=PRIZES[i].text;
+    const words=PRIZES[i].label.split(" ");
+    if(words.length>1){
+      ctx.font="700 25px Oswald, sans-serif";
+      const mid=Math.ceil(words.length/2);
+      ctx.fillText(words.slice(0,mid).join(" ").toUpperCase(),R-42,-6);
+      ctx.fillText(words.slice(mid).join(" ").toUpperCase(),R-42,22);
+    }else{ctx.font="700 30px Oswald, sans-serif";ctx.fillText(PRIZES[i].label.toUpperCase(),R-42,10);}
+    ctx.restore();
+  }
+  ctx.restore();
+}
+draw(-Math.PI/2);
+function pick(){const t=PRIZES.reduce((s,p)=>s+p.w,0);let r=Math.random()*t;for(let i=0;i<N;i++){if((r-=PRIZES[i].w)<0)return i;}return 0;}
+let spinning=false,rot=-Math.PI/2;
+function spinTo(idx,done){
+  spinning=true;
+  const target=-Math.PI/2-(idx*SEG+SEG/2),turns=6*2*Math.PI;
+  const start=rot,end=target-turns,dur=4200,t0=performance.now();
+  (function frame(t){const p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3.4);rot=start+(end-start)*e;draw(rot);if(p<1)requestAnimationFrame(frame);else{spinning=false;done();}})(performance.now());
+}
+const f=document.getElementById('f'),name=document.getElementById('name'),mobile=document.getElementById('mobile'),
+      err=document.getElementById('err'),btn=document.getElementById('spinBtn');
+f.addEventListener('submit',ev=>{
+  ev.preventDefault();if(spinning)return;
+  const n=name.value.trim(),m=mobile.value.replace(/[^\d+]/g,'');
+  if(n.length<2){err.textContent="Pop your first name in.";return;}
+  if(m.replace(/\D/g,'').length<8){err.textContent="Need a valid mobile to text your perk.";return;}
+  err.textContent="";btn.disabled=true;btn.textContent="Spinning…";
+  const idx=pick();
+  spinTo(idx,()=>{const p=PRIZES[idx];setTimeout(()=>{
+    document.getElementById('entry').style.display='none';
+    document.getElementById('winView').classList.add('show');
+    if(p.none){
+      document.getElementById('winEyebrow').textContent="ALMOST.";
+      document.getElementById('prizeText').textContent="Not this time";
+      document.getElementById('winSub').textContent="No perk on that spin — but you're on the list. We'll text you when a chair opens up.";
+      document.querySelector('.win .code').style.display='none';
+      document.getElementById('bookBtn').textContent="See the shop →";
+    }else{
+      document.getElementById('prizeText').textContent=p.label;
+      document.getElementById('codeText').textContent=p.code;
+    }
+  },420);});
+});
+function copyCode(b){const c=document.getElementById('codeText').textContent;navigator.clipboard?.writeText(c);b.textContent="COPIED";setTimeout(()=>b.textContent="COPY",1400);}
+</script>
+</body>
+</html>

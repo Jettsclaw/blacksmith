@@ -33,6 +33,9 @@
     return 'as of ' + (h % 12 || 12) + ':' + m[2] + ap;
   }
   var NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
+  // Display-only: the SLIKR feed spells him "Jarred"; show customers "Jarrod".
+  // Never use this for matching/booking — those must keep the real feed name.
+  function dn(s) { return String(s == null ? '' : s).replace(/Jarred/gi, 'Jarrod'); }
   function barberIn(t) {
     for (var i = 0; i < NAMES.length; i++) if (t.indexOf(NAMES[i]) >= 0) return NAMES[i];
     return null;
@@ -88,7 +91,7 @@
     if (kind === 'remote') return 'You never have to stand around — join the queue from right here, watch your spot live, and walk in when it’s your turn. Tap Book and I’ll set you up.';
     if (kind === 'cancel') { cancelMode = true; return 'No worries — type the name and mobile you booked with and I’ll cancel it.\nLike: Jack Smith, 0400 123 456'; }
     if (kind === 'pay') return 'You pay at the shop after your cut — card or cash both sweet.';
-    if (kind === 'how') return 'Two ways in: join the live queue (walk-in, I’ll show you the wait) or book a time with Jarred or Locky. Tap Book and I’ll walk you through it.';
+    if (kind === 'how') return 'Two ways in: join the live queue (walk-in, I’ll show you the wait) or book a time with Jarrod or Locky. Tap Book and I’ll walk you through it.';
     if (kind === 'app') return 'The Blacksmith app has booking + queue too: https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905';
     if (kind === 'salon') return 'Blackrose Salon Co. is our salon side — colour, styling, the lot. Tap Book and I’ll set you up.';
     if (kind === 'jobs') return 'Keen to join the trade? Call the shop on ' + PHONE + ' or drop in and have a yarn — we also run the Blacksmith Academy.';
@@ -135,7 +138,7 @@
         var fi = +b.free_in || 0;
         var st = fi === 0 ? 'free now' : b.cutting ? 'cutting' + (b.cutting_at === 'salon' ? ' (in the salon)' : '') + ', free in ~' + fi + ' min'
           : fi > 90 ? 'booked up today' : 'booked, free in ~' + fi + ' min';
-        return (b.cutting ? '✂️ ' : fi === 0 ? '🟢 ' : '📅 ') + b.name + ' — ' + st;
+        return (b.cutting ? '✂️ ' : fi === 0 ? '🟢 ' : '📅 ') + dn(b.name) + ' — ' + st;
       }).join('\n');
     }
     return 'I can help with the live wait, who’s on, prices, hours & parking, or booking you in — tap a chip below or just ask.';
@@ -194,7 +197,7 @@
     if (pref) {
       var match = snap.barbers.filter(function (b) { return b.name.split(' ')[0].toLowerCase() === String(pref).toLowerCase(); })[0];
       if (match) {
-        bubble('Book with ' + match.name.split(' ')[0], 'me');
+        bubble('Book with ' + dn(match.name.split(' ')[0]), 'me');
         wiz.barber = match.name;
         wiz.shop = ((match.book || [])[0] === 'bookings') ? 'bookings' : 'barber';
         askService();
@@ -203,7 +206,7 @@
     }
     bubble('Let’s get you booked. Who with?', 'bot');
     var opts = snap.barbers.map(function (b) {
-      return { label: b.name.split(' ')[0], barber: b.name, book: b.book || ['barber'] };
+      return { label: dn(b.name.split(' ')[0]), barber: b.name, book: b.book || ['barber'] };
     });
     opts.push({ label: 'Walk-In’s 💈', walk: true }); // Beau 2026-07-07: jump to the join-the-queue flow
     opts.push({ label: 'Anyone', barber: 'any', book: ['barber'] });
@@ -246,9 +249,9 @@
       bubble('No barbers on walk-ins right now — tap Book to lock a time instead, or call ' + PHONE + '.', 'bot');
       return;
     }
-    bubble('On walk-ins ' + asOf(snap) + ': ' + wb.map(function (b) { return b.name.split(' ')[0]; }).join(', ') +
+    bubble('On walk-ins ' + asOf(snap) + ': ' + wb.map(function (b) { return dn(b.name.split(' ')[0]); }).join(', ') +
       '.\nWho would you like? I’ll pop you in the live queue.', 'bot');
-    var opts = wb.map(function (b) { return { label: b.name.split(' ')[0], barber: b.name, sami: /^sam/i.test(b.name) }; });
+    var opts = wb.map(function (b) { return { label: dn(b.name.split(' ')[0]), barber: b.name, sami: /^sam/i.test(b.name) }; });
     opts.push({ label: 'Any barber', barber: 'any' });
     chipRow(opts, function (o) {
       bubble(o.label, 'me');
@@ -307,11 +310,11 @@
     if (!names.length) { bubble(snap.next_label === 'today' ? 'No times left today \u2014 call 0479 087 782.' : 'Tomorrow\u2019s book isn\u2019t open yet \u2014 try again in the morning.', 'bot'); setWizUI(false); return; }
     wiz = { step: 'barber', ahead: true, date: snap.next_date };
     if (pref && names.map(function (n) { return n.toLowerCase(); }).indexOf(String(pref).toLowerCase()) < 0) {
-      bubble(String(pref).charAt(0).toUpperCase() + String(pref).slice(1) + ' runs the live queue rather than timed slots — when we open I can put you straight in the queue from here (no standing around in the shop). Right now you can lock in ' + snap.next_label + ' with one of these:', 'bot');
+      bubble(dn(String(pref).charAt(0).toUpperCase() + String(pref).slice(1)) + ' runs the live queue rather than timed slots — when we open I can put you straight in the queue from here (no standing around in the shop). Right now you can lock in ' + snap.next_label + ' with one of these:', 'bot');
     } else {
       bubble('We\u2019re closed right now, but you can lock in ' + snap.next_label + '. Who with?', 'bot');
     }
-    var opts = names.map(function (n) { return { label: n, barber: n }; });
+    var opts = names.map(function (n) { return { label: dn(n), barber: n }; });
     opts.push({ label: 'Walk-In’s 💈', walk: true }); // Beau 2026-07-07: jump to the join-the-queue flow
     chipRow(opts, function (o) {
       if (o.walk) { bubble('Walk-In’s', 'me'); scWaitList(); return; }
@@ -350,7 +353,7 @@
       var b = snap.barbers.filter(function (x) { return x.name === wiz.barber; })[0];
       var slots = (b && b.slots) || [];
       if (!slots.length) {
-        bubbleLink((wiz.barber.split(' ')[0]) + ' is booked out today — pick someone else or join the walk-in queue.', 'join the walk-in queue', function () {
+        bubbleLink(dn(wiz.barber.split(' ')[0]) + ' is booked out today — pick someone else or join the walk-in queue.', 'join the walk-in queue', function () {
           bubble('Join the walk-in queue', 'me'); startWalkin();
         });
         wiz = null; setWizUI(false); return;
@@ -746,9 +749,9 @@
         var nm = barberIn(lower);
         setTimeout(function () {
           var b = snap && snap.barbers.filter(function (x) { return x.name.toLowerCase().indexOf(nm) === 0; })[0];
-          if (!b) { bubble(nm.charAt(0).toUpperCase() + nm.slice(1) + ' isn’t on today. Want to see who is? Tap Who’s on.', 'bot'); return; }
+          if (!b) { bubble(dn(nm.charAt(0).toUpperCase() + nm.slice(1)) + ' isn’t on today. Want to see who is? Tap Who’s on.', 'bot'); return; }
           var fi = +b.free_in || 0;
-          bubble(b.name.split(' ')[0] + ' is on — ' + (b.cutting ? 'cutting now' + (b.cutting_at === 'salon' ? ' (in the salon)' : '') : 'free') + (fi > 0 ? ', free in ~' + fi + ' min' : ' now') + '. Want me to book you in with ' + (b.name.split(' ')[0]) + '?', 'bot');
+          bubble(dn(b.name.split(' ')[0]) + ' is on — ' + (b.cutting ? 'cutting now' + (b.cutting_at === 'salon' ? ' (in the salon)' : '') : 'free') + (fi > 0 ? ', free in ~' + fi + ' min' : ' now') + '. Want me to book you in with ' + dn(b.name.split(' ')[0]) + '?', 'bot');
         }, 250);
         return;
       }
@@ -852,7 +855,7 @@
           var st = b.cutting
             ? 'cutting · free ~' + fmtClock(new Date(asOfD.getTime() + (+b.free_in || 0) * 60000))
             : 'free now';
-          return (b.cutting ? '✂️ ' : '🟢 ') + b.name.split(' ')[0] + ' — ' + st;
+          return (b.cutting ? '✂️ ' : '🟢 ') + dn(b.name.split(' ')[0]) + ' — ' + st;
         }).join('\n'), 'bot');
       }
       // CTA → in-chat walk-in queue join (barber/Any picker → details → relay),
@@ -862,7 +865,7 @@
   }
 
   // Barber-first book-ahead: pick who you want, THEN that barber's own
-  // schedule (only the days they're actually on — Jarred Tue–Sun, Locky
+  // schedule (only the days they're actually on — Jarrod Tue–Sun, Locky
   // Wed–Sun, etc.), then a time. Driven off SLIKR's book_days, inverted to
   // a per-barber view so each chair shows its real roster. (Beau/Jett 2026-07-05)
   function dayChip(d) {
@@ -908,7 +911,7 @@
       return;
     }
     bubble(snap.open ? 'Who would you like to book with?' : 'We’re closed now — book ahead. Who with?', 'bot');
-    var opts = order.map(function (n) { return { label: n.split(' ')[0], barber: n }; });
+    var opts = order.map(function (n) { return { label: dn(n.split(' ')[0]), barber: n }; });
     if (samiDays.length) opts.push({ label: 'Sami', sami: true });
     opts.push({ label: 'Walk-In’s 💈', walk: true }); // Beau 2026-07-07: jump to the join-the-queue flow
     chipRow(opts, function (o) {
@@ -956,7 +959,7 @@
       askService();
     }
     if (sched.length === 1) { bubble(dayChip(sched[0]), 'me'); go(sched[0]); return; }
-    bubble(barber.split(' ')[0] + '’s schedule — which day?', 'bot');
+    bubble(dn(barber.split(' ')[0]) + '’s schedule — which day?', 'bot');
     chipRow(sched.map(function (s) { return { label: dayChip(s), day: s }; }), function (o) {
       bubble(o.label, 'me'); go(o.day);
     }, true);
@@ -971,14 +974,14 @@
     if (snap.open) {
       (snap.barbers || []).forEach(function (b) {
         if ((b.book || []).indexOf('bookings') >= 0)
-          opts.push({ label: b.name.split(' ')[0], barber: b.name });
+          opts.push({ label: dn(b.name.split(' ')[0]), barber: b.name });
       });
     } else {
       // CLOSED: list EVERY barber on tomorrow's bookings roster (all slots_next
       // keys) even if their times array is momentarily empty, so the list never
       // collapses to whoever happens to be loaded. (Beau 2026-07-03)
       Object.keys(snap.slots_next || {}).forEach(function (n) {
-        opts.push({ label: n.split(' ')[0], barber: n, ahead: true });
+        opts.push({ label: dn(n.split(' ')[0]), barber: n, ahead: true });
       });
     }
     // Sami — the salon stylist. Shown as just "Sami" (never "Blackrose"/"salon").

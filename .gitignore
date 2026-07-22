@@ -1,1 +1,9 @@
-.vercel
+node_modules/
+work/
+_*-backup/
+_*-backup*/
+*-backup.*
+*-original-backup*
+_sprite-test.html
+.DS_Store
+.vercel/
