@@ -551,15 +551,28 @@
 
   function handleWalkinEmail(text) {
     var e = text.trim();
-    if (/^skip$/i.test(e)) { submitQueue(twq.name, twq.phone, twq.time || 'First available', ''); return; }
+    if (/^skip$/i.test(e)) { twq.email = ''; askWalkinNote(); return; }
     if (!EMAIL_RE.test(e)) { bubble('Hmm — that email doesn’t look right. Try again, or type “skip”.', 'bot'); return; }
-    submitQueue(twq.name, twq.phone, twq.time || 'First available', e);
+    twq.email = e; askWalkinNote();
+  }
+
+  // Optional free-text note — mainly for a preferred barber who's on walk-ins
+  // only (the crew reads it on the card and seats them with that barber). (Beau 2026-07-26)
+  function askWalkinNote() {
+    twq.step = 'note';
+    bubble('Anything else for the crew? A preferred barber, or any notes — or type “skip”.', 'bot');
+  }
+
+  function handleWalkinNote(text) {
+    var n = text.trim();
+    twq.note = /^skip$/i.test(n) ? '' : n.slice(0, 120);
+    submitQueue(twq.name, twq.phone, twq.time || 'First available', twq.email || '');
   }
 
   function submitQueue(name, phone, time, email) {
     bubble('Popping you on tomorrow’s list…', 'bot');
     fetch(QUEUE_API, { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, phone: phone, email: email || '', request: twq.request || '', service: twq.serviceId, barber: 'First available', time: time, date: twq.date || undefined }) })
+      body: JSON.stringify({ name: name, phone: phone, email: email || '', request: twq.request || '', note: twq.note || '', service: twq.serviceId, barber: 'First available', time: time, date: twq.date || undefined }) })
       .then(function (r) { return r.json(); })
       .then(function (d) {
         if (d && d.ok) bubble('✅ You’re on the walk-in list, ' + name.split(' ')[0] + ' — we’ll text you to confirm your time. See you then! ✂️', 'bot');
@@ -748,6 +761,7 @@
       bubble(t, 'me');
       if (twq && twq.step === 'service') { handleWalkinService(t); return; }
       if (twq && twq.step === 'details') { handleWalkinDetails(t); return; }
+      if (twq && twq.step === 'note') { handleWalkinNote(t); return; }
       if (twq && twq.step === 'email') { handleWalkinEmail(t); return; }
       if (cancelMode || (wiz && wiz.step === 'details')) { handleDetails(t); return; }
       if (wiz && wiz.step === 'email') { handleEmail(t); return; }
