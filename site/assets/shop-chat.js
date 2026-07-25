@@ -901,7 +901,9 @@
     var dd = new Date(d.date + 'T00:00:00');
     var diff = Math.round((dd - t) / 86400000);
     if (diff <= 0) return 'Today';
-    if (diff === 1) return 'Tomorrow';
+    // Within the week, name the actual weekday ("Monday") — "Tomorrow" read as a
+    // generic any-day booking when a barber is only on that one day. (Beau 2026-07-26)
+    if (diff <= 6) return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dd.getDay()];
     var wk = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][dd.getDay()];
     var mo = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][dd.getMonth()];
     return wk + ' ' + dd.getDate() + ' ' + mo;
