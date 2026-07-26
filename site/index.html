@@ -151,6 +151,52 @@
 <script src="assets/live-wait.js?v=2" defer></script>
 <script src="assets/shop-chat.js?v=68" defer></script>
 
+<!-- ============ NOW PLAYING (live from the shop's Spotify) ============ -->
+<section class="nowplaying-wrap" id="nowplaying-wrap" hidden aria-label="Now playing in the shop">
+  <a class="np-card" id="np-card" href="#" target="_blank" rel="noopener">
+    <div class="np-art" id="np-art"></div>
+    <div class="np-meta">
+      <div class="np-eyebrow"><span class="np-bars"><i></i><i></i><i></i><i></i></span><span>Now playing in the shop</span></div>
+      <div class="np-track" id="np-track"></div>
+      <div class="np-artist" id="np-artist"></div>
+    </div>
+    <svg class="np-sp" width="22" height="22" viewBox="0 0 24 24" fill="#1DB954" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.6 14.4a.6.6 0 0 1-.86.2c-2.35-1.43-5.3-1.76-8.79-.96a.62.62 0 1 1-.28-1.2c3.8-.87 7.07-.49 9.71 1.12.3.18.39.57.22.84Zm1.23-2.74a.78.78 0 0 1-1.07.26c-2.69-1.65-6.79-2.13-9.97-1.17a.78.78 0 1 1-.45-1.49c3.63-1.1 8.15-.56 11.24 1.33.36.22.48.69.25 1.07Zm.1-2.85C14.42 8.96 8.7 8.78 5.4 9.78a.93.93 0 1 1-.54-1.78c3.79-1.15 10.1-.93 14.06 1.42a.93.93 0 1 1-.95 1.6Z"/></svg>
+  </a>
+</section>
+<style>
+  .nowplaying-wrap{display:flex;justify-content:center;padding:0 20px 46px}
+  .np-card{display:flex;align-items:center;gap:16px;width:100%;max-width:460px;background:#161618;border:1px solid rgba(243,241,234,.12);border-radius:16px;padding:15px 18px;text-decoration:none;color:#f3f1ea;box-shadow:0 14px 40px rgba(0,0,0,.4);transition:border-color .25s,transform .2s}
+  .np-card:hover{border-color:var(--gold,#c8a44d);transform:translateY(-2px)}
+  .np-art{width:58px;height:58px;border-radius:10px;flex:0 0 58px;background:#222 center/cover no-repeat;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+  .np-meta{min-width:0;flex:1}
+  .np-eyebrow{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold,#c8a44d);font-weight:700;margin-bottom:6px}
+  .np-bars{display:inline-flex;gap:2px;align-items:flex-end;height:11px}
+  .np-bars i{width:2.5px;background:var(--gold,#c8a44d);border-radius:1px;animation:npEq .9s ease-in-out infinite}
+  .np-bars i:nth-child(2){animation-delay:.2s}.np-bars i:nth-child(3){animation-delay:.4s}.np-bars i:nth-child(4){animation-delay:.15s}
+  @keyframes npEq{0%,100%{height:3px}50%{height:11px}}
+  .np-track{font-weight:700;font-size:16px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .np-artist{color:#9a988f;font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .np-sp{flex:0 0 auto;opacity:.85}
+</style>
+<script>
+(function(){
+  var API='https://blacksmith-wait-bot.vercel.app/api/nowplaying';
+  var wrap=document.getElementById('nowplaying-wrap');
+  function tick(){
+    fetch(API,{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+      if(d && d.playing && d.track){
+        document.getElementById('np-track').textContent=d.track;
+        document.getElementById('np-artist').textContent=d.artist||'';
+        document.getElementById('np-art').style.backgroundImage=d.art?('url("'+d.art+'")'):'none';
+        document.getElementById('np-card').href=d.url||'#';
+        wrap.hidden=false;
+      }else{ wrap.hidden=true; }
+    }).catch(function(){ wrap.hidden=true; });
+  }
+  tick(); setInterval(tick,10000);
+})();
+</script>
+
 <!-- ============ HOW IT WORKS ============ -->
 <section class="how section-pad" aria-label="How it works">
   <div class="wrap">
