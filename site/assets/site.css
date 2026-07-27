@@ -764,7 +764,12 @@ section{position:relative}
 .ls-card-pop .btn{padding:8px 14px;font-size:.82rem}
 .living-shop .wrap{position:relative}
 .ls-info{color:#a2a2aa;font-size:.9rem;margin:10px 4px 0;text-align:center}
-@media(max-width:640px){.living-shop{padding-top:8px}.ls-info{font-size:.82rem}}
+@media(max-width:640px){.living-shop{padding-top:8px}.ls-info{font-size:.82rem}
+  /* Give the scene more vertical presence on mobile — crop the wide landscape to a
+     taller centred window (counter + barbers stay in frame). Desktop unchanged. (Beau 2026-07-27, re-applied v56) */
+  .ls-stage:not(.ls-immersive):not(.ls-portrait):not(.ls-fsw){aspect-ratio:5/4;display:flex;align-items:center;justify-content:center}
+  .ls-stage:not(.ls-immersive):not(.ls-portrait):not(.ls-fsw) .ls-canvas{height:100%;width:auto;max-width:none;aspect-ratio:1784/672}
+}
 
 .lw-bot{color:var(--gold,#c8a44d);font-size:.9rem;text-decoration:none;border-bottom:1px solid rgba(200,164,77,.35);padding-bottom:2px}
 .lw-bot:hover{color:var(--gold-2,#e3c578);border-color:currentColor}
