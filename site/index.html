@@ -156,7 +156,7 @@
   <a class="np-card" id="np-card" href="#" target="_blank" rel="noopener">
     <div class="np-art" id="np-art"></div>
     <div class="np-meta">
-      <div class="np-eyebrow"><span class="np-bars"><i></i><i></i><i></i><i></i></span><span>Now playing in the shop</span></div>
+      <div class="np-eyebrow"><span class="np-bars"><i></i><i></i><i></i><i></i></span><span id="np-label">Now playing in the shop</span></div>
       <div class="np-track" id="np-track"></div>
       <div class="np-artist" id="np-artist"></div>
     </div>
@@ -178,21 +178,40 @@
   .np-track{font-weight:700;font-size:16px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .np-artist{color:#9a988f;font-size:13px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .np-sp{flex:0 0 auto;opacity:.85}
+  /* Paused / nothing-playing state — stays on screen, reads as idle not live (Beau 2026-07-27) */
+  .np-paused .np-card{opacity:.72}
+  .np-paused .np-eyebrow{color:#9a988f}
+  .np-paused .np-bars i{animation:none;height:3px;background:#9a988f}
+  .np-paused .np-sp{opacity:.4}
 </style>
 <script>
 (function(){
   var API='https://blacksmith-wait-bot.vercel.app/api/nowplaying';
   var wrap=document.getElementById('nowplaying-wrap');
+  var card=document.getElementById('np-card');
+  function set(track,artist,art,url){
+    document.getElementById('np-track').textContent=track;
+    document.getElementById('np-artist').textContent=artist;
+    document.getElementById('np-art').style.backgroundImage=art?('url("'+art+'")'):'none';
+    card.setAttribute('href',url||'#');
+  }
+  card.addEventListener('click',function(e){ if(card.getAttribute('href')==='#') e.preventDefault(); });
   function tick(){
     fetch(API,{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
-      if(d && d.playing && d.track){
-        document.getElementById('np-track').textContent=d.track;
-        document.getElementById('np-artist').textContent=d.artist||'';
-        document.getElementById('np-art').style.backgroundImage=d.art?('url("'+d.art+'")'):'none';
-        document.getElementById('np-card').href=d.url||'#';
-        wrap.hidden=false;
-      }else{ wrap.hidden=true; }
-    }).catch(function(){ wrap.hidden=true; });
+      d=d||{};
+      if(d.playing && d.track){
+        wrap.classList.remove('np-paused');
+        document.getElementById('np-label').textContent='Now playing in the shop';
+        set(d.track,d.artist||'',d.art,d.url);
+      }else{
+        // Paused / nothing playing — keep the widget up, just idle (Beau 2026-07-27)
+        wrap.classList.add('np-paused');
+        document.getElementById('np-label').textContent='Paused';
+        if(d.track){ set(d.track,d.artist||'',d.art,d.url); }
+        else{ set('Nothing playing right now','Blacksmith radio’s on a breather','',''); }
+      }
+      wrap.hidden=false;
+    }).catch(function(){ /* transient error — leave whatever's on screen */ });
   }
   tick(); setInterval(tick,10000);
 })();
