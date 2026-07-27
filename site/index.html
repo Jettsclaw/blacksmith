@@ -208,7 +208,7 @@
         wrap.classList.add('np-paused');
         document.getElementById('np-label').textContent='Paused';
         if(d.track){ set(d.track,d.artist||'',d.art,d.url); }
-        else{ set('Nothing playing right now','Blacksmith radio’s on a breather','',''); }
+        else{ set('Nothing playing','Blacksmith radio’s on a breather','',''); }
       }
       wrap.hidden=false;
     }).catch(function(){ /* transient error — leave whatever's on screen */ });
