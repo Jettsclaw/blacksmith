@@ -53,15 +53,5 @@
     "needsHeadshot": true,
     "blurb": "Runs Blackrose. From foils to precision cuts \u2014 the salon side of the Blacksmith world.",
     "active": true
-  },
-  {
-    "name": "Mubarak",
-    "role": "Barber",
-    "shop": "Blacksmith Barbers",
-    "photo": "assets/barbers/mubarak.svg",
-    "photoSource": "PLACEHOLDER \u2014 no real photo found",
-    "needsHeadshot": true,
-    "blurb": "Steady hands and clean technique. Part of the Blacksmith crew.",
-    "active": true
   }
 ]
