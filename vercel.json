@@ -1,4 +1,7 @@
 {
+  "rewrites": [
+    { "source": "/vip", "destination": "/site/vip.html" }
+  ],
   "redirects": [
     { "source": "/", "destination": "/site/", "permanent": false }
   ],

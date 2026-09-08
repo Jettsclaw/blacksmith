@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Blacksmith Barber Club — VIP Membership | Biggera Waters, Gold Coast</title>
+<meta name="description" content="The Blacksmith Barber Club: VIP airport lounge access +1 guest, member pricing, referral rewards and a platinum member card. Annual membership, strictly limited to 50. Enquire now.">
+<meta name="theme-color" content="#0b0b0d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Blacksmith Barber Club — VIP Membership">
+<meta property="og:description" content="VIP airport lounge access +1 guest, member pricing, referral rewards and a platinum member card. Annual membership, strictly limited to 50 spots.">
+<meta property="og:locale" content="en_AU">
+<meta property="og:url" content="https://blacksmithbarbers.com.au/vip">
+<link rel="canonical" href="https://blacksmithbarbers.com.au/vip">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/logo-white.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Blacksmith">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css?v=57">
+<style>
+/* VIP page — built on the site system (Oswald/Inter, gold #c8a44d), with platinum + gold treatment */
+:root{--plat1:#e9eaee;--plat2:#b7bac2;--plat3:#8d9099;--goldd:#c8a44d;--goldl:#e3c578}
+/* Bulletproof: content is visible by default, never dependent on the scroll-reveal observer */
+.reveal,.stagger,.stagger>*{opacity:1!important;transform:none!important}
+/* More air between titles and their paragraphs */
+.h2 + .lead,.h2 + p{margin-top:22px}
+.eyebrow{margin-bottom:16px}
+.vip-hero .vip-lead-sub{margin-top:26px}
+.vip-hero{position:relative;min-height:92vh;display:flex;align-items:center;overflow:hidden}
+.vip-hero .hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:saturate(1) contrast(1.04)}
+.vip-hero .hero-bg:after{content:"";position:absolute;inset:0;background:
+  radial-gradient(120% 90% at 20% 30%, rgba(200,164,77,.14) 0%, rgba(8,8,10,0) 45%),
+  linear-gradient(180deg,rgba(8,8,10,.72) 0%,rgba(8,8,10,.55) 40%,rgba(8,8,10,.92) 100%)}
+.vip-hero .wrap{position:relative;z-index:2;padding-top:clamp(96px,13vw,150px);padding-bottom:clamp(48px,7vw,80px)}
+.vip-hgrid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(30px,5vw,64px);align-items:center}
+.vip-eyebrow-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.vip-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--goldd);color:var(--goldl);
+  font-family:'Oswald',sans-serif;font-weight:600;font-size:12.5px;letter-spacing:2.5px;text-transform:uppercase;padding:7px 14px;border-radius:999px;background:rgba(200,164,77,.06)}
+.gold-grad{background:linear-gradient(92deg,var(--goldl),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+.vip-lead-sub{max-width:560px;color:#d7d7dd;font-size:clamp(16px,1.7vw,19px);line-height:1.62;margin-top:18px}
+.vip-hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:28px}
+/* platinum member card */
+.pcard-wrap{display:flex;justify-content:center;perspective:1200px}
+.pcard{width:100%;max-width:400px;aspect-ratio:1.586;border-radius:20px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#f1f2f5 0%,#c3c6cd 20%,#9a9da5 38%,#e2e4e8 52%,#aeb2ba 68%,#8f9099 82%,var(--goldd) 118%);
+  box-shadow:0 34px 70px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.7),inset 0 0 0 1px rgba(255,255,255,.25);
+  transform:rotate(-4deg);color:#181a1f;padding:26px 26px 22px}
+.pcard:before{content:"";position:absolute;top:-40%;left:-30%;width:60%;height:200%;transform:rotate(18deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)}
+.pcard-top{display:flex;justify-content:space-between;align-items:flex-start}
+.pcard-brand{font-family:'Oswald',sans-serif;font-weight:700;font-size:22px;letter-spacing:1px}
+.pcard-tier{font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;letter-spacing:3px;color:#6a5417;text-transform:uppercase}
+.pcard-chip{width:52px;height:38px;border-radius:8px;margin-top:26px;
+  background:linear-gradient(135deg,var(--goldl),var(--goldd));box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.pcard-no{font-family:'Oswald',sans-serif;font-weight:500;font-size:19px;letter-spacing:3px;margin-top:16px;color:#2a2c31}
+.pcard-bot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px}
+.pcard-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#2a2c31}
+.pcard-club{font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;color:#6a5417;text-transform:uppercase}
+/* accents */
+.gold-eyebrow{color:var(--goldd)!important}
+.exp-card{position:relative}
+.vip-perk{display:flex;gap:18px;align-items:flex-start}
+.vip-perk .exp-icon{flex:0 0 auto;color:var(--goldd)}
+.vip-perk h3{margin:0 0 12px}.vip-perk p{margin:0}
+.vip-perk .exp-icon{margin-bottom:6px}
+.exp-card.gold-top:before{content:"";position:absolute;top:0;left:22px;right:22px;height:2px;background:linear-gradient(90deg,var(--goldd),transparent)}
+/* atmospheric band */
+.band{position:relative;min-height:46vh;display:flex;align-items:center;overflow:hidden}
+.band .band-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.band .band-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.86) 0%,rgba(8,8,10,.55) 60%,rgba(8,8,10,.35) 100%)}
+.band .wrap{position:relative;z-index:2}
+/* shop */
+.shop-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(24px,4vw,48px);align-items:center;margin-top:8px}
+.shop-imgs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.shop-imgs img{width:100%;border-radius:14px;border:1px solid #26262c;background:#141417}
+.vip-value{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:clamp(28px,4vw,44px)}
+.vip-stat{border:1px solid #2a2a31;background:linear-gradient(180deg,#151519,#101014);border-radius:16px;padding:26px 22px;text-align:center;position:relative}
+.vip-stat:before{content:"";position:absolute;top:0;left:24px;right:24px;height:2px;background:linear-gradient(90deg,var(--goldd),transparent)}
+.vip-stat .num{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(30px,4vw,44px);line-height:1;background:linear-gradient(92deg,var(--goldl),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+.vip-stat .lbl{color:#a2a2aa;font-size:14px;letter-spacing:.4px;margin-top:8px}
+.vip-terms{color:#8f8f98;font-size:13.5px;line-height:1.6;margin-top:20px;max-width:640px}
+.vip-who{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+.vip-who span{border:1px solid #2a2a31;border-radius:999px;padding:9px 16px;color:#e7e7ea;font-size:14px;letter-spacing:.3px;background:rgba(200,164,77,.05)}
+@media(max-width:860px){.vip-hgrid{grid-template-columns:1fr;gap:34px}.pcard-wrap{order:2}.pcard{max-width:340px;transform:rotate(-3deg)}.shop-grid{grid-template-columns:1fr}.vip-value{grid-template-columns:1fr;gap:14px}}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- TOPBAR -->
+<header class="topbar" id="topbar">
+  <a href="index.html" class="topbar-logo" aria-label="Blacksmith Barbers home"><img src="assets/logo-topbar.png" alt="Blacksmith Barbers"></a>
+  <nav class="nav-desktop" aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="academy.html">Academy</a>
+    <a href="blackrose.html">Blackrose</a>
+    <a href="barbers.html">Barbers</a>
+    <a href="about.html">About</a>
+    <a href="visit.html">Visit</a>
+    <a href="vip.html" class="active" aria-current="page">The Club</a>
+  </nav>
+  <div class="nav-actions">
+    <a class="btn btn-gold" href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry">Enquire Now</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+</header>
+
+<!-- MOBILE DRAWER -->
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Site menu">
+  <nav aria-label="Mobile">
+    <a href="index.html" data-close>Home</a>
+    <a href="shop.html" data-close>Shop</a>
+    <a href="academy.html" data-close>Academy</a>
+    <a href="blackrose.html" data-close>Blackrose</a>
+    <a href="barbers.html" data-close>Barbers</a>
+    <a href="about.html" data-close>About</a>
+    <a href="visit.html" data-close>Visit</a>
+    <a href="vip.html" class="active" data-close>The Club</a>
+  </nav>
+  <div class="drawer-actions">
+    <a class="btn btn-gold btn-block" href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry" data-close>Enquire Now</a>
+  </div>
+</div>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="vip-hero" aria-label="The Blacksmith Barber Club">
+  <div class="hero-bg" style="background-image:url('assets/scene/TLB_7534.jpg')" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="vip-hgrid">
+      <div>
+        <div class="vip-eyebrow-row reveal">
+          <span class="vip-badge">VIP Membership</span>
+          <span class="vip-badge">Strictly limited to 50</span>
+        </div>
+        <h1 class="h1 reveal" style="margin-top:18px">The Blacksmith<br><span class="gold-grad">Barber Club.</span></h1>
+        <p class="vip-lead-sub reveal">Travel sharp, get rewarded. VIP airport lounge access for you and a guest, member pricing across the shop, rewards on every referral — and a platinum card that carries it all. Built for the people who move.</p>
+        <div class="vip-hero-cta reveal">
+          <a class="btn btn-gold" href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry">Enquire now &rarr;</a>
+          <a class="btn btn-ghost" href="#whats-included">See what's included</a>
+        </div>
+      </div>
+      <div class="pcard-wrap reveal">
+        <div class="pcard" aria-label="Blacksmith VIP platinum member card">
+          <div class="pcard-top">
+            <div class="pcard-brand">BLACKSMITH</div>
+            <div class="pcard-tier">Platinum</div>
+          </div>
+          <div class="pcard-chip"></div>
+          <div class="pcard-no">•••• •••• •••• VIP</div>
+          <div class="pcard-bot">
+            <div class="pcard-name">Member Name</div>
+            <div class="pcard-club">The Barber Club</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INCLUDED -->
+<section class="section-pad" id="whats-included">
+  <div class="wrap">
+    <div class="reveal" style="max-width:640px">
+      <p class="eyebrow gold-eyebrow">The membership</p>
+      <h2 class="h2">Everything a member gets.</h2>
+      <p class="lead">One annual membership. Five ways it pays you back — every visit, every trip, every referral.</p>
+    </div>
+    <div class="exp-grid stagger">
+      <article class="exp-card gold-top vip-perk">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12l20-7-7 20-3-8-8-5z"/></svg></span>
+        <div><h3 class="h3">VIP airport lounge access, incl. guest</h3><p>Escape the crowds before you fly. Complimentary food and drinks, hi-speed Wi-Fi and shower facilities — and you bring a guest, every time.</p></div>
+      </article>
+      <article class="exp-card gold-top vip-perk">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></span>
+        <div><h3 class="h3">Platinum member card</h3><p>A physical platinum card that marks you as one of the fifty — and unlocks every member perk in the chair.</p></div>
+      </article>
+      <article class="exp-card gold-top vip-perk">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l4-3 4 2 4-2 4 3-3 3v9H7v-9L4 7z"/></svg></span>
+        <div><h3 class="h3">Free Blacksmith tee</h3><p>A Blacksmith t-shirt in your size when you join — from our limited-edition designs.</p></div>
+      </article>
+      <article class="exp-card gold-top vip-perk">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 7h10M7 12h10M7 17h6"/><circle cx="19" cy="17" r="2"/></svg></span>
+        <div><h3 class="h3">20% off merch &amp; hair products</h3><p>Member pricing on everything on the shelf — the pomades, the tools, the gear. <a class="gold" href="shop.html">Visit the shop &rarr;</a></p></div>
+      </article>
+      <article class="exp-card gold-top vip-perk">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 8a4 4 0 1 0-8 0"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="M18 6l2-2M20 6l-2-2"/></svg></span>
+        <div><h3 class="h3">Rewards on referrals</h3><p>Send someone our way and get rewarded for it. Your network, looked after.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- TRAVEL / LOUNGE BAND -->
+<section class="band" aria-label="Airport lounge access">
+  <div class="band-bg" style="background-image:url('assets/scene/lounge-a.png')" aria-hidden="true"></div>
+  <div class="wrap reveal" style="max-width:620px">
+    <p class="eyebrow gold-eyebrow">The lounge, on us</p>
+    <h2 class="h2">The airport lounge is the destination — before your destination.</h2>
+    <p class="lead">Your membership taps into a global airport lounge network. Settle in, and let the terminal wait for you — with a guest alongside, every trip.</p>
+    <div class="vip-who">
+      <span>Complimentary food &amp; drinks</span>
+      <span>Free hi-speed Wi-Fi</span>
+      <span>Shower facilities</span>
+      <span>Guest included</span>
+    </div>
+  </div>
+</section>
+
+<!-- LOUNGE NETWORKS -->
+<section class="section-pad">
+  <div class="wrap">
+    <div class="exp-grid stagger">
+      <article class="exp-card gold-top vip-perk">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12l20-7-7 20-3-8-8-5z"/></svg></span>
+        <div><h3 class="h3">The Centurion Lounge</h3><p>Flagship lounges at Sydney &amp; Melbourne International.</p></div>
+      </article>
+      <article class="exp-card gold-top vip-perk">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span>
+        <div><h3 class="h3">Priority Pass network</h3><p>1,200+ lounges across 500 airports worldwide.</p></div>
+      </article>
+      <article class="exp-card gold-top vip-perk">
+        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20h16M6 20V9l6-4 6 4v11"/><path d="M10 20v-5h4v5"/></svg></span>
+        <div><h3 class="h3">Plaza Premium &amp; partners</h3><p>Plaza Premium and Virgin Australia lounges, with shower facilities on the road.</p></div>
+      </article>
+    </div>
+    <p class="vip-terms">Lounge access is provided through partner programs; specific lounges, networks and guest conditions are confirmed on enquiry and may change.</p>
+  </div>
+</section>
+
+<!-- SHOP / REWARDS -->
+<section class="section-pad" id="shop" style="background:#0f0f12;border-top:1px solid #1c1c22;border-bottom:1px solid #1c1c22">
+  <div class="wrap">
+    <div class="shop-grid">
+      <div class="reveal">
+        <p class="eyebrow gold-eyebrow">Members save on the shelf</p>
+        <h2 class="h2">20% off, every time you shop.</h2>
+        <p class="lead">Merch, pomades, tools and gear — members take 20% off across the whole shop, in the chair and online, including our limited-edition designs.</p>
+        <div class="vip-hero-cta">
+          <a class="btn btn-gold" href="shop.html">Shop the store &rarr;</a>
+        </div>
+      </div>
+      <div class="shop-imgs reveal">
+        <img src="assets/merch/tee-black-product.webp" alt="Blacksmith black tee" loading="lazy">
+        <img src="assets/merch/hoodie-black-product.webp" alt="Blacksmith black hoodie" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO / VALUE -->
+<section class="section-pad">
+  <div class="wrap">
+    <div class="reveal" style="max-width:640px">
+      <p class="eyebrow gold-eyebrow">Who it's for</p>
+      <h2 class="h2">Made for the people who move.</h2>
+      <p class="lead">If you're in and out of lounges, in front of people, and always meant to look the part — this is the card that keeps you sharp without thinking about it.</p>
+      <div class="vip-who">
+        <span>Frequent flyers</span>
+        <span>Networkers</span>
+        <span>Business owners</span>
+      </div>
+    </div>
+    <div class="vip-value reveal">
+      <div class="vip-stat"><div class="num">5</div><div class="lbl">Member benefits</div></div>
+      <div class="vip-stat"><div class="num">50</div><div class="lbl">Spots only, ever</div></div>
+      <div class="vip-stat"><div class="num">+1</div><div class="lbl">Lounge guest, every trip</div></div>
+    </div>
+    <p class="vip-terms">Annual membership fee. Strictly limited to 50 members. Terms &amp; conditions apply — full details provided on enquiry.</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band section-pad">
+  <div class="wrap reveal">
+    <p class="eyebrow gold-eyebrow">Fifty spots. That's it.</p>
+    <h2 class="h2">Claim your place in the club.</h2>
+    <p>Enquire now and we'll walk you through the membership, the card and the price. Once the fifty are gone, they're gone.</p>
+    <div class="hero-cta" style="flex-direction:column;align-items:center;gap:16px;margin-top:14px">
+      <a class="btn btn-gold" href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry">Enquire now &rarr;</a>
+      <p style="color:#a2a2aa;font-size:14px">Or email <a class="gold" href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a></p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-col footer-logo">
+        <img src="assets/logo-white.png" alt="Blacksmith Barbers">
+        <p class="footer-tag">Est. 2015 &mdash; Biggera Waters, Gold Coast. More than a barbershop. We're family.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="academy.html">Academy</a></li>
+          <li><a href="blackrose.html">Blackrose Salon</a></li>
+          <li><a href="barbers.html">Our Barbers</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="visit.html">Visit</a></li>
+          <li><a href="vip.html">The Barber Club</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>The Club</h4>
+        <ul>
+          <li><a href="#whats-included">What's included</a></li>
+          <li><a href="#shop">Member savings</a></li>
+          <li><a href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry">Enquire now</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Visit</h4>
+        <address>
+          9 Gateway Drive<br>
+          Biggera Waters QLD 4216<br>
+          <a href="tel:+61479087782">0479 087 782</a><br>
+          <a class="mail" href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a><br><br>
+          Mon&ndash;Fri 9:00&ndash;5:30<br>
+          Sat&ndash;Sun 9:00&ndash;3:30
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Blacksmith Barbers. Biggera Waters, Gold Coast.</p>
+      <p>Your chair. Your barber. Every time.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js?v=6"></script>
+</body>
+</html>
