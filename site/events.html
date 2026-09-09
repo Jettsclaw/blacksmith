@@ -20,6 +20,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/site.css?v=53">
+<style>
+.ev-form{margin-top:24px;display:flex;flex-direction:column;gap:16px;text-align:left}
+.ev-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ev-form label{display:flex;flex-direction:column;gap:7px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;color:var(--muted,#a2a2aa)}
+.ev-form input,.ev-form select,.ev-form textarea{background:#16161a;border:1px solid #2c2c33;border-radius:10px;color:#f3f1ea;padding:12px 13px;font-size:16px;font-family:'Inter',sans-serif;text-transform:none;letter-spacing:normal;outline:none;width:100%}
+.ev-form input:focus,.ev-form select:focus,.ev-form textarea:focus{border-color:var(--gold,#c8a44d)}
+.ev-form textarea{resize:vertical}
+.ev-form select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,#a2a2aa 50%),linear-gradient(135deg,#a2a2aa 50%,transparent 50%);background-position:calc(100% - 20px) 20px,calc(100% - 14px) 20px;background-size:6px 6px,6px 6px;background-repeat:no-repeat}
+.ev-form button[type=submit]{margin-top:4px;align-self:flex-start}
+.ev-note{font-size:.85rem;color:var(--muted,#a2a2aa);margin:2px 0 0}
+.ev-ok{margin-top:16px;color:var(--gold,#c8a44d);font-family:'Oswald',sans-serif;letter-spacing:.04em}
+@media(max-width:640px){.ev-row{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <a href="#main" class="skip-link">Skip to content</a>
@@ -39,7 +52,7 @@
   </nav>
   <div class="nav-actions">
     <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store"><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
-    <a class="btn btn-gold" href="mailto:benny@thesuitedbarber.com.au?subject=Event%20grooming%20enquiry%20%E2%80%94%20Blacksmith">Enquire</a>
+    <a class="btn btn-gold" href="#enquire">Enquire</a>
     <button class="cart-btn" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
   </div>
   <button class="cart-btn cart-btn-mobile" data-cart-toggle aria-label="Open cart"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="cart-count" data-cart-count>0</span></button>
@@ -61,7 +74,7 @@
     <a href="events.html" class="active" data-close>Events</a><a href="/vip" data-close>VIP</a>
   </nav>
   <div class="drawer-actions">
-    <a class="btn btn-gold btn-block" href="mailto:benny@thesuitedbarber.com.au?subject=Event%20grooming%20enquiry%20%E2%80%94%20Blacksmith" data-close>Enquire for your event</a>
+    <a class="btn btn-gold btn-block" href="#enquire" data-close>Enquire for your event</a>
     <a class="app-badge" href="https://apps.apple.com/au/app/blacksmith-barbers-salon/id1454355905" aria-label="Get the Blacksmith Barbers app on the App Store" data-close><svg width="20" height="24" viewBox="0 0 24 28" fill="#fff" aria-hidden="true"><path d="M17.05 14.86c-.03-2.86 2.34-4.23 2.44-4.3-1.33-1.95-3.4-2.22-4.14-2.25-1.76-.18-3.44 1.04-4.33 1.04-.9 0-2.27-1.02-3.74-.99-1.92.03-3.7 1.12-4.69 2.84-2 3.47-.51 8.6 1.43 11.42.95 1.38 2.08 2.93 3.56 2.87 1.43-.06 1.97-.93 3.7-.93 1.72 0 2.21.93 3.72.9 1.54-.03 2.51-1.4 3.45-2.79 1.09-1.6 1.54-3.15 1.56-3.23-.03-.01-2.99-1.15-3.02-4.55zM14.2 6.55c.79-.96 1.32-2.29 1.18-3.62-1.14.05-2.52.76-3.33 1.71-.73.85-1.37 2.21-1.2 3.5 1.27.1 2.57-.64 3.35-1.59z"/></svg><span class="ab-txt"><span class="ab-small">Get the</span><span class="ab-big">App</span></span></a>
   </div>
 </div>
@@ -74,7 +87,7 @@
     <p class="eyebrow reveal">Events &mdash; The Suited Barber</p>
     <h1 class="h1 reveal">The barber<br>comes to <span class="gold">you.</span></h1>
     <p class="lead reveal">Ben brings the Blacksmith chair to your big day. Mobile grooming for weddings, bucks, parties and corporate events &mdash; the cut, the hot towel and the experience, on location.</p>
-    <div class="hero-cta reveal"><a class="btn btn-gold" href="mailto:benny@thesuitedbarber.com.au?subject=Event%20grooming%20enquiry%20%E2%80%94%20Blacksmith">Enquire for your event</a><a class="btn btn-ghost" href="tel:+61401077993">Call Ben</a></div>
+    <div class="hero-cta reveal"><a class="btn btn-gold" href="#enquire">Enquire for your event</a><a class="btn btn-ghost" href="tel:+61401077993">Call Ben</a></div>
   </div>
 </section>
 
@@ -167,15 +180,37 @@
   </div>
 </section>
 
-<section class="cta-band section-pad">
-  <div class="wrap reveal">
+<section class="cta-band section-pad" id="enquire">
+  <div class="wrap reveal" style="max-width:720px;margin-inline:auto">
     <p class="eyebrow">Bring the chair to your day</p>
-    <h2 class="h2">Got a date in mind? Let's lock Ben in.</h2>
-    <p>Weddings book out early &mdash; get your morning on the calendar.</p>
-    <div class="hero-cta">
-      <a class="btn btn-gold" href="mailto:benny@thesuitedbarber.com.au?subject=Event%20grooming%20enquiry%20%E2%80%94%20Blacksmith">Enquire for your event</a>
-      <a class="btn btn-ghost" href="tel:+61401077993">Call Ben &mdash; 0401 077 993</a>
-    </div>
+    <h2 class="h2">Enquire for your event.</h2>
+    <p>Tell us about your day and Ben will be in touch. Weddings book out early &mdash; get your morning on the calendar.</p>
+    <form class="ev-form" id="evForm" novalidate>
+      <div class="ev-row">
+        <label>Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+      </div>
+      <div class="ev-row">
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>Event type
+          <select name="type" required>
+            <option value="" disabled selected>Choose one</option>
+            <option>Wedding</option>
+            <option>Corporate function</option>
+            <option>Bucks / party</option>
+            <option>Birthday / private</option>
+            <option>Other</option>
+          </select>
+        </label>
+      </div>
+      <div class="ev-row">
+        <label>Event date<input name="date" type="date"></label>
+        <label>Approx. guests<input name="guests" type="number" min="1" inputmode="numeric"></label>
+      </div>
+      <label>Details<textarea name="details" rows="4" placeholder="Location, timing, anything else we should know…"></textarea></label>
+      <button class="btn btn-gold" type="submit">Send enquiry</button>
+      <p class="ev-note">Prefer to call? Ben &mdash; <a href="tel:+61401077993">0401 077 993</a></p>
+    </form>
   </div>
 </section>
 
@@ -205,7 +240,7 @@
       <div class="footer-col">
         <h4>Events</h4>
         <ul>
-          <li><a href="mailto:benny@thesuitedbarber.com.au?subject=Event%20grooming%20enquiry%20%E2%80%94%20Blacksmith">Enquire for your event</a></li>
+          <li><a href="#enquire">Enquire for your event</a></li>
           <li><a href="tel:+61401077993">Call Ben</a></li>
           <li><a href="https://thesuitedbarber.com.au" target="_blank" rel="noopener">The Suited Barber</a></li>
         </ul>
@@ -231,11 +266,25 @@
 
 <!-- ============ STICKY MOBILE BOOKING BAR ============ -->
 <div class="book-bar" id="bookBar">
-  <a class="btn btn-gold btn-block" href="mailto:benny@thesuitedbarber.com.au?subject=Event%20grooming%20enquiry%20%E2%80%94%20Blacksmith">Enquire for your event</a>
+  <a class="btn btn-gold btn-block" href="#enquire">Enquire for your event</a>
 </div>
 
 <script src="assets/site.js?v=4"></script>
 <script src="assets/cart.js"></script>
 <script src="assets/shop-chat.js?v=65" defer></script>
+<script>
+(function(){var f=document.getElementById('evForm');if(!f)return;
+f.addEventListener('submit',function(e){e.preventDefault();
+ if(!f.checkValidity()){f.reportValidity();return;}
+ var d=new FormData(f);
+ var body=['Name: '+d.get('name'),'Email: '+d.get('email'),'Phone: '+(d.get('phone')||'-'),
+  'Event type: '+d.get('type'),'Event date: '+(d.get('date')||'-'),'Approx. guests: '+(d.get('guests')||'-'),
+  '','Details:',(d.get('details')||'-')].join('\n');
+ var subject='Event grooming enquiry \u2014 '+d.get('type')+' \u2014 Blacksmith';
+ window.location.href='mailto:benny@thesuitedbarber.com.au?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+ var ok=document.createElement('p');ok.className='ev-ok';ok.textContent='Opening your email to send \u2014 or call Ben on 0401 077 993.';
+ if(!f.querySelector('.ev-ok'))f.appendChild(ok);
+});})();
+</script>
 </body>
 </html>
