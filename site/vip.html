@@ -68,10 +68,10 @@
 .vip-perk .exp-icon{margin-bottom:6px}
 .exp-card.gold-top:before{content:"";position:absolute;top:0;left:22px;right:22px;height:2px;background:linear-gradient(90deg,var(--goldd),transparent)}
 /* atmospheric band */
-.band{position:relative;min-height:46vh;display:flex;align-items:center;overflow:hidden}
+.band{position:relative;min-height:auto;display:flex;align-items:center;overflow:hidden}
 .band .band-bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .band .band-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.86) 0%,rgba(8,8,10,.55) 60%,rgba(8,8,10,.35) 100%)}
-.band .wrap{position:relative;z-index:2}
+.band .wrap{position:relative;z-index:2;padding-block:clamp(64px,9vw,112px)}
 /* shop */
 .shop-feat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:center}
 .shop-model{border-radius:14px;overflow:hidden;border:1px solid #26262c;aspect-ratio:4/5;background:#0e0e11}
