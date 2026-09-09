@@ -73,11 +73,14 @@
 .band .band-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.86) 0%,rgba(8,8,10,.55) 60%,rgba(8,8,10,.35) 100%)}
 .band .wrap{position:relative;z-index:2}
 /* shop */
-.shop-grid{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(24px,4vw,48px);align-items:center;margin-top:8px}
-.shop-imgs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-.shop-tile{aspect-ratio:1;background:radial-gradient(circle at 50% 35%,#1b1b20 0%,#0e0e11 78%);border:1px solid #26262c;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
-.shop-tile img{width:100%;height:100%;object-fit:cover;display:block}
-.shop-tile.prod img{object-fit:contain;padding:14px}
+.shop-feat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:center}
+.shop-model{border-radius:14px;overflow:hidden;border:1px solid #26262c;aspect-ratio:4/5;background:#0e0e11}
+.shop-model img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.pop-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:clamp(30px,4vw,48px)}
+.pop-tile{display:flex;flex-direction:column;gap:10px}
+.pop-thumb{aspect-ratio:1;background:radial-gradient(circle at 50% 35%,#1b1b20 0%,#0e0e11 78%);border:1px solid #26262c;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.pop-thumb img{width:100%;height:100%;object-fit:contain;padding:14px}
+.pop-name{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12.5px;letter-spacing:.05em;color:#cfcfd6;text-align:center;line-height:1.25}
 .vip-value{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:clamp(28px,4vw,44px)}
 .vip-stat{border:1px solid #2a2a31;background:linear-gradient(180deg,#151519,#101014);border-radius:16px;padding:26px 22px;text-align:center;position:relative}
 .vip-stat:before{content:"";position:absolute;top:0;left:24px;right:24px;height:2px;background:linear-gradient(90deg,var(--goldd),transparent)}
@@ -86,7 +89,7 @@
 .vip-terms{color:#8f8f98;font-size:13.5px;line-height:1.6;margin-top:20px;max-width:640px}
 .vip-who{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
 .vip-who span{border:1px solid #2a2a31;border-radius:999px;padding:9px 16px;color:#e7e7ea;font-size:14px;letter-spacing:.3px;background:rgba(200,164,77,.05)}
-@media(max-width:860px){.vip-hgrid{grid-template-columns:1fr;gap:34px}.pcard-wrap{order:2}.pcard{max-width:340px;transform:rotate(-3deg)}.shop-grid{grid-template-columns:1fr}.shop-imgs{grid-template-columns:1fr 1fr}.vip-value{grid-template-columns:1fr;gap:14px}}
+@media(max-width:860px){.vip-hgrid{grid-template-columns:1fr;gap:34px}.pcard-wrap{order:2}.pcard{max-width:340px;transform:rotate(-3deg)}.shop-feat{grid-template-columns:1fr}.pop-row{grid-template-columns:repeat(2,1fr)}.vip-value{grid-template-columns:1fr;gap:14px}}
 </style>
 </head>
 <body>
@@ -238,7 +241,7 @@
 <!-- SHOP / REWARDS -->
 <section class="section-pad" id="shop" style="background:#0f0f12;border-top:1px solid #1c1c22;border-bottom:1px solid #1c1c22">
   <div class="wrap">
-    <div class="shop-grid">
+    <div class="shop-feat">
       <div class="reveal">
         <p class="eyebrow gold-eyebrow">Members save on the shelf</p>
         <h2 class="h2">20% off, every time you shop.</h2>
@@ -247,14 +250,15 @@
           <a class="btn btn-gold" href="/site/shop.html">Shop the store &rarr;</a>
         </div>
       </div>
-      <div class="shop-imgs reveal">
-        <div class="shop-tile"><img src="/site/assets/merch/tee-black-product.webp" alt="Blacksmith black tee" loading="lazy"></div>
-        <div class="shop-tile"><img src="/site/assets/merch/hoodie-black-product.webp" alt="Blacksmith black hoodie" loading="lazy"></div>
-        <div class="shop-tile prod"><img src="/site/assets/products/style-marmara-clay.jpg" alt="Marmara matte clay wax" loading="lazy"></div>
-        <div class="shop-tile prod"><img src="/site/assets/products/beard-oil-immortal.jpg" alt="Immortal beard oil" loading="lazy"></div>
-        <div class="shop-tile prod"><img src="/site/assets/products/cologne-one-million.jpg" alt="Cologne" loading="lazy"></div>
-        <div class="shop-tile prod"><img src="/site/assets/products/style-tobacco-matte.jpg" alt="Tobacco matte pomade" loading="lazy"></div>
-      </div>
+      <div class="shop-model reveal"><img src="/site/assets/merch/hoodie-black-leaning.webp" alt="Blacksmith hoodie on model" loading="lazy"></div>
+    </div>
+    <p class="eyebrow gold-eyebrow" style="margin-top:clamp(40px,5vw,64px)">Our most popular</p>
+    <div class="pop-row stagger">
+      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/style-super-spray.jpg" alt="Deluxe Super Spray" loading="lazy"></div><div class="pop-name">Salt Spray</div></div>
+      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/style-infuse-powder.jpg" alt="Infuse Styling Powder" loading="lazy"></div><div class="pop-name">Styling Powder</div></div>
+      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/beard-oil-immortal.jpg" alt="Immortal Beard Oil" loading="lazy"></div><div class="pop-name">Beard Oil</div></div>
+      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/style-tobacco-matte.jpg" alt="Tobacco Matte Pomade" loading="lazy"></div><div class="pop-name">Tobacco Pomade</div></div>
+      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/style-wax-cbd.jpg" alt="CBD Styling Wax" loading="lazy"></div><div class="pop-name">Styling Wax</div></div>
     </div>
   </div>
 </section>
