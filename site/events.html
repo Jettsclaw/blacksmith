@@ -87,7 +87,7 @@
     <p class="eyebrow reveal">Events &mdash; The Suited Barber</p>
     <h1 class="h1 reveal">The barber<br>comes to <span class="gold">you.</span></h1>
     <p class="lead reveal">Ben brings the Blacksmith chair to your big day. Mobile grooming for weddings, bucks, parties and corporate events &mdash; the cut, the hot towel and the experience, on location.</p>
-    <div class="hero-cta reveal"><a class="btn btn-gold" href="#enquire">Enquire for your event</a><a class="btn btn-ghost" href="tel:+61401077993">Call Ben</a></div>
+    <div class="hero-cta reveal"><a class="btn btn-gold" href="#enquire">Enquire for your event</a></div>
   </div>
 </section>
 
@@ -209,7 +209,6 @@
       </div>
       <label>Details<textarea name="details" rows="4" placeholder="Location, timing, anything else we should know…"></textarea></label>
       <button class="btn btn-gold" type="submit">Send enquiry</button>
-      <p class="ev-note">Prefer to call? Ben &mdash; <a href="tel:+61401077993">0401 077 993</a></p>
     </form>
   </div>
 </section>
@@ -241,7 +240,6 @@
         <h4>Events</h4>
         <ul>
           <li><a href="#enquire">Enquire for your event</a></li>
-          <li><a href="tel:+61401077993">Call Ben</a></li>
           <li><a href="https://thesuitedbarber.com.au" target="_blank" rel="noopener">The Suited Barber</a></li>
         </ul>
       </div>
@@ -281,8 +279,8 @@ f.addEventListener('submit',function(e){e.preventDefault();
   'Event type: '+d.get('type'),'Event date: '+(d.get('date')||'-'),'Approx. guests: '+(d.get('guests')||'-'),
   '','Details:',(d.get('details')||'-')].join('\n');
  var subject='Event grooming enquiry \u2014 '+d.get('type')+' \u2014 Blacksmith';
- window.location.href='mailto:benny@thesuitedbarber.com.au?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
- var ok=document.createElement('p');ok.className='ev-ok';ok.textContent='Opening your email to send \u2014 or call Ben on 0401 077 993.';
+ window.location.href='mailto:blacksmithbarbers@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+ var ok=document.createElement('p');ok.className='ev-ok';ok.textContent='Opening your email to send your enquiry\u2026';
  if(!f.querySelector('.ev-ok'))f.appendChild(ok);
 });})();
 </script>
