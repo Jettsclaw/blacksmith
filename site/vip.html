@@ -75,6 +75,8 @@
 .band .band-bg{position:absolute;inset:0;background-size:cover;background-position:center}
 .band .band-bg:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,10,.86) 0%,rgba(8,8,10,.55) 60%,rgba(8,8,10,.35) 100%)}
 .band .wrap{position:relative;z-index:2;padding-block:clamp(64px,9vw,112px)}
+.band-through .band-bg:after{background:linear-gradient(rgba(8,8,10,.55),rgba(8,8,10,.82))}
+.band-through .exp-card{background:rgba(16,16,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 /* shop */
 .shop-feat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:center}
 .shop-model{border-radius:14px;overflow:hidden;border:1px solid #26262c;aspect-ratio:4/5;background:#0e0e11}
@@ -212,26 +214,22 @@
   </div>
 </section>
 
-<!-- TRAVEL / LOUNGE BAND -->
-<section class="band" aria-label="Airport lounge access">
+<!-- TRAVEL / LOUNGE — image extends through the cards -->
+<section class="band band-through" aria-label="Airport lounge access">
   <div class="band-bg" style="background-image:url('/site/assets/scene/lounge-a.png')" aria-hidden="true"></div>
-  <div class="wrap reveal" style="max-width:620px">
-    <p class="eyebrow gold-eyebrow">The lounge, on us</p>
-    <h2 class="h2">The airport lounge is the destination — before your destination.</h2>
-    <p class="lead">Your membership taps into a global airport lounge network. Settle in, and let the terminal wait for you — with a guest alongside, every trip.</p>
-    <div class="vip-who">
-      <span>Complimentary food &amp; drinks</span>
-      <span>Free hi-speed Wi-Fi</span>
-      <span>Shower facilities</span>
-      <span>Guest included</span>
-    </div>
-  </div>
-</section>
-
-<!-- LOUNGE NETWORKS -->
-<section class="section-pad">
   <div class="wrap">
-    <div class="exp-grid stagger">
+    <div class="reveal" style="max-width:620px">
+      <p class="eyebrow gold-eyebrow">The lounge, on us</p>
+      <h2 class="h2">The airport lounge is the destination — before your destination.</h2>
+      <p class="lead">Your membership taps into a global airport lounge network. Settle in, and let the terminal wait for you — with a guest alongside, every trip.</p>
+      <div class="vip-who">
+        <span>Complimentary food &amp; drinks</span>
+        <span>Free hi-speed Wi-Fi</span>
+        <span>Shower facilities</span>
+        <span>Guest included</span>
+      </div>
+    </div>
+    <div class="exp-grid stagger" style="margin-top:clamp(36px,5vw,64px)">
       <article class="exp-card gold-top vip-perk">
         <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12l20-7-7 20-3-8-8-5z"/></svg></span>
         <div><h3 class="h3">The Centurion Lounge</h3><p>American Express's flagship lounges at Sydney &amp; Melbourne International.</p></div>
