@@ -79,8 +79,11 @@
 .band-through .exp-card{background:rgba(16,16,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 /* shop */
 .shop-feat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,56px);align-items:center}
-.shop-model{border-radius:14px;overflow:hidden;border:1px solid #26262c;aspect-ratio:4/5;background:#0e0e11}
-.shop-model img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.shop-model{position:relative;border-radius:14px;overflow:hidden;border:1px solid #26262c;aspect-ratio:4/5;background:#0e0e11}
+.shop-model img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block;transition:opacity .45s ease}
+.shop-model .sm-shelf{opacity:0}
+.shop-feat:has(.js-store:hover) .sm-clothes{opacity:0}
+.shop-feat:has(.js-store:hover) .sm-shelf{opacity:1}
 .pop-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:clamp(30px,4vw,48px)}
 .pop-tile{display:flex;flex-direction:column;gap:10px}
 .pop-thumb{aspect-ratio:1;background:radial-gradient(circle at 50% 35%,#1b1b20 0%,#0e0e11 78%);border:1px solid #26262c;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -256,10 +259,14 @@
         <h2 class="h2">20% off, every time you shop.</h2>
         <p class="lead">Merch, pomades, tools and gear — members take 20% off across the whole shop, in the chair and online, including our limited-edition designs.</p>
         <div class="vip-hero-cta">
-          <a class="btn btn-gold" href="/site/shop.html">Shop the store &rarr;</a>
+          <a class="btn btn-gold js-merch" href="/site/shop.html">Shop Merch &rarr;</a>
+          <a class="btn btn-ghost js-store" href="/site/shop.html">Shop the Store &rarr;</a>
         </div>
       </div>
-      <div class="shop-model reveal"><img src="/site/assets/photos/shop-shelf.jpg" alt="The Blacksmith product shelf" loading="lazy"></div>
+      <div class="shop-model reveal">
+        <img class="sm-clothes" src="/site/assets/merch/hoodie-black-leaning.webp" alt="Blacksmith merch on a member" loading="lazy">
+        <img class="sm-shelf" src="/site/assets/photos/shop-shelf.jpg" alt="The Blacksmith product shelf" loading="lazy">
+      </div>
     </div>
     <p class="eyebrow gold-eyebrow" style="margin-top:clamp(40px,5vw,64px)">Our most popular</p>
     <div class="pop-row stagger">
