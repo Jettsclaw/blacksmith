@@ -43,11 +43,11 @@
 .vip-lead-sub{max-width:560px;color:#d7d7dd;font-size:clamp(16px,1.7vw,19px);line-height:1.62;margin-top:18px}
 .vip-hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:28px}
 /* platinum member card */
-.pcard-wrap{display:none}
-.pcard{width:100%;max-width:400px;aspect-ratio:1.586;border-radius:20px;position:relative;overflow:hidden;
+.pcard-wrap{display:flex;justify-content:center;align-items:center}
+.pcard{width:100%;max-width:540px;aspect-ratio:1.586;border-radius:22px;position:relative;overflow:hidden;
   background:linear-gradient(135deg,#f1f2f5 0%,#c3c6cd 20%,#9a9da5 38%,#e2e4e8 52%,#aeb2ba 68%,#8f9099 82%,var(--goldd) 118%);
-  box-shadow:0 34px 70px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.7),inset 0 0 0 1px rgba(255,255,255,.25);
-  transform:rotate(-4deg);color:#181a1f;padding:26px 26px 22px}
+  box-shadow:0 44px 90px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.7),inset 0 0 0 1px rgba(255,255,255,.25);
+  transform:rotate(-6deg) translateX(-34px);color:#181a1f;padding:34px 34px 30px}
 .pcard:before{content:"";position:absolute;top:-40%;left:-30%;width:60%;height:200%;transform:rotate(18deg);
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)}
 .pcard-top{display:flex;justify-content:space-between;align-items:flex-start}
@@ -58,7 +58,10 @@
 .pcard-no{font-family:'Oswald',sans-serif;font-weight:500;font-size:19px;letter-spacing:3px;margin-top:16px;color:#2a2c31}
 .pcard-bot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px}
 .pcard-name{font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#2a2c31}
-.pcard-club{font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;color:#6a5417;text-transform:uppercase}
+.pcard-club{font-family:'Oswald',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;color:#6a5417;text-transform:uppercase;margin-top:3px}
+.pcard-net{display:flex;align-items:center;gap:9px}
+.pcard-net img{height:20px;width:auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.pcard-net img.v{height:14px}
 /* accents */
 .gold-eyebrow{color:var(--goldd)!important}
 /* membership section backdrop */
@@ -70,6 +73,63 @@
 .vip-perk h3{margin:0 0 12px}.vip-perk p{margin:0}
 .vip-perk .exp-icon{margin-bottom:6px}
 .exp-card.gold-top:before{content:"";position:absolute;top:0;left:22px;right:22px;height:2px;background:linear-gradient(90deg,var(--goldd),transparent)}
+/* redesigned perks — editorial numbered list */
+.perklist{margin-top:clamp(34px,5vw,56px);display:grid;grid-template-columns:1fr 1fr;column-gap:clamp(40px,5vw,84px)}
+.perkrow{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;padding:26px 2px;border-top:1px solid rgba(200,164,77,.20)}
+.perkrow .pn{font-family:'Oswald',sans-serif;font-weight:700;font-size:26px;line-height:1;letter-spacing:1px;background:linear-gradient(92deg,var(--goldl),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+.perkrow h3{font-family:'Oswald',sans-serif;text-transform:uppercase;font-weight:600;font-size:17px;letter-spacing:.05em;color:#fff;margin:0 0 9px;display:flex;align-items:center;gap:11px;line-height:1.15}
+.perkrow h3 svg{width:19px;height:19px;color:var(--goldd);flex:0 0 auto}
+.perkrow p{color:#b3b3bd;font-size:14.5px;line-height:1.58;margin:0}
+.benefits-head{max-width:640px;margin:clamp(60px,8vw,104px) auto clamp(6px,1vw,10px);text-align:center;position:relative}
+.benefits-head:before{content:"";display:block;width:44px;height:2px;margin:0 auto 26px;background:linear-gradient(90deg,var(--goldl),var(--goldd))}
+.vip-form{margin:26px auto 0;max-width:540px;display:flex;flex-direction:column;gap:14px;text-align:left}
+.vip-form .vf-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.vip-form label{display:flex;flex-direction:column;gap:7px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;color:#a2a2aa}
+.vip-form input,.vip-form textarea{background:#16161a;border:1px solid #2c2c33;border-radius:10px;color:#f3f1ea;padding:12px 13px;font-size:16px;font-family:inherit;text-transform:none;letter-spacing:normal;outline:none;width:100%}
+.vip-form input:focus,.vip-form textarea:focus{border-color:var(--goldd)}
+.vip-form textarea{resize:vertical}
+.vip-form button[type=submit]{margin-top:4px;align-self:center}
+.vip-ok{margin-top:8px;color:var(--goldd);font-family:'Oswald',sans-serif;letter-spacing:.04em;text-align:center}
+@media(max-width:560px){.vip-form .vf-row{grid-template-columns:1fr}}
+/* lounge logos + highlighted benefits */
+.lounge-head{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(32px,5vw,64px);align-items:center;margin-bottom:clamp(34px,5vw,56px)}
+.lounge-logos{display:flex;flex-direction:column;align-items:center;text-align:center;gap:30px;margin:0;padding:0;border:0}
+.lounge-logos .ll-lbl{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.2em;font-size:12px;color:#8f8f98;margin:0}
+.lounge-logos img{height:120px;width:auto;opacity:.97}
+.lounge-logos img.virgin{height:78px}
+@media(max-width:860px){.lounge-head{grid-template-columns:1fr;gap:30px}.lounge-logos{flex-direction:row;flex-wrap:wrap;align-items:center;gap:36px}.lounge-logos .ll-lbl{width:100%}.lounge-logos img{height:60px}.lounge-logos img.virgin{height:40px}}
+.benefit-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:clamp(30px,4vw,46px)}
+.benefit{display:flex;flex-direction:column;gap:10px;align-items:flex-start;padding:22px 20px;border:1px solid #2a2a31;border-radius:14px;background:rgba(16,16,20,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.benefit.feat{border-color:var(--goldd);background:linear-gradient(180deg,rgba(200,164,77,.16),rgba(16,16,20,.55))}
+.benefit .bi{width:28px;height:28px;color:var(--goldd)}
+.benefit .bt{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.03em;font-size:15px;color:#fff;line-height:1.2}
+.benefit .bs{font-size:13px;color:#a7a7b0;line-height:1.45;margin:0}
+@media(max-width:860px){.benefit-strip{grid-template-columns:1fr 1fr}}
+@media(max-width:460px){.benefit-strip{grid-template-columns:1fr}}
+/* lounge network panels */
+.net-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:clamp(30px,4vw,48px)}
+.net-ic{width:46px;height:46px;border-radius:50%;border:1px solid rgba(200,164,77,.35);display:flex;align-items:center;justify-content:center;color:var(--goldd);flex:0 0 auto}
+.net-ic svg{width:22px;height:22px}
+.net{position:relative;border:1px solid #2a2a31;border-radius:16px;background:rgba(14,14,18,.66);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);padding:clamp(26px,3vw,36px);display:flex;flex-direction:column;gap:15px;overflow:hidden}
+.net:before{content:"";position:absolute;top:0;left:26px;right:26px;height:2px;background:linear-gradient(90deg,var(--goldd),transparent)}
+.net-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:2px}
+.net-logos{display:flex;align-items:center;gap:16px}
+.net-logo{height:40px;width:auto}
+.net-logo.virgin{height:28px}
+.net-tag{font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:var(--goldd);border:1px solid rgba(200,164,77,.45);border-radius:999px;padding:5px 11px;white-space:nowrap}
+.net h3{font-family:'Oswald',sans-serif;text-transform:uppercase;font-weight:600;font-size:clamp(19px,2vw,23px);letter-spacing:.02em;color:#fff;margin:0}
+.net .rule{font-size:14px;color:#c6c6ce;line-height:1.55;margin:0}
+.net ul{list-style:none;display:flex;flex-wrap:wrap;gap:9px 18px;margin:2px 0 0;padding:0}
+.net li{font-size:12.5px;color:#a7a7b0;display:flex;align-items:center;gap:8px}
+.net li:before{content:"";width:5px;height:5px;border-radius:50%;background:var(--goldd);flex:0 0 auto}
+.net .netlink{margin-top:8px;color:var(--goldd);font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.06em;font-size:12px;transition:opacity .15s}
+.net .netlink:hover{opacity:.75}
+.benefit-bar{display:flex;flex-wrap:wrap;gap:16px 30px;justify-content:center;align-items:center;margin-top:clamp(22px,3vw,30px);padding:20px 26px;border:1px solid #2a2a31;border-radius:14px;background:rgba(14,14,18,.55)}
+.benefit-bar .bb{display:flex;align-items:center;gap:10px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.04em;font-size:13.5px;color:#d7d7dd}
+.benefit-bar .bb svg{width:22px;height:22px;color:var(--goldd);flex:0 0 auto}
+.benefit-bar .bb.feat{color:var(--goldl)}
+@media(max-width:820px){.net-grid{grid-template-columns:1fr}.net-top{flex-direction:column;align-items:flex-start;gap:14px}.benefit-bar{justify-content:flex-start;gap:16px 24px}}
+@media(max-width:760px){.perklist{grid-template-columns:1fr;column-gap:0}.perkrow{padding:22px 2px}}
 /* atmospheric band */
 .band{position:relative;min-height:auto;display:flex;align-items:center;overflow:hidden}
 .band .band-bg{position:absolute;inset:0;background-size:cover;background-position:center}
@@ -86,8 +146,9 @@
 .shop-feat:has(.js-store:hover) .sm-shelf{opacity:1}
 .pop-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:clamp(30px,4vw,48px)}
 .pop-tile{display:flex;flex-direction:column;gap:10px}
-.pop-thumb{aspect-ratio:1;background:radial-gradient(circle at 50% 35%,#1b1b20 0%,#0e0e11 78%);border:1px solid #26262c;border-radius:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.pop-thumb img{width:100%;height:100%;object-fit:contain;padding:14px}
+.pop-thumb{aspect-ratio:1;background:#f6f5f3;border:1px solid #ffffff14;border-radius:12px;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 18px 34px rgba(0,0,0,.42);transition:transform .3s cubic-bezier(.22,1,.36,1),box-shadow .3s}
+.pop-tile:hover .pop-thumb{transform:translateY(-4px);box-shadow:0 26px 46px rgba(0,0,0,.55)}
+.pop-thumb img{width:100%;height:100%;object-fit:contain;padding:18px;mix-blend-mode:multiply}
 .pop-name{font-family:'Oswald',sans-serif;text-transform:uppercase;font-size:12.5px;letter-spacing:.05em;color:#cfcfd6;text-align:center;line-height:1.25}
 .vip-value{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:clamp(28px,4vw,44px)}
 .vip-stat{border:1px solid #2a2a31;background:linear-gradient(180deg,#151519,#101014);border-radius:16px;padding:26px 22px;text-align:center;position:relative}
@@ -119,7 +180,7 @@
     <a href="/vip" class="active" aria-current="page">VIP</a>
   </nav>
   <div class="nav-actions">
-    <a class="btn btn-gold" href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry">Enquire Now</a>
+    <a class="btn btn-gold" href="#enquire">Enquire Now</a>
   </div>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
 </header>
@@ -139,7 +200,7 @@
     <a href="/vip" class="active" data-close>VIP</a>
   </nav>
   <div class="drawer-actions">
-    <a class="btn btn-gold btn-block" href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry" data-close>Enquire Now</a>
+    <a class="btn btn-gold btn-block" href="#enquire" data-close>Enquire Now</a>
   </div>
 </div>
 
@@ -147,18 +208,18 @@
 
 <!-- HERO -->
 <section class="vip-hero" aria-label="The Blacksmith Barber Club">
-  <div class="hero-bg" style="background-image:url('/site/assets/scene/vip-hero-lounge.png');background-position:center 60%" aria-hidden="true"></div>
+  <div class="hero-bg" style="background-image:url('/site/assets/scene/lounge-b.png');background-position:center 58%" aria-hidden="true"></div>
   <div class="wrap">
     <div class="vip-hgrid">
       <div>
         <div class="vip-eyebrow-row reveal">
-          <span class="vip-badge">VIP Membership</span>
+          <span class="vip-badge">The Blacksmith Membership</span>
           <span class="vip-badge">Strictly limited to 50</span>
         </div>
         <h1 class="h1 reveal" style="margin-top:18px">The Blacksmith<br><span class="gold-grad">Barber Club.</span></h1>
-        <p class="vip-lead-sub reveal">Travel sharp, get rewarded. VIP airport lounge access for you and a guest, member pricing across the shop, rewards on every referral — and a platinum card that carries it all. Built for the people who move.</p>
+        <p class="vip-lead-sub reveal">Travel sharp, get rewarded. VIP airport lounge access for you and a guest, member pricing across the shop, rewards on every referral — and a platinum card that carries it all. Built for people who love exclusivity, value and experience.</p>
         <div class="vip-hero-cta reveal">
-          <a class="btn btn-gold" href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry">Enquire now &rarr;</a>
+          <a class="btn btn-gold" href="#enquire">Enquire now &rarr;</a>
           <a class="btn btn-ghost" href="#whats-included">See what's included</a>
         </div>
       </div>
@@ -171,8 +232,8 @@
           <div class="pcard-chip"></div>
           <div class="pcard-no">•••• •••• •••• VIP</div>
           <div class="pcard-bot">
-            <div class="pcard-name">Member Name</div>
-            <div class="pcard-club">The Barber Club</div>
+            <div><div class="pcard-name">Member Name</div><div class="pcard-club">The Barber Club</div></div>
+            <div class="pcard-net"><img src="/site/assets/logos/amex.svg" alt="Amex"><img class="v" src="/site/assets/logos/virgin.svg" alt="Virgin"></div>
           </div>
         </div>
       </div>
@@ -182,76 +243,6 @@
 
 <!-- WHAT'S INCLUDED -->
 <section class="section-pad" id="whats-included">
-  <div class="wrap">
-    <div class="reveal" style="max-width:640px">
-      <p class="eyebrow gold-eyebrow">The membership</p>
-      <h2 class="h2">Everything a member gets.</h2>
-      <p class="lead">One annual membership. Six ways it pays you back — every visit, every trip, every referral.</p>
-    </div>
-    <div class="exp-grid stagger">
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12l20-7-7 20-3-8-8-5z"/></svg></span>
-        <div><h3 class="h3">VIP airport lounge access, incl. guest</h3><p>Escape the crowds before you fly. Complimentary food and drinks, hi-speed Wi-Fi and shower facilities — and you bring a guest, every time.</p></div>
-      </article>
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></span>
-        <div><h3 class="h3">Platinum member card</h3><p>A physical platinum card that marks you as one of the fifty — and unlocks every member perk in the chair.</p></div>
-      </article>
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l4-3 4 2 4-2 4 3-3 3v9H7v-9L4 7z"/></svg></span>
-        <div><h3 class="h3">Free Blacksmith tee</h3><p>A Blacksmith t-shirt in your size when you join — from our limited-edition designs.</p></div>
-      </article>
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 8v13M12 8s-1.5-4-4.5-4S4 8 6 8h6zM12 8s1.5-4 4.5-4S20 8 18 8h-6z"/><rect x="4" y="8" width="16" height="4" rx="1"/></svg></span>
-        <div><h3 class="h3">1x birthday haircut</h3><p>A complimentary cut on your birthday, on us — turn up and start your year sharp.</p></div>
-      </article>
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 7h10M7 12h10M7 17h6"/><circle cx="19" cy="17" r="2"/></svg></span>
-        <div><h3 class="h3">20% off merch &amp; hair products</h3><p>Member pricing on everything on the shelf — the pomades, the tools, the gear. <a class="gold" href="/site/shop.html">Visit the shop &rarr;</a></p></div>
-      </article>
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 8a4 4 0 1 0-8 0"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="M18 6l2-2M20 6l-2-2"/></svg></span>
-        <div><h3 class="h3">Get paid on referrals</h3><p>Come under our umbrella of businesses as a referrer — commission paid straight onto your card. Unlimited upside.</p></div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- TRAVEL / LOUNGE — image extends through the cards -->
-<section class="band band-through" aria-label="Airport lounge access">
-  <div class="band-bg" style="background-image:url('/site/assets/scene/lounge-a.png')" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="reveal" style="max-width:620px">
-      <p class="eyebrow gold-eyebrow">The lounge, on us</p>
-      <h2 class="h2">The airport lounge is the destination — before your destination.</h2>
-      <p class="lead">Your membership taps into a global airport lounge network. Settle in, and let the terminal wait for you — with a guest alongside, every trip.</p>
-      <div class="vip-who">
-        <span>Complimentary food &amp; drinks</span>
-        <span>Free hi-speed Wi-Fi</span>
-        <span>Shower facilities</span>
-        <span>Guest included</span>
-      </div>
-    </div>
-    <div class="exp-grid stagger" style="margin-top:clamp(36px,5vw,64px)">
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12l20-7-7 20-3-8-8-5z"/></svg></span>
-        <div><h3 class="h3">The Centurion Lounge</h3><p>American Express's flagship lounges at Sydney &amp; Melbourne International.</p></div>
-      </article>
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg></span>
-        <div><h3 class="h3">Global Lounge Collection</h3><p>American Express lounge access at premium airports around the world.</p></div>
-      </article>
-      <article class="exp-card gold-top vip-perk">
-        <span class="exp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 8h11v6a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V8z"/><path d="M16 9h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M11 3v2"/></svg></span>
-        <div><h3 class="h3">Settle in before you fly</h3><p>Complimentary food and drinks, hi-speed Wi-Fi and shower facilities — you and a guest.</p></div>
-      </article>
-    </div>
-    <p class="vip-terms">Lounge access is provided via American Express; specific lounges and guest conditions are confirmed on enquiry and may change.</p>
-  </div>
-</section>
-
-<!-- SHOP / REWARDS -->
-<section class="section-pad" id="shop" style="background:#0f0f12;border-top:1px solid #1c1c22;border-bottom:1px solid #1c1c22">
   <div class="wrap">
     <div class="shop-feat">
       <div class="reveal">
@@ -268,30 +259,96 @@
         <img class="sm-shelf" src="/site/assets/photos/shop-shelf.jpg" alt="The Blacksmith product shelf" loading="lazy">
       </div>
     </div>
-    <p class="eyebrow gold-eyebrow" style="margin-top:clamp(40px,5vw,64px)">Our most popular</p>
-    <div class="pop-row stagger">
-      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/style-super-spray.jpg" alt="Deluxe Super Spray" loading="lazy"></div><div class="pop-name">Salt Spray</div></div>
-      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/style-infuse-powder.jpg" alt="Infuse Styling Powder" loading="lazy"></div><div class="pop-name">Styling Powder</div></div>
-      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/beard-oil-immortal.jpg" alt="Immortal Beard Oil" loading="lazy"></div><div class="pop-name">Beard Oil</div></div>
-      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/style-tobacco-matte.jpg" alt="Tobacco Matte Pomade" loading="lazy"></div><div class="pop-name">Tobacco Pomade</div></div>
-      <div class="pop-tile"><div class="pop-thumb"><img src="/site/assets/products/style-wax-cbd.jpg" alt="CBD Styling Wax" loading="lazy"></div><div class="pop-name">Styling Wax</div></div>
+
+    <div class="benefits-head reveal">
+      <p class="eyebrow gold-eyebrow">The membership</p>
+      <h2 class="h2">Plus, every member gets.</h2>
+    </div>
+    <div class="perklist stagger">
+      <div class="perkrow">
+        <span class="pn">01</span>
+        <div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12l20-7-7 20-3-8-8-5z"/></svg>VIP airport lounge access, incl. guest</h3><p>Escape the crowds before you fly. Complimentary food and drinks, hi-speed Wi-Fi and shower facilities — and you bring a guest, every time.</p></div>
+      </div>
+      <div class="perkrow">
+        <span class="pn">02</span>
+        <div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>Platinum member card</h3><p>A physical platinum card that marks you as one of the fifty — and unlocks every member perk in the chair.</p></div>
+      </div>
+      <div class="perkrow">
+        <span class="pn">03</span>
+        <div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l4-3 4 2 4-2 4 3-3 3v9H7v-9L4 7z"/></svg>Free Blacksmith tee</h3><p>A Blacksmith t-shirt in your size when you join — from our limited-edition designs.</p></div>
+      </div>
+      <div class="perkrow">
+        <span class="pn">04</span>
+        <div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 8v13M12 8s-1.5-4-4.5-4S4 8 6 8h6zM12 8s1.5-4 4.5-4S20 8 18 8h-6z"/><rect x="4" y="8" width="16" height="4" rx="1"/></svg>1x birthday haircut</h3><p>A complimentary cut on your birthday, on us — turn up and start your year sharp.</p></div>
+      </div>
+      <div class="perkrow">
+        <span class="pn">05</span>
+        <div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 7h10M7 12h10M7 17h6"/><circle cx="19" cy="17" r="2"/></svg>20% off merch &amp; hair products</h3><p>Member pricing on everything on the shelf — the pomades, the tools, the gear.</p></div>
+      </div>
+      <div class="perkrow">
+        <span class="pn">06</span>
+        <div><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 8a4 4 0 1 0-8 0"/><path d="M4 20a8 8 0 0 1 16 0"/><path d="M18 6l2-2M20 6l-2-2"/></svg>Get paid on referrals</h3><p>Come under our umbrella of businesses as a referrer — commission paid straight onto your card. Unlimited upside.</p></div>
+      </div>
     </div>
   </div>
 </section>
+
+<!-- TRAVEL / LOUNGE — image extends through the cards -->
+<section class="band band-through" aria-label="Airport lounge access">
+  <div class="band-bg" style="background-image:url('/site/assets/scene/lounge-a.png')" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="reveal" style="max-width:720px">
+      <p class="eyebrow gold-eyebrow">Exclusive access</p>
+      <h2 class="h2">The airport lounge is the destination — before your destination.</h2>
+      <p class="lead">Two lounge networks, one card. <strong style="color:#fff">Fly Virgin at home, or any airline abroad</strong> — either way you walk straight in, away from the hustle of the terminal. Travel just once or twice a year and the membership pays for itself.</p>
+    </div>
+
+    <div class="net-grid stagger">
+      <article class="net">
+        <div class="net-top"><img class="net-logo" src="/site/assets/logos/amex.svg" alt="American Express"><span class="net-tag">International &middot; Any airline</span></div>
+        <h3>The Centurion Lounge</h3>
+        <p class="rule">American Express's flagship network. Open to Amex Platinum and Business Platinum members regardless of the airline or ticket — no same-day partner flight required to walk in.</p>
+        <ul><li>Premium hot buffets</li><li>Craft cocktail bars</li><li>Upscale quiet spaces</li></ul>
+        <a class="netlink" href="https://www.americanexpress.com/au/credit-cards/membership-benefits/travel/airport-lounges/" target="_blank" rel="noopener">See locations worldwide &rarr;</a>
+      </article>
+      <article class="net">
+        <div class="net-top"><span class="net-logos"><img class="net-logo" src="/site/assets/logos/amex.svg" alt="American Express"><img class="net-logo virgin" src="/site/assets/logos/virgin.svg" alt="Virgin"></span><span class="net-tag">Domestic &middot; Flying Virgin</span></div>
+        <h3>Virgin Australia Lounges</h3>
+        <p class="rule">Home-turf coverage across Brisbane, Sydney, Melbourne and regional airports. Access with Amex Platinum when you're on a same-day Virgin Australia flight.</p>
+        <ul><li>Barista coffee</li><li>Buffet spreads</li><li>Wine &amp; beer bars</li><li>Work zones</li></ul>
+        <a class="netlink" href="https://www.virginaustralia.com/au/en/travel-info/at-the-airport/lounge/" target="_blank" rel="noopener">See domestic lounges &rarr;</a>
+      </article>
+      <article class="net">
+        <div class="net-top"><span class="net-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M17 6a3 3 0 0 1 0 6M21 20a6 6 0 0 0-4-5.6"/></svg></span><span class="net-tag">Every visit</span></div>
+        <h3>You, plus a guest</h3>
+        <p class="rule">Bring one complimentary guest, every time — travelling with you on the same Virgin flight for the domestic lounges. The good part of the trip is never yours alone.</p>
+      </article>
+    </div>
+
+    <div class="benefit-bar stagger">
+      <div class="bb feat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3v8a3 3 0 0 0 6 0V3M8 11v10M19 3c-2 0-3 2-3 5s1 5 3 5V3zM19 13v8"/></svg>Free food &amp; drinks</div>
+      <div class="bb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 8.5a16 16 0 0 1 20 0M5 12a11 11 0 0 1 14 0M8.5 15.5a6 6 0 0 1 7 0"/><circle cx="12" cy="19" r="1"/></svg>Free hi-speed Wi-Fi</div>
+      <div class="bb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12h16v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-3zM7 12V6a2 2 0 0 1 4 0"/></svg>Shower facilities</div>
+    </div>
+
+    <p class="vip-terms">Lounge access is provided via American Express; specific lounges, cardholder tiers and guest conditions are confirmed on enquiry and may change. Blacksmith is not affiliated with, or endorsed by, American Express or Virgin.</p>
+  </div>
+</section>
+
 
 <!-- WHO / VALUE -->
 <section class="section-pad">
   <div class="wrap">
     <div class="reveal" style="max-width:640px">
       <p class="eyebrow gold-eyebrow">Who it's for</p>
-      <h2 class="h2">Made for the people who move.</h2>
-      <p class="lead">If you're in and out of lounges, in front of people, and always meant to look the part — this is the card that keeps you sharp and pays you back. Made for anyone who likes to stay fresh and loves good value: over $1,800 a year in value, plus uncapped commission when you refer through our umbrella of businesses — paid straight onto your card.</p>
+      <h2 class="h2">Made for people in motion.</h2>
+      <p class="lead">You don't need to live in airport lounges to get the value. If you travel at all — interstate trips, weekends away, the odd flight for work — this hands you lounge access and perks most people would never pay for on their own. Over $1,800 a year in value for a fraction of it, plus uncapped commission when you refer through our umbrella of businesses, paid straight onto your card.</p>
       <div class="vip-who">
-        <span>Frequent flyers</span>
-        <span>Networkers</span>
-        <span>Business owners</span>
+        <span>Interstate travellers</span>
+        <span>Weekends away</span>
+        <span>The odd work flight</span>
         <span>Stay-fresh regulars</span>
-        <span>Value lovers</span>
+        <span>Value hunters</span>
       </div>
     </div>
     <div class="vip-value reveal">
@@ -304,15 +361,24 @@
 </section>
 
 <!-- CTA -->
-<section class="cta-band section-pad">
-  <div class="wrap reveal">
+<section class="cta-band section-pad" id="enquire">
+  <div class="wrap reveal" style="max-width:640px;margin-inline:auto;text-align:center">
     <p class="eyebrow gold-eyebrow">Fifty spots. That's it.</p>
     <h2 class="h2">Claim your place in the club.</h2>
-    <p>Enquire now and we'll walk you through the membership, the card and the price. Once the fifty are gone, they're gone.</p>
-    <div class="hero-cta" style="flex-direction:column;align-items:center;gap:16px;margin-top:14px">
-      <a class="btn btn-gold" href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry">Enquire now &rarr;</a>
-      <p style="color:#a2a2aa;font-size:14px">Or email <a class="gold" href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a></p>
-    </div>
+    <p>Enquire and we'll walk you through the membership, the card and the price. Once the fifty are gone, they're gone.</p>
+    <form class="vip-form" id="vipForm" novalidate>
+      <div class="vf-row">
+        <label>Name<input name="name" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+      </div>
+      <div class="vf-row">
+        <label>Phone<input name="phone" type="tel" autocomplete="tel"></label>
+        <label>How often you travel<input name="travel" placeholder="e.g. 2 trips a year"></label>
+      </div>
+      <label>Message<textarea name="details" rows="3" placeholder="Anything you'd like to know about the membership…"></textarea></label>
+      <button class="btn btn-gold" type="submit">Send enquiry &rarr;</button>
+      <p style="color:#a2a2aa;font-size:14px;margin:2px 0 0;text-align:center">Or email <a class="gold" href="mailto:blacksmithbarbers@gmail.com">blacksmithbarbers@gmail.com</a></p>
+    </form>
   </div>
 </section>
 
@@ -343,7 +409,7 @@
         <ul>
           <li><a href="#whats-included">What's included</a></li>
           <li><a href="#shop">Member savings</a></li>
-          <li><a href="mailto:blacksmithbarbers@gmail.com?subject=Blacksmith%20Barber%20Club%20Enquiry">Enquire now</a></li>
+          <li><a href="#enquire">Enquire now</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -366,5 +432,17 @@
 </footer>
 
 <script src="/site/assets/site.js?v=6"></script>
+<script>
+(function(){var f=document.getElementById('vipForm');if(!f)return;
+ f.addEventListener('submit',function(e){e.preventDefault();
+  if(!f.checkValidity()){f.reportValidity();return;}
+  var d=new FormData(f);
+  var body=['Name: '+d.get('name'),'Email: '+d.get('email'),'Phone: '+(d.get('phone')||'-'),
+   'Travel frequency: '+(d.get('travel')||'-'),'','Message:',(d.get('details')||'-')].join('\n');
+  var subject='Blacksmith Barber Club enquiry — '+d.get('name');
+  window.location.href='mailto:blacksmithbarbers@gmail.com?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+  if(!f.querySelector('.vip-ok')){var ok=document.createElement('p');ok.className='vip-ok';ok.textContent='Opening your email to send your enquiry…';f.appendChild(ok);}
+ });})();
+</script>
 </body>
 </html>
