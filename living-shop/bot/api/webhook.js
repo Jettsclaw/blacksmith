@@ -708,7 +708,7 @@ export default async function handler(req, res) {
         if (flbl === 'walk-in' || flbl === 'walkin') { await walkinStart(token, chatId); return res.status(200).send('ok'); }
         if (flbl === 'book' || flbl === 'bookings') { await sendFork(token, chatId, 'Lock a time, or join the walk-in queue?'); return res.status(200).send('ok'); }
         const t = raw.toLowerCase();
-        const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
+        const NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami','cristian'];
         const nm = NAMES.find(n => t.includes(n));
         let kind = 'menu';
         if (/cancel|reschedule|change my/.test(t)) kind = 'cancel';

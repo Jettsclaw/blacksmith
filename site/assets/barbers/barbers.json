@@ -32,7 +32,7 @@
     "shop": "Blacksmith Barbers",
     "photo": "assets/barbers/locky.jpg",
     "photoSource": "blacksmithbarbers.com.au/blacksmith-barbers-team (TLB_3920, listed as Lachlan)",
-    "blurb": "Coming up through the Blacksmith Academy. Learning the craft the right way \u2014 real chairs, real clients.",
+    "blurb": "Coming up through the Blacksmith Academy. Learning the craft the right way — real chairs, real clients.",
     "active": true
   },
   {
@@ -54,13 +54,22 @@
     "active": true
   },
   {
+    "name": "Cristian",
+    "role": "Barber",
+    "shop": "Blacksmith Barbers",
+    "photo": "assets/barbers/cristian.jpg",
+    "photoSource": "PENDING — need studio headshot to match the set",
+    "blurb": "Newest hands on the floor. Sharp fades and an easy chair.",
+    "active": true
+  },
+  {
     "name": "Sami",
     "role": "Blackrose Stylist",
     "shop": "Blackrose Salon",
     "photo": "assets/barbers/sammi.jpg",
-    "photoSource": "PLACEHOLDER \u2014 no real photo found",
+    "photoSource": "PLACEHOLDER — no real photo found",
     "needsHeadshot": true,
-    "blurb": "Runs Blackrose. From foils to precision cuts \u2014 the salon side of the Blacksmith world.",
+    "blurb": "Runs Blackrose. From foils to precision cuts — the salon side of the Blacksmith world.",
     "active": true
   }
 ]

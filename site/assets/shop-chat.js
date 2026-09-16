@@ -32,7 +32,7 @@
     var h = +m[1], ap = h >= 12 ? 'pm' : 'am';
     return 'as of ' + (h % 12 || 12) + ':' + m[2] + ap;
   }
-  var NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami'];
+  var NAMES = ['bayli','jarred','jayden','locky','ben','cam','mubarak','sami','cristian'];
   // Display-only: the SLIKR feed spells him "Jarred"; show customers "Jarrod".
   // Never use this for matching/booking — those must keep the real feed name.
   function dn(s) { return String(s == null ? '' : s).replace(/Jarred/gi, 'Jarrod'); }
