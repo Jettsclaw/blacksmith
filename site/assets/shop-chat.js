@@ -327,7 +327,10 @@
   }
 
   function askService() {
-    var menu = (snap.services && snap.services[wiz.shop]) || [];
+    // A barber can run their own menu (e.g. Cristian's Firex services) — prefer
+    // it over the shared bookings menu when the feed carries one. (2026-09-17)
+    var menu = (wiz.shop === 'bookings' && snap.barber_services && snap.barber_services[wiz.barber])
+      || (snap.services && snap.services[wiz.shop]) || [];
     if (!menu.length) { bubble('Menu’s offline — tap Join the queue instead.', 'bot', true); wiz = null; setWizUI(false); return; }
     bubble('What are we doing?', 'bot');
     chipRow(menu.map(function (s) {
