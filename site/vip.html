@@ -44,8 +44,13 @@
 .vip-hero-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:28px}
 /* platinum member card */
 .pcard-wrap{display:flex;justify-content:center;align-items:center}
+.pcard-img{width:100%;max-width:560px;height:auto;display:block;transform:rotate(-6deg) translateX(-20px);filter:drop-shadow(0 40px 80px rgba(0,0,0,.65))}
+@media(max-width:860px){.pcard-img{max-width:380px;transform:rotate(-3deg)}}
 .pcard{width:100%;max-width:540px;aspect-ratio:1.586;border-radius:22px;position:relative;overflow:hidden;
-  background:linear-gradient(135deg,#f1f2f5 0%,#c3c6cd 20%,#9a9da5 38%,#e2e4e8 52%,#aeb2ba 68%,#8f9099 82%,var(--goldd) 118%);
+  background:
+    repeating-linear-gradient(112deg, rgba(255,255,255,.06) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(68deg, rgba(0,0,0,.05) 0 1px, transparent 1px 6px),
+    linear-gradient(135deg,#f1f2f5 0%,#c3c6cd 20%,#9a9da5 38%,#e2e4e8 52%,#aeb2ba 68%,#8f9099 82%,var(--goldd) 118%);
   box-shadow:0 44px 90px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.7),inset 0 0 0 1px rgba(255,255,255,.25);
   transform:rotate(-6deg) translateX(-34px);color:#181a1f;padding:34px 34px 30px}
 .pcard:before{content:"";position:absolute;top:-40%;left:-30%;width:60%;height:200%;transform:rotate(18deg);
@@ -224,18 +229,7 @@
         </div>
       </div>
       <div class="pcard-wrap reveal">
-        <div class="pcard" aria-label="Blacksmith VIP platinum member card">
-          <div class="pcard-top">
-            <div class="pcard-brand">BLACKSMITH</div>
-            <div class="pcard-tier">Platinum</div>
-          </div>
-          <div class="pcard-chip"></div>
-          <div class="pcard-no">•••• •••• •••• VIP</div>
-          <div class="pcard-bot">
-            <div><div class="pcard-name">Member Name</div><div class="pcard-club">The Barber Club</div></div>
-            <div class="pcard-net"><img src="/site/assets/logos/amex.svg" alt="Amex"><img class="v" src="/site/assets/logos/virgin.svg" alt="Virgin"></div>
-          </div>
-        </div>
+        <img class="pcard-img" src="/site/assets/scene/vip-card-amex.webp" width="1120" height="726" alt="Blacksmith Barber Club platinum member card">
       </div>
     </div>
   </div>
